@@ -1,7 +1,7 @@
 # パートナー要員管理システム ドキュメント一覧
 
 ## 1. システム概要
-- [実装完了報告書](/home/ubuntu/workspace/PMS/implementation_report.md) - システム実装の概要と成果物の説明
+- システム実装の概要と成果物の説明
 
 ## 2. 実装状況
 ### 2.1 フロントエンド実装状況
@@ -25,7 +25,7 @@
 - 契約管理モジュール
 
 ### 2.3 データベース実装状況
-以下のテーブルが実装済みです：
+SQLiteデータベースが使用されており、以下のテーブルが実装済みです：
 - ユーザーテーブル
 - パートナー会社テーブル
 - 反社チェックテーブル
@@ -36,28 +36,28 @@
 - 契約テーブル
 
 ## 3. 開発資料
-- [タスク一覧](/home/ubuntu/workspace/PMS/todo.md) - 実装タスクの一覧と進捗状況
+- [タスク一覧](/home/ubuntu/PMS/todo.md) - 実装タスクの一覧と進捗状況
 
 ## 4. システム起動方法
 ### 4.1 依存関係のインストール
 ```bash
 # バックエンドの依存関係をインストール
-cd /home/ubuntu/workspace/PMS/backend
+cd /home/ubuntu/PMS/backend
 npm install
 
 # フロントエンドの依存関係をインストール
-cd /home/ubuntu/workspace/PMS/frontend
+cd /home/ubuntu/PMS/frontend
 npm install
 ```
 
 ### 4.2 システム起動
 ```bash
 # バックエンドの起動
-cd /home/ubuntu/workspace/PMS/backend
+cd /home/ubuntu/PMS/backend
 npm run start:dev
 
 # フロントエンドの起動（別ターミナルで実行）
-cd /home/ubuntu/workspace/PMS/frontend
+cd /home/ubuntu/PMS/frontend
 npm run dev
 ```
 
@@ -80,3 +80,5 @@ npm run dev
 ## 6. 既知の問題点
 - マイグレーションファイルにTypeScriptエラーがあり、修正済み
 - ポート競合の問題があり、フロントエンドはポート3002で実行中
+- PostgreSQLではなくSQLiteを使用しているため、設計書との不一致がある
+- バックエンドのモジュールは実装されているが、一部の機能は未実装状態

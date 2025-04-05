@@ -5,12 +5,12 @@ import { Project } from '../../entities/project.entity';
 
 export class CreateContractDto {
   @Type(() => Staff)
-  @IsNotEmpty({ message: '要員は必須です' })
-  staff: Staff;
+  @IsOptional() // staffを必須から任意に変更
+  staff?: Staff;
 
   @Type(() => Project)
-  @IsNotEmpty({ message: '案件は必須です' })
-  project: Project;
+  @IsOptional() // projectを必須から任意に変更
+  project?: Project;
 
   @IsDateString()
   @IsNotEmpty({ message: '開始日は必須です' })

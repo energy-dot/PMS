@@ -6,8 +6,8 @@ export class CreateProjectDto {
   name: string;
 
   @IsString()
-  @IsNotEmpty({ message: '部署名は必須です' })
-  department: string;
+  @IsOptional() // departmentを必須から任意に変更
+  department?: string;
 
   @IsString()
   @IsOptional()
@@ -21,8 +21,8 @@ export class CreateProjectDto {
   @IsNotEmpty({ message: '終了日は必須です' })
   endDate: Date;
 
-  @IsEnum(['募集中', '選考中', '充足', '承認待ち', '差し戻し', '終了'], { 
-    message: 'ステータスは「募集中」「選考中」「充足」「承認待ち」「差し戻し」「終了」のいずれかである必要があります' 
+  @IsEnum(['募集中', '選考中', '充足', '承認待ち', '差し戻し', '終了', '進行中'], { 
+    message: 'ステータスは「募集中」「選考中」「充足」「承認待ち」「差し戻し」「終了」「進行中」のいずれかである必要があります' 
   })
   @IsOptional()
   status?: string;
