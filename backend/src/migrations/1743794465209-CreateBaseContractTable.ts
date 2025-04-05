@@ -92,8 +92,12 @@ export class CreateBaseContractTable1743794465209 implements MigrationInterface 
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const table = await queryRunner.getTable("base_contracts");
-        const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("partnerId") !== -1);
-        await queryRunner.dropForeignKey("base_contracts", foreignKey);
+        if (table) {
+            const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("partnerId") !== -1);
+            if (foreignKey) {
+                await queryRunner.dropForeignKey("base_contracts", foreignKey);
+            }
+        }
         await queryRunner.dropTable("base_contracts");
     }
 }

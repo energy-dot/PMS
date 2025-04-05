@@ -84,8 +84,12 @@ export class CreateAntisocialCheckTable1743794168012 implements MigrationInterfa
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const table = await queryRunner.getTable("antisocial_checks");
-        const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("partnerId") !== -1);
-        await queryRunner.dropForeignKey("antisocial_checks", foreignKey);
+        if (table) {
+            const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("partnerId") !== -1);
+            if (foreignKey) {
+                await queryRunner.dropForeignKey("antisocial_checks", foreignKey);
+            }
+        }
         await queryRunner.dropTable("antisocial_checks");
     }
 }

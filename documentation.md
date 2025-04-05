@@ -1,23 +1,82 @@
 # パートナー要員管理システム ドキュメント一覧
 
 ## 1. システム概要
-- [システムアーキテクチャ設計書](/home/ubuntu/architecture/system_architecture.md) - システム全体の構成と設計方針
+- [実装完了報告書](/home/ubuntu/workspace/PMS/implementation_report.md) - システム実装の概要と成果物の説明
 
-## 2. 起動・アクセス方法
-- [システム起動・アクセスガイド](/home/ubuntu/system_startup_guide.md) - システムの起動方法とアクセス方法の詳細
+## 2. 実装状況
+### 2.1 フロントエンド実装状況
+以下の機能が実装済みです：
+- ログイン画面
+- ダッシュボード
+- パートナー会社情報管理
+- 案件管理
+- 要員管理
+- 個別契約管理
 
-## 3. 実装報告
-- [実装完了報告書](/home/ubuntu/implementation_report.md) - システム実装の概要と成果物の説明
+### 2.2 バックエンド実装状況
+以下のモジュールが実装済みです：
+- 認証モジュール（JWT認証）
+- パートナー会社管理モジュール
+  - 信用調査/反社チェック管理
+  - 基本契約管理
+  - パートナー会社営業窓口管理
+- 案件管理モジュール
+- 要員管理モジュール
+- 契約管理モジュール
 
-## 4. 開発資料
-- [タスク一覧](/home/ubuntu/todo.md) - 実装タスクの一覧と進捗状況
+### 2.3 データベース実装状況
+以下のテーブルが実装済みです：
+- ユーザーテーブル
+- パートナー会社テーブル
+- 反社チェックテーブル
+- 基本契約テーブル
+- 営業窓口テーブル
+- 要員テーブル
+- 案件テーブル
+- 契約テーブル
 
-## 5. 構成ファイル
-- [Docker Compose設定](/home/ubuntu/docker-compose.yml) - データベースコンテナの設定
-- [起動スクリプト（ローカル環境用）](/home/ubuntu/start-system.sh) - ローカル環境での起動スクリプト
-- [起動スクリプト（インターネット公開用）](/home/ubuntu/start-system-internet.sh) - インターネット公開用の起動スクリプト
+## 3. 開発資料
+- [タスク一覧](/home/ubuntu/workspace/PMS/todo.md) - 実装タスクの一覧と進捗状況
 
-## 6. データベース
-- [初期スキーマ](/home/ubuntu/database/migrations/001_initial_schema.sql) - データベースの初期スキーマ定義
-- [シードデータ](/home/ubuntu/database/seeds/001_seed_data.sql) - テスト用の初期データ
-- [データベース初期化スクリプト](/home/ubuntu/database/init-db.sh) - データベースの初期化スクリプト
+## 4. システム起動方法
+### 4.1 依存関係のインストール
+```bash
+# バックエンドの依存関係をインストール
+cd /home/ubuntu/workspace/PMS/backend
+npm install
+
+# フロントエンドの依存関係をインストール
+cd /home/ubuntu/workspace/PMS/frontend
+npm install
+```
+
+### 4.2 システム起動
+```bash
+# バックエンドの起動
+cd /home/ubuntu/workspace/PMS/backend
+npm run start:dev
+
+# フロントエンドの起動（別ターミナルで実行）
+cd /home/ubuntu/workspace/PMS/frontend
+npm run dev
+```
+
+### 4.3 アクセス方法
+- バックエンドAPI: http://localhost:3001/api
+- フロントエンド: http://localhost:3002/
+
+## 5. 今後の開発計画
+以下の機能は今後実装予定です：
+- 案件募集送信
+- 要員募集状況管理（応募管理）
+- 要員関連連絡・依頼（ワークフロー）
+- 要員評価管理
+- 通知機能
+- 検索機能
+- レポート機能
+- マスターデータ管理
+- セキュリティ・アクセス権限管理
+
+## 6. 既知の問題点
+- マイグレーションファイルにTypeScriptエラーがあり、修正済み
+- ポート競合の問題があり、フロントエンドはポート3002で実行中

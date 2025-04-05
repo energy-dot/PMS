@@ -89,8 +89,12 @@ export class CreateContactPersonTable1743794742186 implements MigrationInterface
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const table = await queryRunner.getTable("contact_persons");
-        const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("partnerId") !== -1);
-        await queryRunner.dropForeignKey("contact_persons", foreignKey);
+        if (table) {
+            const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf("partnerId") !== -1);
+            if (foreignKey) {
+                await queryRunner.dropForeignKey("contact_persons", foreignKey);
+            }
+        }
         await queryRunner.dropTable("contact_persons");
     }
 }
