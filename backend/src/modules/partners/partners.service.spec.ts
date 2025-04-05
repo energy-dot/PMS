@@ -26,7 +26,7 @@ describe('PartnersService', () => {
     findOne: jest.fn().mockResolvedValue(mockPartner),
     create: jest.fn().mockReturnValue(mockPartner),
     save: jest.fn().mockResolvedValue(mockPartner),
-    delete: jest.fn().mockResolvedValue({ affected: 1 }),
+    delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
   };
 
   beforeEach(async () => {
@@ -112,14 +112,14 @@ describe('PartnersService', () => {
     });
 
     it('should return false when no partner was deleted', async () => {
-      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0 });
+      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0, raw: {} });
       
       const result = await service.remove('999');
       expect(result).toBe(false);
     });
 
     it('should handle null affected value', async () => {
-      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null });
+      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null, raw: {} });
       
       const result = await service.remove('1');
       expect(result).toBe(false);

@@ -17,7 +17,7 @@ describe('ProjectsService', () => {
     startDate: new Date('2025-01-01'),
     endDate: new Date('2025-12-31'),
     status: '進行中',
-    budget: 10000000,
+    budget: '10000000',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -27,7 +27,7 @@ describe('ProjectsService', () => {
     findOne: jest.fn().mockResolvedValue(mockProject),
     create: jest.fn().mockReturnValue(mockProject),
     save: jest.fn().mockResolvedValue(mockProject),
-    delete: jest.fn().mockResolvedValue({ affected: 1 }),
+    delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
   };
 
   beforeEach(async () => {
@@ -73,7 +73,8 @@ describe('ProjectsService', () => {
         startDate: new Date('2025-01-01'),
         endDate: new Date('2025-12-31'),
         status: '進行中',
-        budget: 10000000,
+        budget: '10000000',
+        department: 'テスト部署', // 必須項目を追加
       };
       
       const result = await service.create(createProjectDto);
@@ -116,14 +117,14 @@ describe('ProjectsService', () => {
     });
 
     it('should return false when no project was deleted', async () => {
-      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0 });
+      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0, raw: {} });
       
       const result = await service.remove('999');
       expect(result).toBe(false);
     });
 
     it('should handle null affected value', async () => {
-      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null });
+      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null, raw: {} });
       
       const result = await service.remove('1');
       expect(result).toBe(false);

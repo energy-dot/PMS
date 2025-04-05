@@ -1,5 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Staff } from './staff.entity';
+import { AntisocialCheck } from './antisocial-check.entity';
+import { BaseContract } from './base-contract.entity';
+import { ContactPerson } from './contact-person.entity';
 
 @Entity('partners')
 export class Partner {
@@ -59,6 +62,15 @@ export class Partner {
 
   @OneToMany(() => Staff, staff => staff.partner)
   staff: Staff[];
+
+  @OneToMany(() => AntisocialCheck, check => check.partner)
+  antisocialChecks: AntisocialCheck[];
+
+  @OneToMany(() => BaseContract, contract => contract.partner)
+  baseContracts: BaseContract[];
+
+  @OneToMany(() => ContactPerson, contactPerson => contactPerson.partner)
+  contactPersons: ContactPerson[];
 
   @CreateDateColumn()
   createdAt: Date;

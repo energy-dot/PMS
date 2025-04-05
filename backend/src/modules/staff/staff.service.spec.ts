@@ -12,13 +12,11 @@ describe('StaffService', () => {
 
   const mockStaff = {
     id: '1',
-    firstName: '太郎',
-    lastName: '山田',
+    name: '山田 太郎',
     email: 'taro.yamada@example.com',
     phone: '090-1234-5678',
-    position: 'エンジニア',
+    status: '稼働中',
     skills: ['Java', 'Spring', 'SQL'],
-    partnerId: '1',
     partner: { id: '1', name: 'テスト株式会社' },
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -29,7 +27,7 @@ describe('StaffService', () => {
     findOne: jest.fn().mockResolvedValue(mockStaff),
     create: jest.fn().mockReturnValue(mockStaff),
     save: jest.fn().mockResolvedValue(mockStaff),
-    delete: jest.fn().mockResolvedValue({ affected: 1 }),
+    delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
   };
 
   beforeEach(async () => {
@@ -73,13 +71,12 @@ describe('StaffService', () => {
   describe('create', () => {
     it('should successfully create a staff member', async () => {
       const createStaffDto: CreateStaffDto = {
-        firstName: '太郎',
-        lastName: '山田',
+        name: '山田 太郎',
         email: 'taro.yamada@example.com',
         phone: '090-1234-5678',
-        position: 'エンジニア',
+        status: '稼働中',
         skills: ['Java', 'Spring', 'SQL'],
-        partnerId: '1',
+        partner: { id: '1', name: 'テスト株式会社' } as any,
       };
       
       const result = await service.create(createStaffDto);
@@ -92,7 +89,7 @@ describe('StaffService', () => {
   describe('update', () => {
     it('should update a staff member', async () => {
       const updateStaffDto: UpdateStaffDto = {
-        position: 'シニアエンジニア',
+        status: '稼働中',
         skills: ['Java', 'Spring', 'SQL', 'AWS'],
       };
       
@@ -109,7 +106,7 @@ describe('StaffService', () => {
       jest.spyOn(repo, 'findOne').mockResolvedValueOnce(null);
       
       const updateStaffDto: UpdateStaffDto = {
-        position: 'シニアエンジニア',
+        status: '待機中',
       };
       
       const result = await service.update('999', updateStaffDto);
@@ -125,14 +122,14 @@ describe('StaffService', () => {
     });
 
     it('should return false when no staff member was deleted', async () => {
-      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0 });
+      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0, raw: {} });
       
       const result = await service.remove('999');
       expect(result).toBe(false);
     });
 
     it('should handle null affected value', async () => {
-      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null });
+      jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null, raw: {} });
       
       const result = await service.remove('1');
       expect(result).toBe(false);
