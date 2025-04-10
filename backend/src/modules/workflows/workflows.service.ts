@@ -49,9 +49,9 @@ export class WorkflowsService {
     });
   }
 
-  async findRequestHistoriesByStatus(requestStatus: string): Promise<RequestHistory[]> {
+  async findRequestHistoriesByStatus(status: string): Promise<RequestHistory[]> {
     return this.requestHistoriesRepository.find({
-      where: { requestStatus },
+      where: { requestStatus: status },
       relations: ['project', 'requester', 'approver'],
     });
   }
@@ -66,7 +66,8 @@ export class WorkflowsService {
       throw new BadRequestException(`プロジェクトID ${createRequestHistoryDto.projectId} は存在しません`);
     }
 
-    const newRequestHistory = this.requestHistoriesRepository.create({
+    const newRequestHistory = new RequestHistory();
+    Object.assign(newRequestHistory, {
       ...createRequestHistoryDto,
       requestDate: new Date(createRequestHistoryDto.requestDate),
       approvalDate: createRequestHistoryDto.approvalDate 
@@ -116,7 +117,8 @@ export class WorkflowsService {
     await this.projectsRepository.save(project);
 
     // 申請履歴を作成
-    const requestHistory = this.requestHistoriesRepository.create({
+    const requestHistory = new RequestHistory();
+    Object.assign(requestHistory, {
       projectId,
       requesterId,
       requestType: '案件承認申請',

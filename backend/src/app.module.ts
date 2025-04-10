@@ -1,80 +1,36 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { PartnersModule } from './modules/partners/partners.module';
+import { UsersModule } from './modules/users/users.module';
 import { ProjectsModule } from './modules/projects/projects.module';
+import { PartnersModule } from './modules/partners/partners.module';
 import { StaffModule } from './modules/staff/staff.module';
 import { ContractsModule } from './modules/contracts/contracts.module';
-import { DepartmentsModule } from './modules/departments/departments.module';
-import { SectionsModule } from './modules/sections/sections.module';
-import { Partner } from './entities/partner.entity';
-import { Project } from './entities/project.entity';
-import { Staff } from './entities/staff.entity';
-import { Contract } from './entities/contract.entity';
-import { User } from './entities/user.entity';
-import { AntisocialCheck } from './entities/antisocial-check.entity';
-import { BaseContract } from './entities/base-contract.entity';
-import { ContactPerson } from './entities/contact-person.entity';
-import { Department } from './entities/department.entity';
-import { Section } from './entities/section.entity';
-import { ValidatorsModule } from './validators/validators.module';
+import { ApplicationsModule } from './modules/applications/applications.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { WorkflowsModule } from './modules/workflows/workflows.module';
+import { FileUploadModule } from './modules/file-upload/file-upload.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'database.sqlite',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
     }),
-    process.env.NODE_ENV === 'test'
-      ? TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          entities: [
-            User,
-            Department,
-            Section,
-            Partner,
-            Project,
-            Staff, 
-            Contract, 
-            AntisocialCheck, 
-            BaseContract, 
-            ContactPerson
-          ],
-          synchronize: true,
-          dropSchema: true,
-          autoLoadEntities: true,
-        })
-      : TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: join(__dirname, '..', 'database.sqlite'),
-          entities: [
-            User,
-            Department,
-            Section,
-            Partner,
-            Project,
-            Staff, 
-            Contract, 
-            AntisocialCheck, 
-            BaseContract, 
-            ContactPerson
-          ],
-          synchronize: true,
-          autoLoadEntities: true,
-          logging: true
-        }),
-    AuthModule,
-    PartnersModule,
+    UsersModule,
     ProjectsModule,
+    PartnersModule,
     StaffModule,
     ContractsModule,
-    DepartmentsModule,
-    SectionsModule,
-    ValidatorsModule,
+    ApplicationsModule,
+    NotificationsModule,
+    WorkflowsModule,
+    FileUploadModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

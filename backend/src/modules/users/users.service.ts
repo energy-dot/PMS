@@ -18,126 +18,51 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async findOne(id: string): Promise<User> {
+  async findById(id: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  async findByUsername(username: string): Promise<User> {
+  async findByUsername(username: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { username } });
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     
     const user = new User();
     user.id = uuidv4();
     user.username = createUserDto.username;
-    user.fullName = createUserDto.fullName;
-    user.email = createUserDto.email;
     user.password = hashedPassword;
+    user.fullName = createUserDto.fullName;
     user.role = createUserDto.role;
-    user.department = createUserDto.department;
-    user.isActive = createUserDto.isActive !== undefined ? createUserDto.isActive : true;
+    user.department = createUserDto.department || '';
+    user.email = createUserDto.email || '';
     
     return this.usersRepository.save(user);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(id);
+    const user = await this.findById(id);
     
     if (!user) {
-      throw new Error('ユーザーが見つかりません');
+      throw new Error(`ユーザーID ${id} は見つかりませんでした`);
     }
     
-    if (updateUserDto.username !== undefined) {
-      user.username = updateUserDto.username;
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
     
-    if (updateUserDto.fullName !== undefined) {
-      user.fullName = updateUserDto.fullName;
-    }
-    
-    if (updateUserDto.email !== undefined) {
-      user.email = updateUserDto.email;
-    }
-    
-    if (updateUserDto.password !== undefined) {
-      const salt = await bcrypt.genSalt();
-      user.password = await bcrypt.hash(updateUserDto.password, salt);
-    }
-    
-    if (updateUserDto.role !== undefined) {
-      user.role = updateUserDto.role;
-    }
-    
-    if (updateUserDto.department !== undefined) {
-      user.department = updateUserDto.department;
-    }
-    
-    if (updateUserDto.isActive !== undefined) {
-      user.isActive = updateUserDto.isActive;
-    }
-    
-    return this.usersRepository.save(user);
+    const updatedUser = this.usersRepository.merge(user, updateUserDto);
+    return this.usersRepository.save(updatedUser);
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
-  }
-
-  async toggleStatus(id: string, isActive: boolean): Promise<User> {
-    const user = await this.findOne(id);
+    const user = await this.findById(id);
     
     if (!user) {
-      throw new Error('ユーザーが見つかりません');
+      throw new Error(`ユーザーID ${id} は見つかりませんでした`);
     }
     
-    user.isActive = isActive;
-    
-    return this.usersRepository.save(user);
-  }
-
-  async validateUser(username: string, password: string): Promise<User | null> {
-    const user = await this.findByUsername(username);
-    
-    if (user && await bcrypt.compare(password, user.password)) {
-      return user;
-    }
-    
-    return null;
-  }
-
-  async updateLastLogin(id: string): Promise<User> {
-    const user = await this.findOne(id);
-    
-    if (!user) {
-      throw new Error('ユーザーが見つかりません');
-    }
-    
-    user.lastLogin = new Date();
-    
-    return this.usersRepository.save(user);
-  }
-
-  async changePassword(id: string, oldPassword: string, newPassword: string): Promise<boolean> {
-    const user = await this.findOne(id);
-    
-    if (!user) {
-      throw new Error('ユーザーが見つかりません');
-    }
-    
-    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-    
-    if (!isPasswordValid) {
-      throw new Error('現在のパスワードが正しくありません');
-    }
-    
-    const salt = await bcrypt.genSalt();
-    user.password = await bcrypt.hash(newPassword, salt);
-    
-    await this.usersRepository.save(user);
-    
-    return true;
+    await this.usersRepository.remove(user);
   }
 }

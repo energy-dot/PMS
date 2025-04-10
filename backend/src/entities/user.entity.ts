@@ -18,6 +18,12 @@ export class User {
   @Column({ name: 'full_name' })
   fullName: string;
 
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  department: string;
+
   @Column({
     // SQLiteはenum型をサポートしていないため、テスト用に変更
     // type: 'enum',
@@ -29,6 +35,9 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ nullable: true })
+  lastLogin: Date;
 
   @OneToMany(() => Notification, notification => notification.user)
   notifications: Notification[];

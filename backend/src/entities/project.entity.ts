@@ -54,6 +54,18 @@ export class Project {
   })
   status: string;
 
+  @Column({ nullable: true, type: 'varchar', default: '承認待ち' })
+  approvalStatus: string;
+
+  @Column({ nullable: true })
+  approverId: string;
+
+  @Column({ nullable: true })
+  approvalDate: Date;
+
+  @Column({ nullable: true })
+  rejectionReason: string;
+
   @Column({ nullable: true })
   requiredSkills: string;
 

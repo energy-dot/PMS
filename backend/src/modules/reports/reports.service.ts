@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, Like } from 'typeorm';
+import { Repository, Between, Like, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Project } from '../../entities/project.entity';
 import { Partner } from '../../entities/partner.entity';
 import { Staff } from '../../entities/staff.entity';
@@ -67,7 +67,7 @@ export class ReportsService {
     });
     
     // ステータス別に集計
-    const statusCounts = {};
+    const statusCounts: Record<string, number> = {};
     projects.forEach(project => {
       const status = project.status || '未設定';
       statusCounts[status] = (statusCounts[status] || 0) + 1;
@@ -146,8 +146,8 @@ export class ReportsService {
       
       filteredProjects.forEach(project => {
         project.contracts?.forEach(contract => {
-          if (contract.rate) {
-            totalRate += contract.rate;
+          if (contract.monthlyRate) {
+            totalRate += contract.monthlyRate;
             rateCount++;
           }
         });
@@ -213,7 +213,7 @@ export class ReportsService {
     });
     
     // ステータス別に集計
-    const statusCounts = {};
+    const statusCounts: Record<string, number> = {};
     applications.forEach(application => {
       const status = application.status || '未設定';
       statusCounts[status] = (statusCounts[status] || 0) + 1;
@@ -223,7 +223,7 @@ export class ReportsService {
     const tableData = Object.entries(statusCounts).map(([status, count]) => ({
       status,
       count,
-      percentage: Math.round((count as number) / applications.length * 100)
+      percentage: applications.length > 0 ? Math.round((count as number) / applications.length * 100) : 0
     }));
     
     // チャートデータの作成
@@ -271,7 +271,7 @@ export class ReportsService {
     });
     
     // カテゴリ別に集計
-    const categoryScores = {};
+    const categoryScores: Record<string, { scores: number[], sum: number, count: number }> = {};
     
     evaluations.forEach(evaluation => {
       evaluation.evaluationSkills?.forEach(skill => {
@@ -293,12 +293,12 @@ export class ReportsService {
     
     // テーブルデータの作成
     const tableData = Object.entries(categoryScores).map(([category, data]) => {
-      const scores = data.scores as number[];
+      const scores = data.scores;
       return {
         category,
-        averageScore: Math.round((data.sum / data.count) * 100) / 100,
-        maxScore: Math.max(...scores),
-        minScore: Math.min(...scores),
+        averageScore: data.count > 0 ? Math.round((data.sum / data.count) * 100) / 100 : 0,
+        maxScore: scores.length > 0 ? Math.max(...scores) : 0,
+        minScore: scores.length > 0 ? Math.min(...scores) : 0,
       };
     });
     
@@ -312,7 +312,7 @@ export class ReportsService {
     const totalEvaluations = evaluations.length;
     const totalStaff = new Set(evaluations.map(e => e.staffId)).size;
     
-    let allScores = [];
+    let allScores: number[] = [];
     Object.values(categoryScores).forEach(data => {
       allScores = allScores.concat(data.scores);
     });
@@ -358,7 +358,7 @@ export class ReportsService {
     });
     
     // 契約タイプ別に集計
-    const typeCounts = {};
+    const typeCounts: Record<string, { count: number, totalRate: number, totalAmount: number }> = {};
     contracts.forEach(contract => {
       const type = contract.type || '未設定';
       
@@ -371,10 +371,10 @@ export class ReportsService {
       }
       
       typeCounts[type].count += 1;
-      typeCounts[type].totalRate += contract.rate || 0;
+      typeCounts[type].totalRate += contract.monthlyRate || 0;
       
       // 契約金額の計算（単価 × 工数）
-      const amount = (contract.rate || 0) * (contract.manMonth || 1);
+      const amount = (contract.monthlyRate || 0) * (contract.manMonth || 1);
       typeCounts[type].totalAmount += amount;
     });
     
@@ -382,7 +382,7 @@ export class ReportsService {
     const tableData = Object.entries(typeCounts).map(([contractType, data]) => ({
       contractType,
       count: data.count,
-      averageRate: Math.round(data.totalRate / data.count),
+      averageRate: data.count > 0 ? Math.round(data.totalRate / data.count) : 0,
       totalAmount: data.totalAmount,
     }));
     
@@ -397,7 +397,7 @@ export class ReportsService {
     const totalContracts = contracts.length;
     const totalAmount = tableData.reduce((sum, item) => sum + item.totalAmount, 0);
     const averageRate = totalContracts > 0
-      ? Math.round(contracts.reduce((sum, contract) => sum + (contract.rate || 0), 0) / totalContracts)
+      ? Math.round(contracts.reduce((sum, contract) => sum + (contract.monthlyRate || 0), 0) / totalContracts)
       : 0;
     
     const summary = {
@@ -500,7 +500,8 @@ export class ReportsService {
     // サマリーデータの作成
     const totalNewProjects = monthlyData.reduce((sum, item) => sum + item.newProjects, 0);
     const totalEndedProjects = monthlyData.reduce((sum, item) => sum + item.endedProjects, 0);
-    const averageActiveProjects = Math.round(monthlyData.reduce((sum, item) => sum + item.activeProjects, 0) / monthlyData.length);
+    const averageActiveProjects = monthlyData.length > 0 ? 
+      Math.round(monthlyData.reduce((sum, item) => sum + item.activeProjects, 0) / monthlyData.length) : 0;
     
     const summary = {
       '期間': `${start.toISOString().split('T')[0]} 〜 ${end.toISOString().split('T')[0]}`,

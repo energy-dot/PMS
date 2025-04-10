@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from './user.entity';
 
@@ -10,7 +10,7 @@ export class RequestHistory {
   @Column({ name: 'project_id' })
   projectId: string;
 
-  @ManyToOne(() => Project, project => project.requestHistories, {
+  @ManyToOne(() => Project, {
     onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'project_id' })
@@ -19,7 +19,7 @@ export class RequestHistory {
   @Column({ name: 'requester_id' })
   requesterId: string;
 
-  @ManyToOne(() => User, user => user.requestedHistories, {
+  @ManyToOne(() => User, {
     onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'requester_id' })
@@ -37,7 +37,7 @@ export class RequestHistory {
   @Column({ name: 'approver_id', nullable: true })
   approverId: string;
 
-  @ManyToOne(() => User, user => user.approvedHistories, {
+  @ManyToOne(() => User, {
     onDelete: 'SET NULL',
     nullable: true
   })
@@ -47,8 +47,14 @@ export class RequestHistory {
   @Column({ name: 'approval_date', nullable: true })
   approvalDate: Date;
 
+  @Column({ name: 'rejection_date', nullable: true })
+  rejectionDate: Date;
+
   @Column({ name: 'rejection_reason', type: 'text', nullable: true })
   rejectionReason: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  details: any;
 
   @Column({ type: 'text', nullable: true })
   remarks: string;
