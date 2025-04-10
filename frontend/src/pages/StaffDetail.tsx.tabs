@@ -1,0 +1,194 @@
+  // スキル管理タブの内容
+  const renderSkills = () => {
+    if (!staff || !staff.skills) return null;
+
+    // スキルレベルの表示用マッピング
+    const skillLevelLabels = {
+      1: '初級',
+      2: '中級',
+      3: '上級',
+      4: 'エキスパート',
+      5: 'マスター'
+    };
+
+    // スキルカテゴリー
+    const skillCategories = {
+      'プログラミング言語': ['Java', 'JavaScript', 'TypeScript', 'Python', 'C#', 'PHP', 'Ruby', 'Go', 'Swift', 'Kotlin'],
+      'フレームワーク': ['Spring', 'React', 'Angular', 'Vue.js', 'Next.js', 'Django', 'Ruby on Rails', 'Laravel', 'Express', 'NestJS'],
+      'データベース': ['MySQL', 'PostgreSQL', 'Oracle', 'SQL Server', 'MongoDB', 'Redis', 'Elasticsearch', 'DynamoDB', 'Cassandra'],
+      'インフラ': ['AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes', 'Terraform', 'Ansible', 'Jenkins', 'CircleCI', 'GitHub Actions'],
+      'その他': ['UI/UX', 'テスト自動化', 'セキュリティ', 'パフォーマンス最適化', 'アジャイル開発', 'スクラム', '要件定義', '設計', 'プロジェクト管理']
+    };
+
+    // スキルレベルの取得（デフォルト値は1）
+    const getSkillLevel = (skillName: string) => {
+      if (staff.skillLevels && staff.skillLevels[skillName]) {
+        return staff.skillLevels[skillName];
+      }
+      return 1;
+    };
+
+    // スキルの編集ハンドラー
+    const handleEditSkills = () => {
+      navigate(`/staff/${id}/skills/edit`);
+    };
+
+    return (
+      <div className="card p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">スキル管理</h3>
+          <Button onClick={handleEditSkills}>
+            スキル編集
+          </Button>
+        </div>
+
+        {staff.skills.length === 0 ? (
+          <p className="text-center py-4">登録されているスキルはありません。</p>
+        ) : (
+          <div>
+            {Object.entries(skillCategories).map(([category, categorySkills]) => {
+              // このカテゴリーに該当するスキルがあるか確認
+              const hasSkillsInCategory = staff.skills.some(skill => categorySkills.includes(skill));
+              
+              if (!hasSkillsInCategory) return null;
+              
+              return (
+                <div key={category} className="mb-6">
+                  <h4 className="font-semibold mb-2">{category}</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {staff.skills
+                      .filter(skill => categorySkills.includes(skill))
+                      .map(skill => {
+                        const level = getSkillLevel(skill);
+                        return (
+                          <div key={skill} className="border rounded-lg p-3 bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <span className="font-medium">{skill}</span>
+                              <span className={`skill-level skill-level-${level}`}>
+                                {skillLevelLabels[level as keyof typeof skillLevelLabels]}
+                              </span>
+                            </div>
+                            <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                              <div 
+                                className="bg-blue-600 h-2.5 rounded-full" 
+                                style={{ width: `${(level / 5) * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // 評価履歴タブの内容
+  const renderEvaluations = () => {
+    const columnDefs: ColDef<Evaluation>[] = [
+      {
+        field: 'evaluationDate',
+        headerName: '評価日',
+        width: 120,
+        valueFormatter: (params) => formatDate(params.value)
+      },
+      { 
+        field: 'project.name', 
+        headerName: '案件名', 
+        width: 200,
+        valueGetter: (params) => params.data?.project?.name || '-'
+      },
+      { 
+        field: 'evaluator.name', 
+        headerName: '評価者', 
+        width: 150,
+        valueGetter: (params) => params.data?.evaluator?.name || '-'
+      },
+      {
+        field: 'overallRating',
+        headerName: '総合評価',
+        width: 120,
+        cellRenderer: (params: any) => {
+          const rating = params.value;
+          return (
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map(star => (
+                <span key={star} className={star <= rating ? 'text-yellow-500' : 'text-gray-300'}>★</span>
+              ))}
+            </div>
+          );
+        }
+      },
+      {
+        field: 'technicalSkill',
+        headerName: '技術力',
+        width: 100,
+        valueFormatter: (params) => `${params.value}/5`
+      },
+      {
+        field: 'communicationSkill',
+        headerName: 'コミュニケーション',
+        width: 150,
+        valueFormatter: (params) => `${params.value}/5`
+      },
+      {
+        field: 'problemSolving',
+        headerName: '問題解決力',
+        width: 120,
+        valueFormatter: (params) => `${params.value}/5`
+      },
+      {
+        field: 'teamwork',
+        headerName: 'チームワーク',
+        width: 120,
+        valueFormatter: (params) => `${params.value}/5`
+      },
+      { 
+        headerName: '操作', 
+        width: 150,
+        cellRenderer: (params: any) => {
+          const id = params.data?.id || '';
+          return (
+            <div>
+              <button 
+                className="action-button" 
+                onClick={() => navigate(`/evaluations/${id}`)}
+              >
+                詳細
+              </button>
+            </div>
+          );
+        }
+      }
+    ];
+
+    return (
+      <div className="card p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">評価履歴</h3>
+          <Button
+            onClick={() => navigate(`/staff/${id}/evaluations/create`)}
+          >
+            新規評価登録
+          </Button>
+        </div>
+        
+        {evaluations.length === 0 ? (
+          <p className="text-center py-4">評価履歴はありません。</p>
+        ) : (
+          <div className="ag-theme-alpine" style={{ height: 400 }}>
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={evaluations}
+              pagination={true}
+              paginationPageSize={10}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };

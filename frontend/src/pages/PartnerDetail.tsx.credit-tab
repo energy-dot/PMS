@@ -1,0 +1,111 @@
+// 信用調査タブの内容
+const renderCreditChecks = () => {
+  const columnDefs: ColDef<CreditCheck>[] = [
+    {
+      field: 'checkDate',
+      headerName: 'チェック実施日',
+      width: 150,
+      valueFormatter: (params) => formatDate(params.value)
+    },
+    { field: 'checkedBy', headerName: '実施者', width: 120 },
+    { field: 'checkMethod', headerName: 'チェック方法', width: 150 },
+    {
+      field: 'result',
+      headerName: '結果',
+      width: 100,
+      cellRenderer: (params: any) => {
+        const result = params.value;
+        let className = '';
+        
+        switch (result) {
+          case '良好':
+            className = 'status-badge status-active';
+            break;
+          case '注意':
+            className = 'status-badge status-pending';
+            break;
+          case '不良':
+            className = 'status-badge status-rejected';
+            break;
+          default:
+            className = 'status-badge';
+        }
+        
+        return <span className={className}>{result}</span>;
+      }
+    },
+    { field: 'creditScore', headerName: '信用スコア', width: 120 },
+    { field: 'financialStability', headerName: '財務安定性', width: 150 },
+    { field: 'paymentHistory', headerName: '支払履歴', width: 150 },
+    {
+      field: 'expiryDate',
+      headerName: '有効期限',
+      width: 150,
+      valueFormatter: (params) => formatDate(params.value)
+    },
+    { field: 'documentFile', headerName: '関連書類', width: 120 },
+    { field: 'remarks', headerName: '備考', flex: 1 },
+    { 
+      headerName: '操作', 
+      width: 150,
+      cellRenderer: (params: any) => {
+        const id = params.data?.id || '';
+        return (
+          <div>
+            <button 
+              className="action-button" 
+              onClick={() => navigate(`/credit-checks/${id}/edit`)}
+            >
+              編集
+            </button>
+            <button 
+              className="action-button delete" 
+              onClick={() => handleDeleteCreditCheck(id)}
+            >
+              削除
+            </button>
+          </div>
+        );
+      }
+    }
+  ];
+
+  const handleDeleteCreditCheck = async (checkId: string) => {
+    if (!window.confirm('この信用調査記録を削除してもよろしいですか？')) {
+      return;
+    }
+
+    try {
+      await creditCheckService.deleteCreditCheck(checkId);
+      setCreditChecks(prev => prev.filter(check => check.id !== checkId));
+    } catch (err: any) {
+      setError(err.response?.data?.message || '削除に失敗しました');
+    }
+  };
+
+  return (
+    <div className="card p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">信用調査履歴</h3>
+        <Button
+          onClick={() => navigate(`/partners/${id}/credit-checks/create`)}
+        >
+          新規調査登録
+        </Button>
+      </div>
+      
+      {creditChecks.length === 0 ? (
+        <p className="text-center py-4">調査履歴はありません。</p>
+      ) : (
+        <div className="ag-theme-alpine" style={{ height: 400 }}>
+          <AgGridReact
+            columnDefs={columnDefs}
+            rowData={creditChecks}
+            pagination={true}
+            paginationPageSize={10}
+          />
+        </div>
+      )}
+    </div>
+  );
+};

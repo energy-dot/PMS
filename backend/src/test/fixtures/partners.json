@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "name": "テスト株式会社",
+    "address": "東京都渋谷区",
+    "phone": "03-1234-5678",
+    "email": "test@example.com",
+    "status": "取引中"
+  },
+  {
+    "id": "2",
+    "name": "サンプル技研",
+    "address": "大阪府大阪市",
+    "phone": "06-9876-5432",
+    "email": "info@sample-tech.example.com",
+    "status": "取引中"
+  },
+  {
+    "id": "3",
+    "name": "デモシステムズ",
+    "address": "福岡県福岡市",
+    "phone": "092-555-1234",
+    "email": "contact@demosystems.example.com",
+    "status": "候補"
+  }
+]

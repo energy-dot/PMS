@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1",
+    "title": "テスト契約",
+    "startDate": "2025-01-01",
+    "endDate": "2025-12-31",
+    "price": 800000,
+    "paymentTerms": "月額固定",
+    "status": "契約中",
+    "staffId": "1",
+    "projectId": "1"
+  },
+  {
+    "id": "2",
+    "title": "モバイルアプリ開発契約",
+    "startDate": "2025-03-01",
+    "endDate": "2025-09-30",
+    "price": 750000,
+    "paymentTerms": "月額固定",
+    "status": "契約中",
+    "staffId": "3",
+    "projectId": "2"
+  },
+  {
+    "id": "3",
+    "title": "レガシーシステム刷新契約",
+    "startDate": "2025-02-15",
+    "endDate": "2026-02-14",
+    "price": 900000,
+    "paymentTerms": "月額固定",
+    "status": "更新待ち",
+    "staffId": "2",
+    "projectId": "3"
+  }
+]

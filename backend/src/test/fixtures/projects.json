@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "name": "テストプロジェクト",
+    "description": "テスト用プロジェクトの説明",
+    "startDate": "2025-01-01",
+    "endDate": "2025-12-31",
+    "status": "募集中",
+    "budget": 10000000,
+    "department": "システム開発部"
+  },
+  {
+    "id": "2",
+    "name": "モバイルアプリ開発",
+    "description": "新規モバイルアプリケーションの開発",
+    "startDate": "2025-03-01",
+    "endDate": "2025-09-30",
+    "status": "選考中",
+    "budget": 8000000,
+    "department": "モバイル開発部"
+  },
+  {
+    "id": "3",
+    "name": "レガシーシステム刷新",
+    "description": "既存システムのモダナイゼーション",
+    "startDate": "2025-02-15",
+    "endDate": "2026-02-14",
+    "status": "承認待ち",
+    "budget": 15000000,
+    "department": "基幹システム部"
+  }
+]

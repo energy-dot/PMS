@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# パッケージファイルコピー
+COPY package*.json ./
+RUN npm install
+
+# ソースコードコピー
+COPY . .
+
+# 開発サーバーポート公開
+EXPOSE 3002
+
+# 開発サーバー起動
+CMD ["npm", "run", "dev"]

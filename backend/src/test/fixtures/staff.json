@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "name": "山田 太郎",
+    "email": "taro.yamada@example.com",
+    "phone": "090-1234-5678",
+    "status": "稼働中",
+    "skills": ["Java", "Spring", "SQL"],
+    "partnerId": "1"
+  },
+  {
+    "id": "2",
+    "name": "佐藤 花子",
+    "email": "hanako.sato@example.com",
+    "phone": "080-8765-4321",
+    "status": "待機中",
+    "skills": ["Project Management", "Agile", "Scrum"],
+    "partnerId": "1"
+  },
+  {
+    "id": "3",
+    "name": "鈴木 一郎",
+    "email": "ichiro.suzuki@example.com",
+    "phone": "070-5555-6666",
+    "status": "稼働中",
+    "skills": ["AWS", "Docker", "Kubernetes"],
+    "partnerId": "2"
+  }
+]
