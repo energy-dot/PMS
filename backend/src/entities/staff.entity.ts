@@ -3,6 +3,7 @@ import { Partner } from './partner.entity';
 import { Contract } from './contract.entity';
 import { Department } from './department.entity';
 import { Section } from './section.entity';
+import { Evaluation } from './evaluation.entity';
 
 @Entity('staff')
 export class Staff {
@@ -79,4 +80,7 @@ export class Staff {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Evaluation, evaluation => evaluation.evaluatedUser)
+  evaluations: Evaluation[];
 }

@@ -18,13 +18,22 @@ export class ApplicationsService {
   ) {}
 
   // 応募者関連のメソッド
+  // コントローラーとの互換性のためのエイリアス
   async findAllApplications(): Promise<Application[]> {
+    return this.findAll();
+  }
+  
+  async findAll(): Promise<Application[]> {
     return this.applicationsRepository.find({
       relations: ['project', 'partner', 'contactPerson', 'documentScreener', 'interviewRecords'],
     });
   }
 
   async findApplicationById(id: string): Promise<Application> {
+    return this.findOne(id);
+  }
+  
+  async findOne(id: string): Promise<Application> {
     const application = await this.applicationsRepository.findOne({
       where: { id },
       relations: ['project', 'partner', 'contactPerson', 'documentScreener', 'interviewRecords'],
@@ -38,6 +47,10 @@ export class ApplicationsService {
   }
 
   async findApplicationsByProjectId(projectId: string): Promise<Application[]> {
+    return this.findByProject(projectId);
+  }
+  
+  async findByProject(projectId: string): Promise<Application[]> {
     return this.applicationsRepository.find({
       where: { projectId },
       relations: ['project', 'partner', 'contactPerson', 'documentScreener', 'interviewRecords'],
@@ -45,6 +58,10 @@ export class ApplicationsService {
   }
 
   async findApplicationsByPartnerId(partnerId: string): Promise<Application[]> {
+    return this.findByStaff(partnerId);
+  }
+  
+  async findByStaff(partnerId: string): Promise<Application[]> {
     return this.applicationsRepository.find({
       where: { partnerId },
       relations: ['project', 'partner', 'contactPerson', 'documentScreener', 'interviewRecords'],
@@ -52,6 +69,10 @@ export class ApplicationsService {
   }
 
   async findApplicationsByStatus(status: string): Promise<Application[]> {
+    return this.findByStatus(status);
+  }
+  
+  async findByStatus(status: string): Promise<Application[]> {
     return this.applicationsRepository.find({
       where: { status },
       relations: ['project', 'partner', 'contactPerson', 'documentScreener', 'interviewRecords'],
@@ -59,19 +80,29 @@ export class ApplicationsService {
   }
 
   async createApplication(createApplicationDto: CreateApplicationDto): Promise<Application> {
-    const newApplication = this.applicationsRepository.create({
+    return this.create(createApplicationDto);
+  }
+  
+  async create(createApplicationDto: CreateApplicationDto): Promise<Application> {
+    // Create a properly typed object that matches the entity structure
+    const applicationData: Partial<Application> = {
       ...createApplicationDto,
       applicationDate: new Date(createApplicationDto.applicationDate),
       finalResultNotificationDate: createApplicationDto.finalResultNotificationDate 
         ? new Date(createApplicationDto.finalResultNotificationDate) 
-        : null,
-    });
+        : undefined,
+    };
 
+    const newApplication = this.applicationsRepository.create(applicationData);
     return this.applicationsRepository.save(newApplication);
   }
 
   async updateApplication(id: string, updateApplicationDto: UpdateApplicationDto): Promise<Application> {
-    const application = await this.findApplicationById(id);
+    return this.update(id, updateApplicationDto);
+  }
+  
+  async update(id: string, updateApplicationDto: UpdateApplicationDto): Promise<Application> {
+    const application = await this.findOne(id);
 
     // 日付フィールドの変換
     if (updateApplicationDto.applicationDate) {
@@ -89,11 +120,37 @@ export class ApplicationsService {
   }
 
   async removeApplication(id: string): Promise<void> {
-    const application = await this.findApplicationById(id);
+    return this.remove(id);
+  }
+  
+  async remove(id: string): Promise<void> {
+    const application = await this.findOne(id);
     await this.applicationsRepository.remove(application);
   }
 
   // 面談記録関連のメソッド
+  async getInterviewRecords(applicationId: string): Promise<InterviewRecord[]> {
+    return this.interviewRecordsRepository.find({
+      where: { applicationId },
+      relations: ['application', 'interviewer'],
+    });
+  }
+
+  // 以下のメソッドはエイリアスまたは内部使用
+  async addInterviewRecord(applicationId: string, createInterviewRecordDto: CreateInterviewRecordDto): Promise<InterviewRecord> {
+    // 既存のcreateInterviewRecordメソッドを活用
+    return this.createInterviewRecord({
+      ...createInterviewRecordDto,
+      applicationId: applicationId,
+    });
+  }
+
+  async updateStatus(applicationId: string, status: string): Promise<Application> {
+    const application = await this.findOne(applicationId);
+    application.status = status;
+    return this.applicationsRepository.save(application);
+  }
+
   async findAllInterviewRecords(): Promise<InterviewRecord[]> {
     return this.interviewRecordsRepository.find({
       relations: ['application', 'interviewer'],

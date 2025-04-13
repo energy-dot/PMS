@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsOptional, IsNumber, IsBoolean, IsIn, IsUUID } from 'class-validator';
+import { IsString, IsDate, IsOptional, IsNumber, IsBoolean, IsIn, IsUUID, Min, Max } from 'class-validator';
 
 export class CreateProjectDto {
   @IsString()
@@ -43,6 +43,14 @@ export class CreateProjectDto {
   requiredNumber?: number;
 
   @IsOptional()
+  @IsNumber()
+  requiredHeadcount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  currentHeadcount?: number = 0;
+
+  @IsOptional()
   @IsString()
   budget?: string;
 
@@ -61,4 +69,18 @@ export class CreateProjectDto {
   @IsOptional()
   @IsString()
   remarks?: string;
+
+  @IsOptional()
+  @IsString()
+  contractType?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  rateMin?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  rateMax?: number;
 }

@@ -1,145 +1,52 @@
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+/* ダッシュボードのカードスタイル */
+.dashboard-card {
+  @apply bg-white rounded-lg shadow-md p-4;
 }
 
-.main-content {
-  flex: 1;
-  padding: 1rem;
+/* フォームスタイル */
+.form-group {
+  @apply mb-4;
 }
 
-.page-title {
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 500;
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
 }
 
-.page-subtitle {
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: #555;
+.form-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500;
 }
 
-.ag-theme-alpine {
-  --ag-header-background-color: #f5f5f5;
-  --ag-odd-row-background-color: #fafafa;
+.form-error {
+  @apply mt-1 text-sm text-red-600;
 }
 
-.status-badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  display: inline-block;
-  text-align: center;
+/* ボタンスタイル */
+.btn {
+  @apply px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200;
 }
 
-.status-active {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
 }
 
-.status-pending {
-  background-color: #fff3e0;
-  color: #ef6c00;
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
 }
 
-.status-rejected {
-  background-color: #ffebee;
-  color: #c62828;
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700;
 }
 
-.status-completed {
-  background-color: #e3f2fd;
-  color: #1565c0;
+.btn-success {
+  @apply bg-green-600 text-white hover:bg-green-700;
 }
 
-.status-success {
-  background-color: #e0f2f1;
-  color: #00695c;
+/* エラーメッセージ */
+.error-message {
+  @apply bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4;
 }
 
-.text-success-color {
-  color: #2e7d32;
-}
-
-.text-warning-color {
-  color: #ef6c00;
-}
-
-.text-error-color {
-  color: #c62828;
-}
-
-.action-button {
-  background: none;
-  border: none;
-  color: var(--primary-color);
-  cursor: pointer;
-  padding: 0.25rem;
-  margin: 0 0.25rem;
-}
-
-.action-button:hover {
-  color: #1565c0;
-}
-
-.action-button.delete {
-  color: var(--error-color);
-}
-
-.action-button.delete:hover {
-  color: #c62828;
-}
-
-/* タブスタイル */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.tab {
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.tab:hover {
-  color: var(--primary-color);
-}
-
-.tab.active {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
-}
-
-/* カード */
-.card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-/* アラート */
-.alert {
-  padding: 0.75rem 1rem;
-  border-radius: 0.25rem;
-  margin-bottom: 1rem;
-}
-
-.alert-warning {
-  background-color: #fff3e0;
-  color: #ef6c00;
-  border-left: 4px solid #ef6c00;
-}
-
-.alert-error {
-  background-color: #ffebee;
-  color: #c62828;
-  border-left: 4px solid #c62828;
+/* デバッグが容易になるよう、すべての要素に境界線を表示 */
+.debug * {
+  outline: 1px solid rgba(255, 0, 0, 0.2);
 }

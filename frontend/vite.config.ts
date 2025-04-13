@@ -19,13 +19,16 @@ export default defineConfig(({ mode }) => {
       target: 'es2018',
       assetsDir: 'assets',
       cssCodeSplit: true,
-      sourcemap: false,
+      sourcemap: true,  // デバッグ用にソースマップを有効化
       minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: true,
+          drop_console: false,  // コンソールログを保持
         },
       },
+      rollupOptions: {
+        external: []
+      }
     },
     plugins: [react()],
     resolve: {
@@ -41,7 +44,9 @@ export default defineConfig(({ mode }) => {
         'react-router-dom',
         'zustand',
         '@hookform/resolvers/zod',
-        'axios'
+        'axios',
+        'chart.js',
+        'react-chartjs-2'
       ]
     },
     server: {

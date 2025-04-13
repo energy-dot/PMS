@@ -173,7 +173,7 @@ const EvaluationList: React.FC = () => {
         
         // 開発担当者の場合は、自分が評価者の評価のみ表示
         const filteredData = user?.role === 'developer' 
-          ? data.filter(eval => eval.evaluatorName === user.fullName)
+          ? data.filter(evaluation => evaluation.evaluatorName === user.fullName)
           : data;
           
         setEvaluations(filteredData);

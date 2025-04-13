@@ -21,11 +21,12 @@ export class ProjectsService {
     });
   }
 
-  async findOne(id: string): Promise<Project> {
-    return this.projectsRepository.findOne({
+  async findOne(id: string): Promise<Project | null> {
+    const project = await this.projectsRepository.findOne({
       where: { id },
       relations: ['department', 'section']
     });
+    return project;
   }
 
   async create(createProjectDto: CreateProjectDto): Promise<Project> {
@@ -34,7 +35,7 @@ export class ProjectsService {
     
     // 基本情報
     project.name = createProjectDto.name;
-    project.description = createProjectDto.description;
+    project.description = createProjectDto.description || '';
     project.startDate = createProjectDto.startDate;
     project.endDate = createProjectDto.endDate;
     project.status = createProjectDto.status || 'draft';
@@ -49,22 +50,22 @@ export class ProjectsService {
     }
     
     // 予算・人員情報
-    project.budget = createProjectDto.budget;
+    project.budget = createProjectDto.budget || '';
     project.requiredHeadcount = createProjectDto.requiredHeadcount || 1;
     project.currentHeadcount = createProjectDto.currentHeadcount || 0;
     
     // スキル要件
-    project.requiredSkills = createProjectDto.requiredSkills;
+    project.requiredSkills = createProjectDto.requiredSkills || '';
     
     // 契約情報
-    project.contractType = createProjectDto.contractType;
-    project.rateMin = createProjectDto.rateMin;
-    project.rateMax = createProjectDto.rateMax;
+    project.contractType = createProjectDto.contractType || '';
+    project.rateMin = createProjectDto.rateMin || 0;
+    project.rateMax = createProjectDto.rateMax || 0;
     
     // 承認情報
     project.isApproved = false;
-    project.approvedBy = null;
-    project.approvedAt = null;
+    project.approvedBy = '';
+    project.approvedAt = new Date(0); // 1970-01-01, エポックタイム
     
     return this.projectsRepository.save(project);
   }
@@ -173,36 +174,36 @@ export class ProjectsService {
     }
     
     // 開始日での範囲検索
-    if (searchProjectsDto.startDateFrom) {
-      where.startDate = where.startDate || {};
-      where.startDate = { ...where.startDate, gte: searchProjectsDto.startDateFrom };
-    }
-    
-    if (searchProjectsDto.startDateTo) {
-      where.startDate = where.startDate || {};
-      where.startDate = { ...where.startDate, lte: searchProjectsDto.startDateTo };
+    if (searchProjectsDto.startDateFrom || searchProjectsDto.startDateTo) {
+      const startDateFilter: any = {};
+      if (searchProjectsDto.startDateFrom) {
+        startDateFilter.gte = new Date(searchProjectsDto.startDateFrom);
+      }
+      if (searchProjectsDto.startDateTo) {
+        startDateFilter.lte = new Date(searchProjectsDto.startDateTo);
+      }
+      where.startDate = startDateFilter;
     }
     
     // 終了日での範囲検索
-    if (searchProjectsDto.endDateFrom) {
-      where.endDate = where.endDate || {};
-      where.endDate = { ...where.endDate, gte: searchProjectsDto.endDateFrom };
-    }
-    
-    if (searchProjectsDto.endDateTo) {
-      where.endDate = where.endDate || {};
-      where.endDate = { ...where.endDate, lte: searchProjectsDto.endDateTo };
+    if (searchProjectsDto.endDateFrom || searchProjectsDto.endDateTo) {
+      const endDateFilter: any = {};
+      if (searchProjectsDto.endDateFrom) {
+        endDateFilter.gte = new Date(searchProjectsDto.endDateFrom);
+      }
+      if (searchProjectsDto.endDateTo) {
+        endDateFilter.lte = new Date(searchProjectsDto.endDateTo);
+      }
+      where.endDate = endDateFilter;
     }
     
     // 単価での範囲検索
     if (searchProjectsDto.rateMin) {
-      where.rateMin = where.rateMin || {};
-      where.rateMin = { ...where.rateMin, gte: searchProjectsDto.rateMin };
+      where.rateMin = parseInt(searchProjectsDto.rateMin as any, 10);
     }
     
     if (searchProjectsDto.rateMax) {
-      where.rateMax = where.rateMax || {};
-      where.rateMax = { ...where.rateMax, lte: searchProjectsDto.rateMax };
+      where.rateMax = parseInt(searchProjectsDto.rateMax as any, 10);
     }
     
     return this.projectsRepository.find({
@@ -250,5 +251,19 @@ export class ProjectsService {
     project.status = status;
     
     return this.projectsRepository.save(project);
+  }
+
+  async findByDepartment(departmentId: string): Promise<Project[]> {
+    return this.projectsRepository.find({
+      where: { departmentId },
+      relations: ['department', 'section'],
+    });
+  }
+
+  async findByStatus(status: string): Promise<Project[]> {
+    return this.projectsRepository.find({
+      where: { status },
+      relations: ['department', 'section'],
+    });
   }
 }

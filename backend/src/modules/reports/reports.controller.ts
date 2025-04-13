@@ -1,7 +1,40 @@
 import { Controller, Get, Post, Body, Param, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ReportsService } from './reports.service';
-import * as ExcelJS from 'exceljs';
+// ExcelJS 型定義エラー回避用
+interface Column {
+  width?: number;
+}
+
+interface Workbook {
+  addWorksheet(name: string): Worksheet;
+  xlsx: {
+    write(stream: any): Promise<void>;
+  };
+}
+
+interface Cell {
+  value: any;
+  font?: any;
+  fill?: any;
+  border?: any;
+  alignment?: any;
+}
+
+interface Row {
+  eachCell(callback: (cell: Cell, colNumber: number) => void): void;
+}
+
+interface Worksheet {
+  mergeCells(range: string): void;
+  getCell(address: string): Cell;
+  addRow(data?: any[]): Row;
+  columns: Column[];
+  rowCount: number;
+}
+
+// ExcelJS の代わりに独自の型定義を使用
+const ExcelJS: { Workbook: new () => Workbook } = require('exceljs');
 
 @Controller('reports')
 export class ReportsController {
@@ -117,7 +150,7 @@ export class ReportsController {
     const headers = this.getReportHeaders(reportType);
     worksheet.addRow([]);
     const headerRow = worksheet.addRow(headers);
-    headerRow.eachCell((cell) => {
+    headerRow.eachCell((cell: any) => {
       cell.font = { bold: true };
       cell.fill = {
         type: 'pattern',
@@ -137,7 +170,7 @@ export class ReportsController {
       reportData.tableData.forEach(item => {
         const rowData = this.getRowData(reportType, item);
         const dataRow = worksheet.addRow(rowData);
-        dataRow.eachCell((cell) => {
+        dataRow.eachCell((cell: any) => {
           cell.border = {
             top: { style: 'thin' },
             left: { style: 'thin' },
@@ -149,7 +182,7 @@ export class ReportsController {
     }
     
     // 列幅の自動調整
-    worksheet.columns.forEach(column => {
+    worksheet.columns.forEach((column: any) => {
       column.width = 20;
     });
     

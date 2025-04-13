@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
@@ -12,14 +13,29 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { WorkflowsModule } from './modules/workflows/workflows.module';
 import { FileUploadModule } from './modules/file-upload/file-upload.module';
 import { AuthModule } from './auth/auth.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
+import { SectionsModule } from './modules/sections/sections.module';
+import { EvaluationsModule } from './modules/evaluations/evaluations.module';
+import { MasterDataModule } from './modules/master-data/master-data.module';
+import { ReportsModule } from './modules/reports/reports.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'database.sqlite',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'sqlite',
+        database: configService.get('DATABASE_PATH', 'database.sqlite'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: configService.get('NODE_ENV') === 'development', // 開発環境のみ
+        autoLoadEntities: true,
+        logging: configService.get('NODE_ENV') === 'development' ? ['error', 'warn'] : false,
+      }),
     }),
     UsersModule,
     ProjectsModule,
@@ -31,6 +47,11 @@ import { AuthModule } from './auth/auth.module';
     WorkflowsModule,
     FileUploadModule,
     AuthModule,
+    DepartmentsModule,
+    SectionsModule,
+    EvaluationsModule,
+    MasterDataModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

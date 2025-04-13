@@ -47,7 +47,7 @@ export class ProjectsController {
 
   @Post(':id/approve')
   @Roles('admin', 'partner_manager')
-  approve(@Param('id') id: string, @Request() req) {
+  approve(@Param('id') id: string, @Request() req: any) {
     return this.projectsService.approve(id, req.user.id);
   }
 

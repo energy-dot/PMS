@@ -24,25 +24,25 @@ const ProjectDetail: React.FC = () => {
   useEffect(() => {
     if (!id) return;
 
-    const fetchProjectData = async () => {
+    const fetchProjectDetails = async () => {
       setIsLoading(true);
       setError(null);
       try {
         // 案件情報を取得
-        const projectData = await projectService.getProject(id);
+        const projectData = await projectService.getProjectById(id);
         setProject(projectData);
         
         // 承認ステータスを設定
         setApprovalStatus(projectData.approvalStatus || projectData.status);
       } catch (err: any) {
-        setError(err.response?.data?.message || 'データの取得に失敗しました');
+        setError('Failed to fetch project details: ' + (err.message || 'Unknown error'));
         console.error('Failed to fetch project details:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchProjectData();
+    fetchProjectDetails();
   }, [id]);
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const ProjectDetail: React.FC = () => {
       });
       
       // 案件情報を再取得して表示を更新
-      const updatedProject = await projectService.getProject(id);
+      const updatedProject = await projectService.getProjectById(id);
       setProject(updatedProject);
       setApprovalStatus('承認待ち');
       

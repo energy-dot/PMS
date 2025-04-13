@@ -207,12 +207,12 @@ export class AddTestData1744500000005 implements MigrationInterface {
     // プロジェクトIDを取得するヘルパーメソッド
     private async getProjectIds(queryRunner: QueryRunner): Promise<string[]> {
         const projects = await queryRunner.query(`SELECT id FROM projects LIMIT 5`);
-        return projects.map(project => project.id);
+        return projects.map((project: { id: string }) => project.id);
     }
 
     // ユーザーIDを取得するヘルパーメソッド
     private async getUserIds(queryRunner: QueryRunner): Promise<string[]> {
         const users = await queryRunner.query(`SELECT id FROM users LIMIT 5`);
-        return users.map(user => user.id);
+        return users.map((user: { id: string }) => user.id);
     }
 }

@@ -6,9 +6,12 @@ import Button from '../components/common/Button';
 import Input from '../components/common/Input';
 import Alert from '../components/common/Alert';
 import DepartmentSectionFilter from '../components/filters/DepartmentSectionFilter';
-import projectService, { Project, UpdateProjectDto } from '../services/projectService';
+import projectService, { Project } from '../services/projectService';
 import departmentService from '../services/departmentService';
 import { DateEditor, SelectEditor, TagEditor, NumberEditor } from '../components/grids/editors';
+
+// UpdateProjectDtoの型定義
+export interface UpdateProjectDto extends Partial<Project> {}
 
 const ProjectList: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -72,13 +75,13 @@ const ProjectList: React.FC = () => {
       let data;
       if (selectedSectionId) {
         // セクションでフィルタリング
-        data = await projectService.getProjectsBySection(selectedSectionId);
+        data = await projectService.searchProjects({ sectionId: selectedSectionId });
       } else if (selectedDepartmentId) {
         // 事業部でフィルタリング
-        data = await projectService.getProjectsByDepartment(selectedDepartmentId);
+        data = await projectService.searchProjects({ departmentId: selectedDepartmentId });
       } else {
         // 全件取得
-        data = await projectService.getProjects();
+        data = await projectService.getAllProjects();
       }
       setProjects(data);
     } catch (err: any) {

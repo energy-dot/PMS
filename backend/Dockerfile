@@ -1,14 +1,31 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# パッケージファイルをコピーしてインストール
+COPY package*.json ./
+RUN npm install
+
+# ソースコードをコピー
+COPY . .
+
+# ビルドを実行
+RUN npm run build
+
+# 本番環境用の軽量イメージを作成
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+# ビルドステージからpackage.jsonとビルド成果物をコピー
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
 
-COPY . .
-RUN npm run build
+# 本番依存関係のみをインストール
+RUN npm install --omit=dev
 
+# ポート3001を開放
 EXPOSE 3001
 
-# 開発環境ではソースコードから直接起動
-CMD ["npm", "run", "start:dev"]
+# アプリケーションを起動
+CMD ["node", "dist/main"]

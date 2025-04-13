@@ -8,6 +8,73 @@ import { UpdateEvaluationDto } from '../../dto/evaluations/update-evaluation.dto
 
 @Injectable()
 export class EvaluationsService {
+  // 必要なメソッドを追加
+  async findAll(): Promise<Evaluation[]> {
+    return this.evaluationsRepository.find({
+      relations: ['staff', 'evaluator', 'project', 'skills'],
+    });
+  }
+
+  async findOne(id: string): Promise<Evaluation> {
+    const evaluation = await this.evaluationsRepository.findOne({
+      where: { id },
+      relations: ['staff', 'evaluator', 'project', 'skills'],
+    });
+
+    if (!evaluation) {
+      throw new Error(`評価ID ${id} は見つかりませんでした`);
+    }
+
+    return evaluation;
+  }
+
+  async create(createEvaluationDto: CreateEvaluationDto): Promise<Evaluation> {
+    const newEvaluation = this.evaluationsRepository.create(createEvaluationDto);
+    return this.evaluationsRepository.save(newEvaluation);
+  }
+
+  async update(id: string, updateEvaluationDto: UpdateEvaluationDto): Promise<Evaluation> {
+    const evaluation = await this.findOne(id);
+    this.evaluationsRepository.merge(evaluation, updateEvaluationDto);
+    return this.evaluationsRepository.save(evaluation);
+  }
+
+  async remove(id: string): Promise<void> {
+    const evaluation = await this.findOne(id);
+    await this.evaluationsRepository.remove(evaluation);
+  }
+
+  async findByStaff(staffId: string): Promise<Evaluation[]> {
+    return this.evaluationsRepository.find({
+      where: { staffId },
+      relations: ['staff', 'evaluator', 'project', 'skills'],
+    });
+  }
+
+  async findByProject(projectId: string): Promise<Evaluation[]> {
+    return this.evaluationsRepository.find({
+      where: { projectId },
+      relations: ['staff', 'evaluator', 'project', 'skills'],
+    });
+  }
+
+  async addSkill(createSkillDto: any): Promise<any> {
+    const skill = this.evaluationSkillsRepository.create(createSkillDto);
+    return this.evaluationSkillsRepository.save(skill);
+  }
+
+  async getSkills(evaluationId: string): Promise<any[]> {
+    return this.evaluationSkillsRepository.find({
+      where: { evaluationId },
+    });
+  }
+
+  async removeSkill(id: string): Promise<void> {
+    const skill = await this.evaluationSkillsRepository.findOne({ where: { id } });
+    if (skill) {
+      await this.evaluationSkillsRepository.remove(skill);
+    }
+  }
   constructor(
     @InjectRepository(Evaluation)
     private evaluationsRepository: Repository<Evaluation>,
@@ -194,10 +261,12 @@ export class EvaluationsService {
         }
         
         const current = skillMap.get(skill.skillName);
-        skillMap.set(skill.skillName, {
-          sum: current.sum + skill.skillLevel,
-          count: current.count + 1,
-        });
+        if (current) {
+          skillMap.set(skill.skillName, {
+            sum: current.sum + skill.skillLevel,
+            count: current.count + 1,
+          });
+        }
       });
     });
     

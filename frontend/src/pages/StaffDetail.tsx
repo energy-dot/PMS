@@ -26,22 +26,22 @@ const StaffDetail: React.FC = () => {
   useEffect(() => {
     if (!id) return;
 
-    const fetchStaffData = async () => {
+    const fetchStaffDetails = async () => {
       setIsLoading(true);
       setError(null);
       try {
         // 要員情報を取得
-        const staffData = await staffService.getStaff(id);
+        const staffData = await staffService.getStaffById(id);
         setStaff(staffData);
       } catch (err: any) {
-        setError(err.response?.data?.message || 'データの取得に失敗しました');
+        setError('Failed to fetch staff details: ' + (err.message || 'Unknown error'));
         console.error('Failed to fetch staff details:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchStaffData();
+    fetchStaffDetails();
   }, [id]);
 
   useEffect(() => {
@@ -176,7 +176,7 @@ const StaffDetail: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="page-title">{staff.name}</h1>
+        <h1 className="page-title">{staff.fullName}</h1>
         <div>
           <Button
             variant="secondary"
@@ -205,7 +205,7 @@ const StaffDetail: React.FC = () => {
       <div className="card p-6 mb-6">
         <div className="flex justify-between mb-4">
           <div>
-            <span className={getStatusStyle(staff.status)}>{staff.status}</span>
+            <span className={getStatusStyle(staff.availability)}>{staffService.getAvailabilityText(staff.availability)}</span>
           </div>
           <div>
             <strong>登録日:</strong> {formatDate(staff.createdAt)}
@@ -228,7 +228,11 @@ const StaffDetail: React.FC = () => {
                   <tbody>
                     <tr className="border-b">
                       <th className="py-2 text-left">氏名</th>
-                      <td className="py-2">{staff.name}</td>
+                      <td className="py-2">{staff.fullName}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <th className="py-2 text-left">フリガナ</th>
+                      <td className="py-2">{staff.nameKana || '-'}</td>
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">所属会社</th>
@@ -254,10 +258,6 @@ const StaffDetail: React.FC = () => {
                       <th className="py-2 text-left">性別</th>
                       <td className="py-2">{staff.gender || '-'}</td>
                     </tr>
-                    <tr className="border-b">
-                      <th className="py-2 text-left">住所</th>
-                      <td className="py-2">{staff.address || '-'}</td>
-                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -267,15 +267,23 @@ const StaffDetail: React.FC = () => {
                   <tbody>
                     <tr className="border-b">
                       <th className="py-2 text-left">現在のステータス</th>
-                      <td className="py-2">{staff.status}</td>
+                      <td className="py-2">{staffService.getAvailabilityText(staff.availability)}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <th className="py-2 text-left">契約形態</th>
+                      <td className="py-2">{staff.contractType || '-'}</td>
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">経験年数</th>
-                      <td className="py-2">{staff.experience ? `${staff.experience}年` : '-'}</td>
+                      <td className="py-2">{staff.yearsOfExperience ? `${staff.yearsOfExperience}年` : '-'}</td>
+                    </tr>
+                    <tr className="border-b">
+                      <th className="py-2 text-left">スキルレベル</th>
+                      <td className="py-2">{staffService.getSkillLevelText(staff.skillLevel)}</td>
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">備考</th>
-                      <td className="py-2">{staff.remarks || '-'}</td>
+                      <td className="py-2">{staff.notes || '-'}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -296,21 +304,17 @@ const StaffDetail: React.FC = () => {
               </Button>
             </div>
             
-            {staff.skills && staff.skills.length > 0 ? (
+            {staff.skills ? (
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold mb-2">言語・フレームワーク</h4>
-                  <ul className="list-disc pl-5">
-                    {staff.skills
-                      .filter(skill => typeof skill === 'string')
-                      .map((skill, index) => (
-                        <li key={index} className="mb-1">{skill}</li>
-                      ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">その他スキル</h4>
-                  <p>{staff.resume || '詳細なスキル情報はスキルシートをご確認ください。'}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {staff.skills.split(',').map((skill, index) => (
+                      <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             ) : (
@@ -349,7 +353,7 @@ const StaffDetail: React.FC = () => {
                       <td className="py-2 px-4">
                         {formatDate(contract.startDate)} 〜 {formatDate(contract.endDate)}
                       </td>
-                      <td className="py-2 px-4">{contract.price?.toLocaleString() || '-'} 円</td>
+                      <td className="py-2 px-4">{contract.rate?.toLocaleString() || '-'} 円</td>
                       <td className="py-2 px-4">
                         <span className={getStatusStyle(contract.status)}>{contract.status}</span>
                       </td>

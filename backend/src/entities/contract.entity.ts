@@ -24,6 +24,18 @@ export class Contract {
   @Column()
   price: number;
 
+  // 月額単価（price と同じ値も可）
+  @Column({ nullable: true, type: 'decimal', precision: 10, scale: 2 })
+  monthlyRate: number;
+
+  // 工数（人月）
+  @Column({ nullable: true, type: 'decimal', precision: 5, scale: 2, default: 1 })
+  manMonth: number;
+
+  // 契約タイプ（準委任、派遣など）
+  @Column({ nullable: true })
+  type: string;
+
   @Column({ nullable: true })
   paymentTerms: string;
 
@@ -41,6 +53,10 @@ export class Contract {
 
   @Column({ nullable: true })
   remarks: string;
+
+  // 備考（備考の翻訳ミスまたは追加フィールド）
+  @Column({ nullable: true })
+  notes: string;
 
   @Column({ default: false })
   isAutoRenew: boolean;

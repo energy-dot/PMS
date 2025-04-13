@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Partner } from './partner.entity';
+import { Application } from './application.entity';
 
 @Entity('contact_persons')
 export class ContactPerson {
@@ -39,6 +40,9 @@ export class ContactPerson {
 
   @Column({ nullable: true })
   preferredContactMethod: string;
+
+  @OneToMany(() => Application, application => application.contactPerson)
+  applications: Application[];
 
   @CreateDateColumn()
   createdAt: Date;

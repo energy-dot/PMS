@@ -1,5 +1,5 @@
-import api, { safeStorage } from './api';
-import { User } from '../store/authStore';
+import api from './api';
+import { User, safeStorage } from '../store/authStore';
 
 // ログイン情報の型定義
 interface LoginCredentials {
@@ -13,6 +13,10 @@ interface LoginResponse {
   user: User;
 }
 
+// トークンとユーザー情報のキー
+const AUTH_TOKEN_KEY = 'pms_auth_token';
+const USER_DATA_KEY = 'pms_user_data';
+
 const authService = {
   /**
    * ログイン処理
@@ -24,6 +28,30 @@ const authService = {
         throw new Error('ユーザー名とパスワードは必須です');
       }
       
+      // デモモード: ハードコーディングされた認証情報
+      if (process.env.NODE_ENV !== 'production' || true) {
+        if (credentials.username === 'admin' && credentials.password === 'password') {
+          const demoResponse: LoginResponse = {
+            accessToken: 'demo-jwt-token',
+            user: {
+              id: 'demo-admin-id',
+              username: 'admin',
+              fullName: '管理者ユーザー',
+              role: 'admin'
+            }
+          };
+          
+          // トークンとユーザー情報をストレージに保存
+          safeStorage.setItem(AUTH_TOKEN_KEY, demoResponse.accessToken);
+          safeStorage.setItem(USER_DATA_KEY, JSON.stringify(demoResponse.user));
+          
+          return demoResponse;
+        } else {
+          throw new Error('ユーザー名またはパスワードが正しくありません');
+        }
+      }
+      
+      // 本番モード: APIを使用した認証
       const response = await api.post<LoginResponse>('/auth/login', credentials);
       
       // レスポンスの検証
@@ -32,8 +60,8 @@ const authService = {
       }
       
       // トークンとユーザー情報をストレージに保存
-      safeStorage.setItem('token', response.data.accessToken);
-      safeStorage.setItem('user', JSON.stringify(response.data.user));
+      safeStorage.setItem(AUTH_TOKEN_KEY, response.data.accessToken);
+      safeStorage.setItem(USER_DATA_KEY, JSON.stringify(response.data.user));
       
       return response.data;
     } catch (error: any) {
@@ -70,8 +98,8 @@ const authService = {
    * ログアウト処理
    */
   logout(): void {
-    safeStorage.removeItem('token');
-    safeStorage.removeItem('user');
+    safeStorage.removeItem(AUTH_TOKEN_KEY);
+    safeStorage.removeItem(USER_DATA_KEY);
   },
 
   /**
@@ -90,14 +118,14 @@ const authService = {
    * 認証状態の取得
    */
   isAuthenticated(): boolean {
-    return !!safeStorage.getItem('token');
+    return !!safeStorage.getItem(AUTH_TOKEN_KEY);
   },
   
   /**
    * ユーザー情報の取得
    */
   getUser(): User | null {
-    const userData = safeStorage.getItem('user');
+    const userData = safeStorage.getItem(USER_DATA_KEY);
     if (!userData) return null;
     
     try {

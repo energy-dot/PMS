@@ -2,6 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Exclude } from 'class-transformer';
 import { Notification } from './notification.entity';
 import { NotificationSetting } from './notification-setting.entity';
+import { Application } from './application.entity';
+import { Evaluation } from './evaluation.entity';
+import { InterviewRecord } from './interview-record.entity';
 
 @Entity('users')
 export class User {
@@ -44,6 +47,18 @@ export class User {
 
   @OneToMany(() => NotificationSetting, notificationSetting => notificationSetting.user)
   notificationSettings: NotificationSetting[];
+
+  @OneToMany(() => Application, application => application.documentScreener)
+  screenedApplications: Application[];
+
+  @OneToMany(() => Evaluation, evaluation => evaluation.evaluatedUser)
+  receivedEvaluations: Evaluation[];
+
+  @OneToMany(() => Evaluation, evaluation => evaluation.evaluator)
+  givenEvaluations: Evaluation[];
+
+  @OneToMany(() => InterviewRecord, interviewRecord => interviewRecord.interviewer)
+  conductedInterviews: InterviewRecord[];
 
   @CreateDateColumn()
   createdAt: Date;

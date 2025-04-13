@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { User } from './user.entity';
 import { Project } from './project.entity';
 import { EvaluationSkill } from './evaluation-skill.entity';
+import { Staff } from './staff.entity';
 
 @Entity('evaluations')
 export class Evaluation {
@@ -11,11 +12,11 @@ export class Evaluation {
   @Column({ name: 'staff_id' })
   staffId: string;
 
-  @ManyToOne(() => User, user => user.receivedEvaluations, {
+  @ManyToOne(() => Staff, staff => staff.evaluations, {
     onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'staff_id' })
-  staff: User;
+  evaluatedUser: Staff;
 
   @Column({ name: 'evaluator_id' })
   evaluatorId: string;
@@ -70,6 +71,12 @@ export class Evaluation {
     cascade: true
   })
   skills: EvaluationSkill[];
+  
+  // evaluationSkillsプロパティの追加（reportsサービスで参照されているため）
+  @OneToMany(() => EvaluationSkill, evaluationSkill => evaluationSkill.evaluation, {
+    cascade: true
+  })
+  evaluationSkills: EvaluationSkill[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

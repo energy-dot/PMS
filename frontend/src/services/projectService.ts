@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './api';
 import { API_BASE_URL } from '../config';
 
 // 案件の型定義
@@ -55,7 +55,7 @@ class ProjectService {
   // 全ての案件を取得
   async getAllProjects(): Promise<Project[]> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/projects`);
+      const response = await api.get(`/projects`);
       return response.data;
     } catch (error) {
       console.error('案件の取得に失敗しました', error);
@@ -66,7 +66,7 @@ class ProjectService {
   // 特定の案件を取得
   async getProjectById(id: string): Promise<Project> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/projects/${id}`);
+      const response = await api.get(`/projects/${id}`);
       return response.data;
     } catch (error) {
       console.error(`ID: ${id} の案件の取得に失敗しました`, error);
@@ -86,7 +86,7 @@ class ProjectService {
         }
       });
       
-      const response = await axios.get(`${API_BASE_URL}/projects/search?${queryParams.toString()}`);
+      const response = await api.get(`/projects/search?${queryParams.toString()}`);
       return response.data;
     } catch (error) {
       console.error('案件の検索に失敗しました', error);
@@ -97,7 +97,7 @@ class ProjectService {
   // 案件を作成
   async createProject(data: Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'isApproved' | 'approvedBy' | 'approvedAt' | 'rejectionReason'>): Promise<Project> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/projects`, data);
+      const response = await api.post(`/projects`, data);
       return response.data;
     } catch (error) {
       console.error('案件の作成に失敗しました', error);
@@ -108,7 +108,7 @@ class ProjectService {
   // 案件を更新
   async updateProject(id: string, data: Partial<Project>): Promise<Project> {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/projects/${id}`, data);
+      const response = await api.patch(`/projects/${id}`, data);
       return response.data;
     } catch (error) {
       console.error(`ID: ${id} の案件の更新に失敗しました`, error);
@@ -119,7 +119,7 @@ class ProjectService {
   // 案件を削除
   async deleteProject(id: string): Promise<void> {
     try {
-      await axios.delete(`${API_BASE_URL}/projects/${id}`);
+      await api.delete(`/projects/${id}`);
     } catch (error) {
       console.error(`ID: ${id} の案件の削除に失敗しました`, error);
       throw error;
@@ -129,7 +129,7 @@ class ProjectService {
   // 案件を承認
   async approveProject(id: string): Promise<Project> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/projects/${id}/approve`);
+      const response = await api.post(`/projects/${id}/approve`);
       return response.data;
     } catch (error) {
       console.error(`ID: ${id} の案件の承認に失敗しました`, error);
@@ -140,7 +140,7 @@ class ProjectService {
   // 案件を差し戻し
   async rejectProject(id: string, reason: string): Promise<Project> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/projects/${id}/reject`, { reason });
+      const response = await api.post(`/projects/${id}/reject`, { reason });
       return response.data;
     } catch (error) {
       console.error(`ID: ${id} の案件の差し戻しに失敗しました`, error);
@@ -151,12 +151,32 @@ class ProjectService {
   // 案件のステータスを更新
   async updateProjectStatus(id: string, status: string): Promise<Project> {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/projects/${id}/status`, { status });
+      const response = await api.patch(`/projects/${id}/status`, { status });
       return response.data;
     } catch (error) {
       console.error(`ID: ${id} の案件のステータス更新に失敗しました`, error);
       throw error;
     }
+  }
+
+  // 部署によるプロジェクト検索
+  async getProjectsByDepartment(departmentId: string): Promise<Project[]> {
+    return this.searchProjects({ departmentId });
+  }
+
+  // セクションによるプロジェクト検索
+  async getProjectsBySection(sectionId: string): Promise<Project[]> {
+    return this.searchProjects({ sectionId });
+  }
+
+  // 下位互換性のため
+  async getProjects(): Promise<Project[]> {
+    return this.getAllProjects();
+  }
+
+  // 下位互換性のため
+  async getProject(id: string): Promise<Project> {
+    return this.getProjectById(id);
   }
 }
 

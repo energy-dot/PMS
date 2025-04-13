@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsDateString, IsNumber, IsString, IsEnum, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsDateString, IsNumber, IsString, IsEnum, IsBoolean, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Staff } from '../../entities/staff.entity';
 import { Project } from '../../entities/project.entity';
@@ -13,6 +13,14 @@ export class CreateContractDto {
   @IsNotEmpty({ message: 'プロジェクトは必須です' })
   project: Project;
 
+  @IsOptional()
+  @IsUUID()
+  staffId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  projectId?: string;
+
   @IsDateString()
   @IsNotEmpty({ message: '開始日は必須です' })
   startDate: Date;
@@ -25,6 +33,18 @@ export class CreateContractDto {
   @IsNumber()
   @IsNotEmpty({ message: '契約単価は必須です' })
   price: number;
+
+  @IsOptional()
+  @IsNumber()
+  monthlyRate?: number;
+
+  @IsOptional()
+  @IsNumber()
+  manMonth?: number;
+
+  @IsOptional()
+  @IsString()
+  type?: string;
 
   @IsString()
   @IsOptional()
@@ -43,6 +63,10 @@ export class CreateContractDto {
   @IsString()
   @IsOptional()
   remarks?: string;
+
+  @IsString()
+  @IsOptional()
+  notes?: string;
 
   @IsBoolean()
   @IsOptional()

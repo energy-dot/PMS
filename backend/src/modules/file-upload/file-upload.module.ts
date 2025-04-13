@@ -11,14 +11,14 @@ import { FileUploadService } from './file-upload.service';
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads',
-        filename: (req, file, callback) => {
+        filename: (req: any, file: any, callback: any) => {
           const uniqueSuffix = uuidv4();
           const ext = extname(file.originalname);
           const filename = `${uniqueSuffix}${ext}`;
           callback(null, filename);
         },
       }),
-      fileFilter: (req, file, callback) => {
+      fileFilter: (req: any, file: any, callback: any) => {
         // 許可するファイル形式
         const allowedMimeTypes = [
           'application/pdf',

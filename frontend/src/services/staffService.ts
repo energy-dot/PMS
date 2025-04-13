@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './api';
 import { API_BASE_URL } from '../config';
 
 // 要員の型定義
@@ -47,7 +47,7 @@ class StaffService {
   // 全ての要員を取得
   async getAllStaff(): Promise<Staff[]> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/staff`);
+      const response = await api.get(`/staff`);
       return response.data;
     } catch (error) {
       console.error('要員の取得に失敗しました', error);
@@ -58,7 +58,7 @@ class StaffService {
   // 特定の要員を取得
   async getStaffById(id: string): Promise<Staff> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/staff/${id}`);
+      const response = await api.get(`/staff/${id}`);
       return response.data;
     } catch (error) {
       console.error(`ID: ${id} の要員の取得に失敗しました`, error);
@@ -78,7 +78,7 @@ class StaffService {
         }
       });
       
-      const response = await axios.get(`${API_BASE_URL}/staff/search?${queryParams.toString()}`);
+      const response = await api.get(`/staff/search?${queryParams.toString()}`);
       return response.data;
     } catch (error) {
       console.error('要員の検索に失敗しました', error);
@@ -89,7 +89,7 @@ class StaffService {
   // 要員を作成
   async createStaff(data: Omit<Staff, 'id' | 'createdAt' | 'updatedAt'>): Promise<Staff> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/staff`, data);
+      const response = await api.post(`/staff`, data);
       return response.data;
     } catch (error) {
       console.error('要員の作成に失敗しました', error);
@@ -100,7 +100,7 @@ class StaffService {
   // 要員を更新
   async updateStaff(id: string, data: Partial<Staff>): Promise<Staff> {
     try {
-      const response = await axios.patch(`${API_BASE_URL}/staff/${id}`, data);
+      const response = await api.patch(`/staff/${id}`, data);
       return response.data;
     } catch (error) {
       console.error(`ID: ${id} の要員の更新に失敗しました`, error);
@@ -111,7 +111,7 @@ class StaffService {
   // 要員を削除
   async deleteStaff(id: string): Promise<void> {
     try {
-      await axios.delete(`${API_BASE_URL}/staff/${id}`);
+      await api.delete(`/staff/${id}`);
     } catch (error) {
       console.error(`ID: ${id} の要員の削除に失敗しました`, error);
       throw error;
@@ -138,6 +138,11 @@ class StaffService {
       case 5: return 'マスター';
       default: return `レベル ${level}`;
     }
+  }
+
+  // 下位互換性のため
+  async getStaff(id: string): Promise<Staff> {
+    return this.getStaffById(id);
   }
 }
 

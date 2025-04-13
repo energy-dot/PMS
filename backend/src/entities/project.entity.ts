@@ -3,6 +3,8 @@ import { Contract } from './contract.entity';
 // 循環参照を避けるためにTypeとしてインポート
 import type { Section } from './section.entity';
 import type { Department } from './department.entity';
+import { Application } from './application.entity';
+import { Evaluation } from './evaluation.entity';
 
 @Entity('projects')
 export class Project {
@@ -90,8 +92,41 @@ export class Project {
   @Column({ nullable: true })
   remarks: string;
 
+  @Column({ nullable: true })
+  requiredHeadcount: number;
+
+  @Column({ nullable: true, default: 0 })
+  currentHeadcount: number;
+
+  // プロジェクトの契約タイプ
+  @Column({ nullable: true })
+  contractType: string;
+
+  // 希望単価範囲
+  @Column({ nullable: true, type: 'float' })
+  rateMin: number;
+
+  @Column({ nullable: true, type: 'float' })
+  rateMax: number;
+
+  // 承認関連
+  @Column({ default: false })
+  isApproved: boolean;
+
+  @Column({ nullable: true })
+  approvedBy: string;
+
+  @Column({ nullable: true })
+  approvedAt: Date;
+
   @OneToMany(() => Contract, contract => contract.project)
   contracts: Contract[];
+
+  @OneToMany(() => Application, application => application.project)
+  applications: Application[];
+
+  @OneToMany(() => Evaluation, evaluation => evaluation.project)
+  evaluations: Evaluation[];
 
   @CreateDateColumn()
   createdAt: Date;

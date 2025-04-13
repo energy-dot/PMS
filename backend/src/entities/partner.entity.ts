@@ -4,6 +4,7 @@ import { AntisocialCheck } from './antisocial-check.entity';
 import { BaseContract } from './base-contract.entity';
 import { ContactPerson } from './contact-person.entity';
 import { CreditCheck } from './credit-check.entity';
+import { Application } from './application.entity';
 
 @Entity('partners')
 export class Partner {
@@ -75,6 +76,9 @@ export class Partner {
   
   @OneToMany(() => CreditCheck, creditCheck => creditCheck.partner)
   creditChecks: CreditCheck[];
+
+  @OneToMany(() => Application, application => application.partner)
+  applications: Application[];
 
   @CreateDateColumn()
   createdAt: Date;

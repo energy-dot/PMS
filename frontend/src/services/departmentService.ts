@@ -114,7 +114,7 @@ const departmentService = {
    * キャッシュから部一覧を取得（同期版）
    * すでにキャッシュがあることを前提とする
    */
-  getSections(): Section[] {
+  getSectionsFromCache(): Section[] {
     return sectionsCache;
   },
 
@@ -122,7 +122,7 @@ const departmentService = {
    * キャッシュから事業部一覧を取得（同期版）
    * すでにキャッシュがあることを前提とする
    */
-  getDepartments(): Department[] {
+  getDepartmentsFromCache(): Department[] {
     return departmentsCache;
   },
 

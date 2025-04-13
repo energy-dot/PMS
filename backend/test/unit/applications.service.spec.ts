@@ -3,11 +3,13 @@ import { ApplicationsService } from '../../src/modules/applications/applications
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Application } from '../../src/entities/application.entity';
 import { InterviewRecord } from '../../src/entities/interview-record.entity';
+import { CreateApplicationDto } from '../../src/dto/applications/create-application.dto';
+import { CreateInterviewRecordDto } from '../../src/dto/applications/create-interview-record.dto';
 
 describe('ApplicationsService', () => {
   let service: ApplicationsService;
-  let mockApplicationsRepository;
-  let mockInterviewRecordsRepository;
+  let mockApplicationsRepository: MockRepository<Application>;
+  let mockInterviewRecordsRepository: MockRepository<InterviewRecord>;
 
   const mockApplications = [
     {
@@ -81,7 +83,16 @@ describe('ApplicationsService', () => {
       }),
       merge: jest.fn().mockImplementation((application, dto) => ({ ...application, ...dto })),
       remove: jest.fn().mockResolvedValue(true),
-    };
+      createQueryBuilder: jest.fn(() => ({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        getOne: jest.fn(),
+        getMany: jest.fn()
+      })),
+      delete: jest.fn(),
+      count: jest.fn()
+    } as unknown as MockRepository<Application>;
 
     mockInterviewRecordsRepository = {
       find: jest.fn().mockImplementation(({ where }) => {
@@ -95,7 +106,18 @@ describe('ApplicationsService', () => {
         }
         return Promise.resolve(record);
       }),
-    };
+      createQueryBuilder: jest.fn(() => ({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        getOne: jest.fn(),
+        getMany: jest.fn()
+      })),
+      delete: jest.fn(),
+      count: jest.fn(),
+      merge: jest.fn(),
+      remove: jest.fn()
+    } as unknown as MockRepository<InterviewRecord>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -152,11 +174,12 @@ describe('ApplicationsService', () => {
 
   describe('create', () => {
     it('should create a new application', async () => {
-      const createApplicationDto = {
+      const createApplicationDto: CreateApplicationDto = {
         projectId: 'project3',
-        staffId: 'staff3',
+        partnerId: 'partner1',
+        applicantName: 'Test Applicant',
+        applicationDate: new Date('2025-03-01'),
         status: '書類選考中',
-        appliedDate: new Date('2025-03-01'),
         notes: '新規応募者',
       };
 
@@ -164,9 +187,9 @@ describe('ApplicationsService', () => {
 
       expect(result).toHaveProperty('id');
       expect(result.projectId).toBe(createApplicationDto.projectId);
-      expect(result.staffId).toBe(createApplicationDto.staffId);
+      expect(result.partnerId).toBe(createApplicationDto.partnerId);
       expect(result.status).toBe(createApplicationDto.status);
-      expect(result.appliedDate).toEqual(createApplicationDto.appliedDate);
+      expect(result.applicationDate).toEqual(createApplicationDto.applicationDate);
       expect(result.notes).toBe(createApplicationDto.notes);
 
       expect(mockApplicationsRepository.create).toHaveBeenCalledWith(createApplicationDto);
@@ -258,11 +281,11 @@ describe('ApplicationsService', () => {
 
   describe('addInterviewRecord', () => {
     it('should add an interview record to an application', async () => {
-      const createInterviewRecordDto = {
+      const createInterviewRecordDto: CreateInterviewRecordDto = {
         applicationId: '1',
         interviewDate: new Date('2025-01-25'),
-        interviewType: '二次面接',
-        interviewers: '面接官E, 面接官F',
+        interviewFormat: '対面',
+        interviewers: ['面接官E', '面接官F'],
         result: '合格',
         feedback: '技術力が高く、チームへの適合性も良好',
         notes: '新規面接記録',
@@ -277,7 +300,7 @@ describe('ApplicationsService', () => {
 
       mockInterviewRecordsRepository.save.mockResolvedValueOnce(mockSavedRecord);
 
-      const result = await service.addInterviewRecord(createInterviewRecordDto);
+      const result = await service.addInterviewRecord('1', createInterviewRecordDto);
 
       expect(result).toEqual(mockSavedRecord);
       expect(mockInterviewRecordsRepository.create).toHaveBeenCalledWith(createInterviewRecordDto);

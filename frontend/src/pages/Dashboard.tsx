@@ -3,14 +3,14 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { ColDef } from 'ag-grid-community';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
-import { Pie, Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title } from 'chart.js';
+import { Pie, Bar, Line } from 'react-chartjs-2';
 import axios from 'axios';
 import { API_BASE_URL } from '../config';
 import { useAuthStore } from '../store/authStore';
 
 // Chart.js登録
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title);
 
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
@@ -114,6 +114,7 @@ const Dashboard: React.FC = () => {
         backgroundColor: 'rgba(54, 162, 235, 0.6)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
+        type: 'bar'
       },
       {
         label: '終了案件',
@@ -121,16 +122,27 @@ const Dashboard: React.FC = () => {
         backgroundColor: 'rgba(255, 99, 132, 0.6)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
-      },
+        type: 'bar'
+      }
+    ],
+  };
+  
+  // 進行中案件用の別のデータセット
+  const activeProjectsChartData = {
+    labels: monthlyTrendData?.chartData?.labels || [],
+    datasets: [
       {
         label: '進行中案件',
         data: monthlyTrendData?.chartData?.activeProjects || [],
+        fill: false,
         backgroundColor: 'rgba(75, 192, 192, 0.6)',
         borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-        type: 'line',
-      },
-    ],
+        borderWidth: 2,
+        tension: 0.1,
+        pointRadius: 3,
+        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+      }
+    ]
   };
   
   // パートナー別案件数グラフの設定
@@ -243,9 +255,28 @@ const Dashboard: React.FC = () => {
             {/* 月別案件推移グラフ */}
             <div className="bg-white p-4 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-4">月別案件推移</h3>
-              <div className="h-64">
+              <div className="h-40 mb-2">
                 <Bar
                   data={monthlyTrendChartData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                      },
+                    },
+                  }}
+                />
+              </div>
+              <div className="h-40 mt-4">
+                <Line
+                  data={activeProjectsChartData}
                   options={{
                     responsive: true,
                     maintainAspectRatio: false,

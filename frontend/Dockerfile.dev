@@ -2,6 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# viteをグローバルにインストール
+RUN npm install -g vite
+
 # パッケージファイルコピー
 COPY package*.json ./
 RUN npm install
@@ -12,5 +15,8 @@ COPY . .
 # 開発サーバーポート公開
 EXPOSE 3002
 
+# HOSTを0.0.0.0に設定して外部からアクセスできるようにする
+ENV HOST=0.0.0.0
+
 # 開発サーバー起動
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

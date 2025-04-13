@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { safeStorage } from '../store/authStore';
 
 // APIの基本URL
 // 環境変数 > 自動検出 > デフォルト値 の優先順位
@@ -29,60 +30,8 @@ const getBaseUrl = () => {
 // APIクライアントの基本URL
 const API_URL = getBaseUrl();
 
-// メモリストレージ（フォールバック用）
-const memoryStorage: Record<string, string> = {};
-
-// 安全なストレージアクセス
-const safeStorage = {
-  getItem(key: string): string | null {
-    try {
-      // ブラウザ環境でない場合
-      if (typeof window === 'undefined' || !window.localStorage) {
-        return memoryStorage[key] || null;
-      }
-      
-      // 通常のローカルストレージアクセス
-      return localStorage.getItem(key);
-    } catch (error) {
-      console.warn('ストレージアクセスエラー、メモリストレージを使用します');
-      return memoryStorage[key] || null;
-    }
-  },
-  
-  setItem(key: string, value: string): void {
-    // メモリ内に常に保存
-    memoryStorage[key] = value;
-    
-    try {
-      // ブラウザ環境でない場合
-      if (typeof window === 'undefined' || !window.localStorage) {
-        return;
-      }
-      
-      // 通常のローカルストレージアクセス
-      localStorage.setItem(key, value);
-    } catch (error) {
-      console.warn('ストレージアクセスエラー、メモリストレージのみ使用します');
-    }
-  },
-  
-  removeItem(key: string): void {
-    // メモリストレージから削除
-    delete memoryStorage[key];
-    
-    try {
-      // ブラウザ環境でない場合
-      if (typeof window === 'undefined' || !window.localStorage) {
-        return;
-      }
-      
-      // 通常のローカルストレージアクセス
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.warn('ストレージアクセスエラー');
-    }
-  }
-};
+// トークンの保存キー
+const AUTH_TOKEN_KEY = 'pms_auth_token';
 
 // Axiosインスタンスの作成
 const api = axios.create({
@@ -99,11 +48,16 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // トークンの取得（安全な方法で）
-    const token = safeStorage.getItem('token');
-    
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = safeStorage.getItem(AUTH_TOKEN_KEY);
+      
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.warn('トークンの取得に失敗しました:', error);
     }
+    
     return config;
   },
   (error) => {
@@ -119,8 +73,12 @@ api.interceptors.response.use(
   (error) => {
     // 認証エラー（401）の場合、ログアウト処理
     if (error.response?.status === 401) {
-      safeStorage.removeItem('token');
-      safeStorage.removeItem('user');
+      try {
+        safeStorage.removeItem(AUTH_TOKEN_KEY);
+        safeStorage.removeItem('pms_user_data');
+      } catch (storageError) {
+        console.warn('ストレージへのアクセスに失敗しました:', storageError);
+      }
       
       // 現在のページがログインページでない場合のみリダイレクト
       if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
@@ -162,5 +120,7 @@ export const callWithRetry = async (fn: Function, retries = 3, delay = 1000) => 
   }
 };
 
+// 外部からのインポート用に公開
+export const BASE_URL = API_URL;
+
 export default api;
-export { safeStorage };

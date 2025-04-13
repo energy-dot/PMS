@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# NestJS CLIをグローバルにインストール
+RUN npm install -g @nestjs/cli
+
+# パッケージファイルコピー
+COPY package*.json ./
+RUN npm install
+
+# ソースコードコピー
+COPY . .
+
+# 開発サーバーポート公開
+EXPOSE 3001
+
+# 開発サーバー起動
+CMD ["npm", "run", "start:dev"]

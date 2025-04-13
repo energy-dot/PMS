@@ -1,19 +1,19 @@
-version: '3.8'
-
 services:
   backend:
     build: 
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: pms-backend-dev
     ports:
       - "3001:3001"
     environment:
       - NODE_ENV=development
+      - PORT=3001
+      - HOST=0.0.0.0
+      - ALLOWED_ORIGINS=http://localhost:3002,http://pms-frontend-dev:3002,http://127.0.0.1:3002
     volumes:
       - ./backend:/app
       - /app/node_modules
-    command: npm run start:dev
     restart: unless-stopped
     networks:
       - pms-network
@@ -32,7 +32,6 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    command: npm run dev
     depends_on:
       - backend
     restart: unless-stopped

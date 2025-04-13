@@ -40,6 +40,9 @@ async function bootstrap() {
     maxAge: 3600,
   });
   
+  // グローバルプレフィックスを削除（フロントエンドとの整合性のため）
+  // app.setGlobalPrefix('api');
+  
   // 初期管理者ユーザーを作成
   try {
     const dataSource = app.get(getDataSourceToken());
@@ -47,6 +50,11 @@ async function bootstrap() {
   } catch (error) {
     logger.error(`初期ユーザー作成中にエラーが発生しました: ${error.message}`);
   }
+  
+  // ヘルスチェックエンドポイント
+  app.getHttpAdapter().get('/health', (req, res) => {
+    res.status(200).send('OK');
+  });
   
   // 起動時のログ出力
   const port = process.env.PORT || 3001;

@@ -24,7 +24,7 @@ export class UsersController {
   }
 
   @Get('me')
-  getProfile(@Request() req) {
+  getProfile(@Request() req: any) {
     return this.usersService.findOne(req.user.id);
   }
 
@@ -54,7 +54,7 @@ export class UsersController {
 
   @Post('change-password')
   changePassword(
-    @Request() req,
+    @Request() req: any,
     @Body('oldPassword') oldPassword: string,
     @Body('newPassword') newPassword: string,
   ) {

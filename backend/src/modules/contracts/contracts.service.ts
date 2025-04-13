@@ -38,4 +38,33 @@ export class ContractsService {
     const result = await this.contractsRepository.delete(id);
     return result && result.affected ? result.affected > 0 : false;
   }
+
+  async findByProject(projectId: string): Promise<Contract[]> {
+    return this.contractsRepository.find({
+      relations: ['staff', 'project'],
+      where: {
+        project: {
+          id: projectId
+        }
+      }
+    });
+  }
+
+  async findByStaff(staffId: string): Promise<Contract[]> {
+    return this.contractsRepository.find({
+      relations: ['staff', 'project'],
+      where: {
+        staff: {
+          id: staffId
+        }
+      }
+    });
+  }
+
+  async findActiveContracts(): Promise<Contract[]> {
+    return this.contractsRepository.find({
+      where: { status: '契約中' },
+      relations: ['staff', 'project'],
+    });
+  }
 }
