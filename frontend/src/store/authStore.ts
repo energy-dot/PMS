@@ -6,35 +6,62 @@ const memoryStorage: Record<string, string> = {};
 
 // 安全なストレージアクセス
 export const safeStorage = {
-  getItem(key: string): string | null {
+  // ストレージが利用可能かどうかを確認する関数
+  isStorageAvailable(): boolean {
     try {
-      // ブラウザ環境でない場合や、ストレージへのアクセスが制限されている場合
-      if (typeof window === 'undefined' || !window.localStorage) {
-        return memoryStorage[key] || null;
+      // ブラウザ環境でない場合
+      if (typeof window === 'undefined') {
+        return false;
       }
       
-      // localStorage へのアクセスを試行
-      return localStorage.getItem(key);
-    } catch (error) {
-      console.warn('ストレージアクセスエラー、メモリストレージを使用します', error);
-      return memoryStorage[key] || null;
+      // ストレージが存在するか確認
+      if (!window.localStorage) {
+        return false;
+      }
+      
+      // テスト用のキーを設定して削除することでアクセス権を確認
+      const testKey = '__storage_test__';
+      localStorage.setItem(testKey, 'test');
+      localStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      return false;
     }
   },
   
+  getItem(key: string): string | null {
+    // まずメモリストレージをチェック（常に利用可能）
+    const memoryValue = memoryStorage[key] || null;
+    
+    // ストレージが利用可能な場合のみlocalStorageを試行
+    if (this.isStorageAvailable()) {
+      try {
+        const storageValue = localStorage.getItem(key);
+        // localStorageに値がある場合はそれを返し、メモリストレージも更新
+        if (storageValue !== null) {
+          memoryStorage[key] = storageValue;
+          return storageValue;
+        }
+      } catch (error) {
+        console.warn('ストレージ読み取りエラー、メモリストレージを使用します', error);
+      }
+    }
+    
+    // localStorageが利用できないか、エラーが発生した場合はメモリストレージを使用
+    return memoryValue;
+  },
+  
   setItem(key: string, value: string): void {
-    // メモリ内に常に保存
+    // メモリ内に常に保存（フォールバック用）
     memoryStorage[key] = value;
     
-    try {
-      // ブラウザ環境でない場合や、ストレージへのアクセスが制限されている場合
-      if (typeof window === 'undefined' || !window.localStorage) {
-        return;
+    // ストレージが利用可能な場合のみlocalStorageを試行
+    if (this.isStorageAvailable()) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (error) {
+        console.warn('ストレージ書き込みエラー、メモリストレージのみ使用します', error);
       }
-      
-      // localStorage へのアクセスを試行
-      localStorage.setItem(key, value);
-    } catch (error) {
-      console.warn('ストレージアクセスエラー、メモリストレージのみ使用します', error);
     }
   },
   
@@ -42,16 +69,13 @@ export const safeStorage = {
     // メモリストレージから削除
     delete memoryStorage[key];
     
-    try {
-      // ブラウザ環境でない場合や、ストレージへのアクセスが制限されている場合
-      if (typeof window === 'undefined' || !window.localStorage) {
-        return;
+    // ストレージが利用可能な場合のみlocalStorageを試行
+    if (this.isStorageAvailable()) {
+      try {
+        localStorage.removeItem(key);
+      } catch (error) {
+        console.warn('ストレージ削除エラー', error);
       }
-      
-      // localStorage へのアクセスを試行
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.warn('ストレージアクセスエラー', error);
     }
   }
 };

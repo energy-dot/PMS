@@ -13,7 +13,8 @@ import {
   KeyboardEvent,
   CellEditingStartedEvent,
   CellEditingStoppedEvent,
-  RowNode
+  RowNode,
+  GridOptions
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
@@ -261,27 +262,18 @@ const DataGrid: React.FC<DataGridProps> = ({
     if (params.event.ctrlKey && params.event.key === 'c') {
       if (!gridApi) return;
       
-      const selectedRanges = gridApi.getCellRanges();
-      if (selectedRanges && selectedRanges.length > 0) {
-        const range = selectedRanges[0];
-        const startRow = range.startRow?.rowIndex || 0;
-        const endRow = range.endRow?.rowIndex || 0;
-        const columns = range.columns;
-        
+      // Community版ではgetCellRanges()が使用できないため、選択行のみを処理
+      const selectedNodes = gridApi.getSelectedNodes();
+      if (selectedNodes && selectedNodes.length > 0) {
         const copiedData: any[] = [];
         
-        for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-          const rowNode = gridApi.getDisplayedRowAtIndex(rowIndex);
-          if (!rowNode) continue;
+        selectedNodes.forEach(node => {
+          if (!node) return;
           
-          const rowData: any = {};
-          columns.forEach(column => {
-            const field = column.getColId();
-            rowData[field] = rowNode.data[field];
-          });
-          
+          // 選択された行のデータをコピー
+          const rowData = { ...node.data };
           copiedData.push(rowData);
-        }
+        });
         
         setCopiedCells(copiedData);
         return true; // イベントを消費
@@ -350,28 +342,25 @@ const DataGrid: React.FC<DataGridProps> = ({
     if ((params.event.key === 'Delete' || params.event.key === 'Backspace') && editable) {
       if (!gridApi) return;
       
-      const selectedRanges = gridApi.getCellRanges();
-      if (selectedRanges && selectedRanges.length > 0) {
-        const range = selectedRanges[0];
-        const startRow = range.startRow?.rowIndex || 0;
-        const endRow = range.endRow?.rowIndex || 0;
-        const columns = range.columns;
+      // Community版ではgetCellRanges()が使用できないため、選択行と現在フォーカスされているセルを処理
+      const selectedNodes = gridApi.getSelectedNodes();
+      const focusedCell = gridApi.getFocusedCell();
+      
+      if (selectedNodes && selectedNodes.length > 0 && focusedCell) {
+        // フォーカスされている列
+        const focusedColId = focusedCell.column.getColId();
         
-        for (let rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-          const rowNode = gridApi.getDisplayedRowAtIndex(rowIndex);
-          if (!rowNode) continue;
+        selectedNodes.forEach(node => {
+          if (!node) return;
           
-          const updatedData = { ...rowNode.data };
+          const updatedData = { ...node.data };
           let changed = false;
           
-          columns.forEach(column => {
-            const field = column.getColId();
-            // 編集可能なセルのみクリア
-            if (column.getColDef().editable !== false) {
-              updatedData[field] = null;
-              changed = true;
-            }
-          });
+          // フォーカスされているセルのみクリア
+          if (focusedCell.column.getColDef().editable !== false) {
+            updatedData[focusedColId] = null;
+            changed = true;
+          }
           
           if (changed) {
             // データ更新
@@ -388,7 +377,7 @@ const DataGrid: React.FC<DataGridProps> = ({
             
             setHasUnsavedChanges(true);
           }
-        }
+        });
         
         return true; // イベントを消費
       }

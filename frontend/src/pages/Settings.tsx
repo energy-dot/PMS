@@ -71,23 +71,38 @@ const Settings: React.FC = () => {
         setLoading(true);
         
         // ローカルストレージからダークモード設定を読み込む
-        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+        let savedDarkMode = false;
+        try {
+          savedDarkMode = localStorage.getItem('darkMode') === 'true';
+        } catch (storageError) {
+          console.warn('ローカルストレージへのアクセスエラー:', storageError);
+          // メモリ内の状態を使用して続行
+        }
         setDarkMode(savedDarkMode);
         
         // ダークモードを適用
-        if (savedDarkMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+        try {
+          if (savedDarkMode) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (domError) {
+          console.warn('DOM操作エラー:', domError);
         }
         
         // APIから通知設定を読み込む
         if (user && user.id) {
-          const notificationResponse = await axios.get(`${API_BASE_URL}/users/${user.id}/notification-settings`);
-          setNotificationSettings(notificationResponse.data);
-          
-          const displayResponse = await axios.get(`${API_BASE_URL}/users/${user.id}/display-settings`);
-          setDisplaySettings(displayResponse.data);
+          try {
+            const notificationResponse = await axios.get(`${API_BASE_URL}/users/${user.id}/notification-settings`);
+            setNotificationSettings(notificationResponse.data);
+            
+            const displayResponse = await axios.get(`${API_BASE_URL}/users/${user.id}/display-settings`);
+            setDisplaySettings(displayResponse.data);
+          } catch (apiError: any) {
+            console.warn('API呼び出しエラー:', apiError);
+            // エラーがあっても続行（デフォルト設定を使用）
+          }
         }
         
         setLoading(false);
@@ -106,13 +121,22 @@ const Settings: React.FC = () => {
     setDarkMode(newDarkMode);
     
     // ローカルストレージに保存
-    localStorage.setItem('darkMode', String(newDarkMode));
+    try {
+      localStorage.setItem('darkMode', String(newDarkMode));
+    } catch (storageError) {
+      console.warn('ローカルストレージへの保存エラー:', storageError);
+      // ストレージエラーがあっても続行
+    }
     
     // HTML要素にクラスを適用
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    try {
+      if (newDarkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (domError) {
+      console.warn('DOM操作エラー:', domError);
     }
   };
   

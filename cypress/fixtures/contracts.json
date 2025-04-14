@@ -1,0 +1,53 @@
+[
+  {
+    "id": "1",
+    "projectId": "1",
+    "staffId": "1",
+    "startDate": "2023-04-01T00:00:00.000Z",
+    "endDate": "2023-09-30T00:00:00.000Z",
+    "rate": 850000,
+    "contractType": "準委任",
+    "workLocation": "東京都千代田区",
+    "workingHours": "9:00-18:00",
+    "isRemote": true,
+    "remarks": "週2回オンサイト、他リモート",
+    "status": "進行中",
+    "paymentTerms": "月末締め翌月末払い",
+    "createdAt": "2023-03-20T00:00:00.000Z",
+    "updatedAt": "2023-03-20T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "projectId": "2",
+    "staffId": "3",
+    "startDate": "2023-05-01T00:00:00.000Z",
+    "endDate": "2023-10-31T00:00:00.000Z",
+    "rate": 750000,
+    "contractType": "準委任",
+    "workLocation": "東京都渋谷区",
+    "workingHours": "10:00-19:00",
+    "isRemote": true,
+    "remarks": "フルリモート",
+    "status": "進行中",
+    "paymentTerms": "月末締め翌月末払い",
+    "createdAt": "2023-04-15T00:00:00.000Z",
+    "updatedAt": "2023-04-15T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "projectId": "1",
+    "staffId": "2",
+    "startDate": "2023-05-15T00:00:00.000Z",
+    "endDate": "2023-11-30T00:00:00.000Z",
+    "rate": 820000,
+    "contractType": "準委任",
+    "workLocation": "東京都千代田区",
+    "workingHours": "9:00-18:00",
+    "isRemote": true,
+    "remarks": "週1回オンサイト、他リモート",
+    "status": "進行中",
+    "paymentTerms": "月末締め翌月末払い",
+    "createdAt": "2023-05-01T00:00:00.000Z",
+    "updatedAt": "2023-05-01T00:00:00.000Z"
+  }
+]

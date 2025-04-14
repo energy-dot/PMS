@@ -1,0 +1,36 @@
+[
+  {
+    "id": "grid-1",
+    "columnDefs": [
+      { "field": "id", "headerName": "ID", "sortable": true, "filter": true },
+      { "field": "name", "headerName": "名前", "sortable": true, "filter": true, "editable": true },
+      { "field": "department", "headerName": "部署", "sortable": true, "filter": true, "editable": true },
+      { "field": "position", "headerName": "役職", "sortable": true, "filter": true, "editable": true }
+    ],
+    "rowData": [
+      { "id": 1, "name": "山田太郎", "department": "営業部", "position": "部長" },
+      { "id": 2, "name": "佐藤花子", "department": "開発部", "position": "リーダー" },
+      { "id": 3, "name": "鈴木一郎", "department": "人事部", "position": "担当" },
+      { "id": 4, "name": "田中次郎", "department": "営業部", "position": "主任" },
+      { "id": 5, "name": "伊藤三郎", "department": "開発部", "position": "エンジニア" }
+    ]
+  },
+  {
+    "id": "grid-2",
+    "columnDefs": [
+      { "field": "id", "headerName": "ID", "sortable": true, "filter": true },
+      { "field": "projectName", "headerName": "プロジェクト名", "sortable": true, "filter": true, "editable": true },
+      { "field": "client", "headerName": "クライアント", "sortable": true, "filter": true, "editable": true },
+      { "field": "startDate", "headerName": "開始日", "sortable": true, "filter": true, "editable": true },
+      { "field": "endDate", "headerName": "終了日", "sortable": true, "filter": true, "editable": true },
+      { "field": "status", "headerName": "ステータス", "sortable": true, "filter": true, "editable": true }
+    ],
+    "rowData": [
+      { "id": 1, "projectName": "ECサイト構築", "client": "A社", "startDate": "2023-01-01", "endDate": "2023-06-30", "status": "進行中" },
+      { "id": 2, "projectName": "基幹システム更新", "client": "B社", "startDate": "2023-02-15", "endDate": "2023-12-31", "status": "計画中" },
+      { "id": 3, "projectName": "モバイルアプリ開発", "client": "C社", "startDate": "2022-10-01", "endDate": "2023-03-31", "status": "完了" },
+      { "id": 4, "projectName": "データ分析基盤構築", "client": "D社", "startDate": "2023-04-01", "endDate": "2023-09-30", "status": "進行中" },
+      { "id": 5, "projectName": "クラウド移行", "client": "E社", "startDate": "2023-05-15", "endDate": "2024-02-28", "status": "計画中" }
+    ]
+  }
+]

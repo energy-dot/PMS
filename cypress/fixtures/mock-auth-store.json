@@ -1,0 +1,78 @@
+{
+  "admin": {
+    "user": {
+      "id": "admin-id-1",
+      "username": "admin",
+      "fullName": "管理者ユーザー",
+      "role": "admin"
+    },
+    "isAuthenticated": true,
+    "isLoading": false,
+    "error": null,
+    "networkError": false
+  },
+  "manager": {
+    "user": {
+      "id": "manager-id-1",
+      "username": "manager",
+      "fullName": "マネージャーユーザー",
+      "role": "partner_manager"
+    },
+    "isAuthenticated": true,
+    "isLoading": false,
+    "error": null,
+    "networkError": false
+  },
+  "developer": {
+    "user": {
+      "id": "developer-id-1",
+      "username": "developer",
+      "fullName": "開発者ユーザー",
+      "role": "developer"
+    },
+    "isAuthenticated": true,
+    "isLoading": false,
+    "error": null,
+    "networkError": false
+  },
+  "viewer": {
+    "user": {
+      "id": "viewer-id-1",
+      "username": "viewer",
+      "fullName": "閲覧者ユーザー",
+      "role": "viewer"
+    },
+    "isAuthenticated": true,
+    "isLoading": false,
+    "error": null,
+    "networkError": false
+  },
+  "unauthenticated": {
+    "user": null,
+    "isAuthenticated": false,
+    "isLoading": false,
+    "error": null,
+    "networkError": false
+  },
+  "loading": {
+    "user": null,
+    "isAuthenticated": false,
+    "isLoading": true,
+    "error": null,
+    "networkError": false
+  },
+  "error": {
+    "user": null,
+    "isAuthenticated": false,
+    "isLoading": false,
+    "error": "ログインに失敗しました。ユーザー名またはパスワードが正しくありません。",
+    "networkError": false
+  },
+  "networkError": {
+    "user": null,
+    "isAuthenticated": false,
+    "isLoading": false,
+    "error": "サーバーに接続できませんでした。ネットワーク接続を確認してください。",
+    "networkError": true
+  }
+}

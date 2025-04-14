@@ -11,20 +11,12 @@ const getBaseUrl = () => {
   
   // ブラウザ環境の場合は現在のホストを基準に設定
   if (typeof window !== 'undefined') {
-    const protocol = window.location.protocol;
-    const hostname = window.location.hostname;
-    
-    // 同一オリジンのAPIエンドポイント（ポート3001を使用）
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return `${protocol}//${hostname}:3001`;
-    } else {
-      // 本番環境ではAPIルートを使用
-      return '/api';
-    }
+    // 常にプロキシを使用（/api）
+    return '/api';
   }
   
   // デフォルト値
-  return 'http://localhost:3001';
+  return '/api';
 };
 
 // APIクライアントの基本URL

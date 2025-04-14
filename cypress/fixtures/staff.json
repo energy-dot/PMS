@@ -1,0 +1,71 @@
+[
+  {
+    "id": "1",
+    "name": "山田太郎",
+    "email": "yamada@techpartner.example.com",
+    "phone": "090-1234-5678",
+    "status": "稼働中",
+    "skills": ["Java", "Spring Boot", "Oracle", "AWS"],
+    "skillLevels": {
+      "Java": 4,
+      "Spring Boot": 3,
+      "Oracle": 4,
+      "AWS": 3
+    },
+    "experience": 8,
+    "birthDate": "1985-05-15T00:00:00.000Z",
+    "gender": "男性",
+    "address": "東京都新宿区西新宿1-1-1",
+    "resume": "8年間の基幹システム開発経験あり。大規模プロジェクトのリーダー経験複数回。",
+    "remarks": "コミュニケーション能力が高い",
+    "partnerId": "1",
+    "departmentId": "1",
+    "sectionId": "1"
+  },
+  {
+    "id": "2",
+    "name": "佐藤花子",
+    "email": "sato@infrasolution.example.com",
+    "phone": "090-2345-6789",
+    "status": "稼働中",
+    "skills": ["AWS", "Azure", "Docker", "Kubernetes"],
+    "skillLevels": {
+      "AWS": 5,
+      "Azure": 4,
+      "Docker": 4,
+      "Kubernetes": 3
+    },
+    "experience": 6,
+    "birthDate": "1988-08-20T00:00:00.000Z",
+    "gender": "女性",
+    "address": "東京都中央区銀座2-2-2",
+    "resume": "クラウドインフラ構築のスペシャリスト。AWS認定ソリューションアーキテクト。",
+    "remarks": "英語対応可能",
+    "partnerId": "2",
+    "departmentId": "3",
+    "sectionId": "5"
+  },
+  {
+    "id": "3",
+    "name": "鈴木一郎",
+    "email": "suzuki@designcreate.example.com",
+    "phone": "090-3456-7890",
+    "status": "待機中",
+    "skills": ["React", "Vue.js", "UI/UX", "Figma"],
+    "skillLevels": {
+      "React": 4,
+      "Vue.js": 3,
+      "UI/UX": 5,
+      "Figma": 4
+    },
+    "experience": 4,
+    "birthDate": "1992-11-10T00:00:00.000Z",
+    "gender": "男性",
+    "address": "東京都目黒区中目黒4-4-4",
+    "resume": "UIデザインとフロントエンド開発の経験豊富。複数のECサイト開発に参画。",
+    "remarks": "デザイン思考のワークショップ経験あり",
+    "partnerId": "3",
+    "departmentId": "2",
+    "sectionId": "3"
+  }
+]

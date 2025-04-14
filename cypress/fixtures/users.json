@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "username": "admin",
+    "password": "admin123",
+    "email": "admin@example.com",
+    "role": "admin",
+    "name": "管理者ユーザー"
+  },
+  {
+    "id": "2",
+    "username": "manager",
+    "password": "manager123",
+    "email": "manager@example.com",
+    "role": "manager",
+    "name": "マネージャーユーザー"
+  },
+  {
+    "id": "3",
+    "username": "user",
+    "password": "user123",
+    "email": "user@example.com",
+    "role": "user",
+    "name": "一般ユーザー"
+  }
+]

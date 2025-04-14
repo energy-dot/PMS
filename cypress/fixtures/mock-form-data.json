@@ -1,0 +1,25 @@
+[
+  {
+    "id": "login-form-1",
+    "title": "ログイン",
+    "fields": [
+      { "id": "username", "label": "ユーザー名", "type": "text", "required": true },
+      { "id": "password", "label": "パスワード", "type": "password", "required": true }
+    ],
+    "submitButton": { "text": "ログイン" },
+    "cancelButton": { "text": "キャンセル" }
+  },
+  {
+    "id": "registration-form-1",
+    "title": "ユーザー登録",
+    "fields": [
+      { "id": "username", "label": "ユーザー名", "type": "text", "required": true },
+      { "id": "email", "label": "メールアドレス", "type": "email", "required": true },
+      { "id": "password", "label": "パスワード", "type": "password", "required": true },
+      { "id": "confirmPassword", "label": "パスワード（確認）", "type": "password", "required": true },
+      { "id": "role", "label": "役割", "type": "select", "options": ["admin", "manager", "developer", "viewer"], "required": true }
+    ],
+    "submitButton": { "text": "登録" },
+    "cancelButton": { "text": "キャンセル" }
+  }
+]
