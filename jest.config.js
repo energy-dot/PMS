@@ -23,5 +23,5 @@ module.exports = {
     '!frontend/src/serviceWorker.ts'
   ],
   coverageDirectory: 'coverage',
-  testPathIgnorePatterns: ['/node_modules/', '/cypress/', '/backup/']
+  testPathIgnorePatterns: ['/node_modules/', '/backup/']
 };

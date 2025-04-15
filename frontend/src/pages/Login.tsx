@@ -9,12 +9,6 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   
-  // コンポーネントマウント時のデバッグログ
-  useEffect(() => {
-    console.log("Login component mounted");
-    console.log("Authentication state:", isAuthenticated);
-  }, [isAuthenticated]);
-
   // すでに認証済みの場合はダッシュボードにリダイレクト
   useEffect(() => {
     if (isAuthenticated) {
@@ -24,13 +18,10 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt with:", { username, password });
     
     try {
       await login(username, password);
-      console.log("Login success");
     } catch (err: any) {
-      console.error("Login error:", err);
       setError(err.message || '認証に失敗しました');
     }
   };

@@ -207,7 +207,9 @@ const ProjectDetail: React.FC = () => {
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">部署</th>
-                      <td className="py-2">{project.department}</td>
+                      <td className="py-2">
+                        {project.department?.name || '-'} / {project.section?.name || '-'}
+                      </td>
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">案件概要</th>

@@ -38,16 +38,11 @@ export class ProjectsService {
     project.description = createProjectDto.description || '';
     project.startDate = createProjectDto.startDate;
     project.endDate = createProjectDto.endDate;
-    project.status = createProjectDto.status || 'draft';
+    project.status = createProjectDto.status || '承認待ち';
     
-    // 部署・セクション情報
-    if (createProjectDto.departmentId) {
-      project.departmentId = createProjectDto.departmentId;
-    }
-    
-    if (createProjectDto.sectionId) {
-      project.sectionId = createProjectDto.sectionId;
-    }
+    // 部署・セクション情報 - 必須フィールドに変更
+    project.departmentId = createProjectDto.departmentId;
+    project.sectionId = createProjectDto.sectionId;
     
     // 予算・人員情報
     project.budget = createProjectDto.budget || '';
@@ -223,7 +218,7 @@ export class ProjectsService {
     project.isApproved = true;
     project.approvedBy = userId;
     project.approvedAt = new Date();
-    project.status = 'recruiting';
+    project.status = '募集中';
     
     return this.projectsRepository.save(project);
   }
@@ -235,7 +230,7 @@ export class ProjectsService {
       throw new Error('案件が見つかりません');
     }
     
-    project.status = 'rejected';
+    project.status = '差し戻し';
     project.rejectionReason = reason;
     
     return this.projectsRepository.save(project);
@@ -251,19 +246,5 @@ export class ProjectsService {
     project.status = status;
     
     return this.projectsRepository.save(project);
-  }
-
-  async findByDepartment(departmentId: string): Promise<Project[]> {
-    return this.projectsRepository.find({
-      where: { departmentId },
-      relations: ['department', 'section'],
-    });
-  }
-
-  async findByStatus(status: string): Promise<Project[]> {
-    return this.projectsRepository.find({
-      where: { status },
-      relations: ['department', 'section'],
-    });
   }
 }

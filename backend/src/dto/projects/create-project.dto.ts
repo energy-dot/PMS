@@ -4,16 +4,11 @@ export class CreateProjectDto {
   @IsString()
   name: string;
 
-  @IsString()
-  department: string;
-
-  @IsOptional()
   @IsUUID()
-  departmentId?: string;
+  departmentId: string;
 
-  @IsOptional()
   @IsUUID()
-  sectionId?: string;
+  sectionId: string;
 
   @IsOptional()
   @IsString()

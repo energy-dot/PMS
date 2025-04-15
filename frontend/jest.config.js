@@ -6,5 +6,5 @@ module.exports = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/src/test/__mocks__/fileMock.js'
   },
-  testPathIgnorePatterns: ['/node_modules/', '/cypress/']
+  testPathIgnorePatterns: ['/node_modules/']
 };

@@ -129,20 +129,4 @@ export class FileUploadService {
     
     return metadata;
   }
-
-  getMimeType(extension: string): string {
-    const mimeTypes: Record<string, string> = {
-      '.pdf': 'application/pdf',
-      '.doc': 'application/msword',
-      '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      '.xls': 'application/vnd.ms-excel',
-      '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.png': 'image/png',
-      '.txt': 'text/plain',
-    };
-    
-    return extension in mimeTypes ? mimeTypes[extension] : 'application/octet-stream';
-  }
 }

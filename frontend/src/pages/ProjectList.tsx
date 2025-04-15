@@ -60,7 +60,7 @@ const ProjectList: React.FC = () => {
         });
         setSectionsMap(sectMap);
       } catch (err) {
-        console.error('Failed to fetch departments and sections:', err);
+        // エラー処理
       }
     };
     
@@ -86,7 +86,6 @@ const ProjectList: React.FC = () => {
       setProjects(data);
     } catch (err: any) {
       setError(err.response?.data?.message || '案件データの取得に失敗しました');
-      console.error('Failed to fetch projects:', err);
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +106,8 @@ const ProjectList: React.FC = () => {
     // クライアントサイドフィルタリング（本来はAPIでの検索が望ましい）
     const filteredProjects = projects.filter(project => 
       project.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (project.department && project.department.toLowerCase().includes(searchTerm.toLowerCase()))
+      (project.department?.name && project.department.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (project.section?.name && project.section.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setProjects(filteredProjects);
   };
@@ -141,7 +141,6 @@ const ProjectList: React.FC = () => {
     const newProject: any = {
       id: `new-${Date.now()}`,
       name: '新規案件',
-      department: '未設定',
       departmentId: null,
       sectionId: null,
       startDate: today,
@@ -235,7 +234,20 @@ const ProjectList: React.FC = () => {
 
           // 必須フィールドの確認と設定
           if (!updateData.name) updateData.name = "新規案件";
-          if (!updateData.department) updateData.department = "未設定";
+          if (!updateData.departmentId) {
+            // 事業部が選択されていない場合、デフォルト値を設定
+            const defaultDeptId = Object.keys(departmentsMap)[0];
+            if (defaultDeptId) {
+              updateData.departmentId = defaultDeptId;
+            }
+          }
+          if (!updateData.sectionId && updateData.departmentId) {
+            // 部が選択されていない場合、選択された事業部の最初の部をデフォルト値に設定
+            const sectionsForDept = getSectionsByDepartment(updateData.departmentId);
+            if (sectionsForDept.length > 0) {
+              updateData.sectionId = sectionsForDept[0];
+            }
+          }
           if (!updateData.startDate) updateData.startDate = new Date();
           if (!updateData.endDate) updateData.endDate = new Date(new Date().setMonth(new Date().getMonth() + 3)); // デフォルト3ヶ月
           
@@ -267,7 +279,6 @@ const ProjectList: React.FC = () => {
     }
     
     // 単一セル編集のハンドリング（即時保存しない場合）
-    console.log('Cell value changed:', params);
   };
 
   // 行削除時のハンドラ
@@ -340,12 +351,6 @@ const ProjectList: React.FC = () => {
       minWidth: 180,
       cellStyle: { textOverflow: 'ellipsis' },
     },
-    { 
-      field: 'department', 
-      headerName: '部署（従来）', 
-      width: 150,
-      editable: true,
-    },
     {
       field: 'departmentId',
       headerName: '事業部',
@@ -355,7 +360,7 @@ const ProjectList: React.FC = () => {
       cellEditorParams: {
         values: Object.keys(departmentsMap),
         valueLabels: departmentsMap,
-        allowEmpty: true,
+        allowEmpty: false,
         emptyText: '選択してください'
       },
       valueFormatter: (params) => getDepartmentName(params.value),
@@ -395,7 +400,7 @@ const ProjectList: React.FC = () => {
         return { 
           values: filteredSectionIds,
           valueLabels: filteredSectionLabels,
-          allowEmpty: true,
+          allowEmpty: false,
           emptyText: '選択してください'
         };
       },
@@ -505,154 +510,86 @@ const ProjectList: React.FC = () => {
           <div>
             <button 
               className="action-button px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 focus:outline-none" 
-              onClick={() => handleViewProject(id)}
-              disabled={isEditable}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleViewProject(id);
+              }}
             >
               詳細
             </button>
           </div>
         );
-      }
+      },
+      cellStyle: { textAlign: 'center' }
     }
   ];
 
-  // APIがまだ整備されていない場合のフォールバックデータ
-  const fallbackData: Project[] = [
-    { 
-      id: '1', 
-      name: 'Javaエンジニア募集', 
-      department: '開発1部', 
-      departmentId: null,
-      sectionId: null,
-      description: 'ECサイト開発のためのJavaエンジニアを募集します',
-      startDate: new Date('2025-05-01'),
-      endDate: new Date('2025-10-31'),
-      status: '募集中',
-      requiredSkills: 'Java, Spring Boot, MySQL',
-      requiredExperience: 'Javaでの開発経験3年以上',
-      requiredNumber: 2,
-      budget: '700,000〜850,000円',
-      location: '東京都中央区',
-      workingHours: '9:30〜18:30',
-      isRemote: true,
-      remarks: '',
-      createdAt: new Date('2025-04-01'),
-      updatedAt: new Date('2025-04-01')
-    },
-    { 
-      id: '2', 
-      name: 'インフラエンジニア', 
-      department: '基盤開発部', 
-      departmentId: null,
-      sectionId: null,
-      description: 'クラウドインフラ構築・運用のエンジニアを募集します',
-      startDate: new Date('2025-05-15'),
-      endDate: new Date('2025-11-30'),
-      status: '選考中',
-      requiredSkills: 'AWS, Docker, Kubernetes',
-      requiredExperience: 'AWSでの構築経験2年以上',
-      requiredNumber: 1,
-      budget: '800,000〜900,000円',
-      location: '東京都港区',
-      workingHours: '9:00〜18:00',
-      isRemote: true,
-      remarks: '',
-      createdAt: new Date('2025-04-05'),
-      updatedAt: new Date('2025-04-10')
-    },
-    { 
-      id: '3', 
-      name: 'フロントエンドエンジニア', 
-      department: '開発2部', 
-      departmentId: null,
-      sectionId: null,
-      description: 'SPAフロントエンド開発のエンジニアを募集します',
-      startDate: new Date('2025-06-01'),
-      endDate: new Date('2025-09-30'),
-      status: '承認待ち',
-      requiredSkills: 'React, TypeScript, GraphQL',
-      requiredExperience: 'SPAフレームワークでの開発経験2年以上',
-      requiredNumber: 1,
-      budget: '750,000〜850,000円',
-      location: '東京都新宿区',
-      workingHours: '10:00〜19:00',
-      isRemote: true,
-      remarks: '',
-      createdAt: new Date('2025-04-12'),
-      updatedAt: new Date('2025-04-12')
-    },
-  ];
+  // 事業部・部署フィルターの変更ハンドラ
+  const handleDepartmentChange = (departmentId: string | null) => {
+    setSelectedDepartmentId(departmentId);
+    setSelectedSectionId(null); // 事業部が変更されたら部署フィルターをリセット
+  };
 
-  // 表示用のデータ（APIから取得したデータがない場合はフォールバックデータを使用）
-  const displayProjects = projects.length > 0 ? projects : fallbackData;
+  const handleSectionChange = (sectionId: string | null) => {
+    setSelectedSectionId(sectionId);
+  };
+
+  // アクションボタン定義
+  const actionButtons = [
+    {
+      label: isEditable ? '編集モード終了' : '編集モード',
+      onClick: toggleEditMode,
+      variant: isEditable ? 'warning' : 'primary',
+    },
+    {
+      label: '新規登録',
+      onClick: handleCreateProject,
+      variant: 'success' as const,
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+        </svg>
+      )
+    }
+  ];
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="page-title">案件一覧</h1>
+      <div className="mb-4 flex flex-wrap items-center gap-4">
+        <div className="flex-grow">
+          <DepartmentSectionFilter
+            onDepartmentChange={handleDepartmentChange}
+            onSectionChange={handleSectionChange}
+            selectedDepartmentId={selectedDepartmentId}
+            selectedSectionId={selectedSectionId}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="案件名で検索..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            className="w-64"
+          />
+          <Button onClick={handleSearch} variant="primary" size="sm">検索</Button>
+        </div>
       </div>
-      
+
       {error && <Alert variant="error" message={error} onClose={() => setError(null)} />}
-      
-      <div className="card p-4 mb-4">
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
-          {/* 検索ボックス */}
-          <div className="w-full md:w-1/3">
-            <Input 
-              label="キーワード検索"
-              placeholder="案件名で検索" 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          
-          {/* 事業部・部フィルター */}
-          <div className="w-full md:w-2/3">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              事業部・部フィルター
-            </label>
-            <DepartmentSectionFilter
-              selectedDepartmentId={selectedDepartmentId}
-              selectedSectionId={selectedSectionId}
-              onDepartmentChange={setSelectedDepartmentId}
-              onSectionChange={setSelectedSectionId}
-              showAllOption={true}
-              className="md:flex-row"
-            />
-          </div>
-        </div>
-        
-        <div className="flex justify-end">
-          <Button onClick={handleSearch}>検索</Button>
-        </div>
-      </div>
-      
+
       <DataGrid
         title="案件一覧"
-        rowData={displayProjects}
+        rowData={projects}
         columnDefs={columnDefs}
         pagination={true}
         paginationPageSize={10}
         onRowClick={handleViewProject}
-        actionButtons={[
-          {
-            label: isEditable ? '編集モード終了' : '編集モード',
-            onClick: toggleEditMode,
-            variant: isEditable ? 'warning' : 'primary',
-          },
-          {
-            label: '新規登録',
-            onClick: handleCreateProject,
-            variant: 'success',
-            icon: (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            )
-          }
-        ]}
+        actionButtons={actionButtons}
         exportOptions={{
           fileName: '案件一覧',
+          sheetName: '案件'
         }}
         loading={isLoading}
         error={error}
@@ -665,57 +602,6 @@ const ProjectList: React.FC = () => {
 
       {/* エクセルライクなグリッド表示のためのカスタムCSS */}
       <style jsx global>{`
-        /* ステータス表示用の基本スタイル */
-        .status-badge {
-          padding: 0.25rem 0.5rem;
-          border-radius: 9999px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          display: inline-block;
-          line-height: 1;
-        }
-
-        /* AG-Grid用のカスタムスタイル */
-        .ag-theme-alpine .ag-header {
-          font-weight: bold;
-        }
-
-        .ag-theme-alpine .ag-header-cell-label {
-          justify-content: center;
-        }
-
-        /* 編集モード時のセルスタイル */
-        .ag-theme-alpine-edit-mode .ag-cell {
-          transition: all 0.2s;
-        }
-
-        .ag-theme-alpine-edit-mode .ag-cell-editable:hover {
-          background-color: rgba(240, 248, 255, 0.6);
-          box-shadow: inset 0 0 0 1px #4299e1;
-        }
-
-        /* 編集中のセルスタイル */
-        .ag-theme-alpine-edit-mode .ag-cell-focus.ag-cell-inline-editing {
-          padding: 0 !important;
-          height: 100% !important;
-        }
-
-        /* タグ表示用スタイル */
-        .tag-display {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-        }
-
-        .tag-item {
-          background-color: rgba(59, 130, 246, 0.1);
-          color: rgba(37, 99, 235, 1);
-          padding: 0 8px;
-          border-radius: 9999px;
-          font-size: 0.75rem;
-          line-height: 1.5;
-        }
-        
         /* 編集モード時のセルスタイル強化 */
         .ag-theme-alpine-edit-mode .ag-cell-editable {
           background-color: rgba(240, 248, 255, 0.2);

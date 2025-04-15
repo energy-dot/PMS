@@ -1,14 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
 import { Department } from './department.entity';
-// 循環参照を避けるためにTypeとしてインポート
-import type { Project } from './project.entity';
+import { Project } from './project.entity';
 
 @Entity('sections')
+@Index('IDX_SECTION_CODE', ['code'], { unique: true })
+@Index('IDX_SECTION_DEPARTMENT', ['departmentId'])
 export class Section {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: false })
   departmentId: string;
 
   @Column({ unique: true })
@@ -23,14 +24,13 @@ export class Section {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Department, department => department.sections)
+  @ManyToOne(() => Department, department => department.sections, {
+    onDelete: 'RESTRICT'
+  })
   @JoinColumn({ name: 'department_id' })
   department: Department;
 
-  // プロジェクトとの関連 - 文字列で参照
-  @OneToMany('Project', (project: any) => project.section, {
-    cascade: false
-  })
+  @OneToMany(() => Project, project => project.section)
   projects: Project[];
 
   @CreateDateColumn()

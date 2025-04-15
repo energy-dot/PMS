@@ -38,15 +38,6 @@ export class Partner {
   @Column({ nullable: true })
   businessCategory: string;
 
-  @Column({ nullable: true })
-  establishedYear: number;
-
-  @Column({ nullable: true })
-  employeeCount: number;
-
-  @Column({ nullable: true })
-  annualRevenue: string;
-
   @Column({ default: false })
   antisocialCheckCompleted: boolean;
 

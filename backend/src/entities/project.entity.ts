@@ -1,10 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Contract } from './contract.entity';
-// 循環参照を避けるためにTypeとしてインポート
-import type { Section } from './section.entity';
-import type { Department } from './department.entity';
 import { Application } from './application.entity';
 import { Evaluation } from './evaluation.entity';
+import { Department } from './department.entity';
+import { Section } from './section.entity';
 
 @Entity('projects')
 export class Project {
@@ -14,26 +13,24 @@ export class Project {
   @Column()
   name: string;
 
-  // 旧カラム - 移行期間中は残しておく
-  @Column()
-  department: string;
-
-  // 新カラム - 事業部との関連
-  @Column({ nullable: true })
+  @Column({ nullable: false })
+  @Index('IDX_PROJECT_DEPARTMENT')
   departmentId: string;
 
-  @ManyToOne('Department', (department: any) => department.projects, {
-    cascade: false
+  @ManyToOne(() => Department, department => department.projects, {
+    cascade: false,
+    onDelete: 'RESTRICT'
   })
   @JoinColumn({ name: 'department_id' })
-  departmentObj: Department;
+  department: Department;
 
-  // 新カラム - 部との関連
-  @Column({ nullable: true })
+  @Column({ nullable: false })
+  @Index('IDX_PROJECT_SECTION')
   sectionId: string;
 
-  @ManyToOne('Section', (section: any) => section.projects, {
-    cascade: false
+  @ManyToOne(() => Section, section => section.projects, {
+    cascade: false,
+    onDelete: 'RESTRICT'
   })
   @JoinColumn({ name: 'section_id' })
   section: Section;
@@ -56,23 +53,11 @@ export class Project {
   })
   status: string;
 
-  @Column({ nullable: true, type: 'varchar', default: '承認待ち' })
-  approvalStatus: string;
-
-  @Column({ nullable: true })
-  approverId: string;
-
-  @Column({ nullable: true })
-  approvalDate: Date;
-
   @Column({ nullable: true })
   rejectionReason: string;
 
   @Column({ nullable: true })
   requiredSkills: string;
-
-  @Column({ nullable: true })
-  requiredExperience: string;
 
   @Column({ nullable: true })
   requiredNumber: number;
@@ -93,10 +78,7 @@ export class Project {
   remarks: string;
 
   @Column({ nullable: true })
-  requiredHeadcount: number;
-
-  @Column({ nullable: true, default: 0 })
-  currentHeadcount: number;
+  requiredNumber: number;
 
   // プロジェクトの契約タイプ
   @Column({ nullable: true })
