@@ -9,6 +9,7 @@ import applicationService, { Application } from '../services/applicationService'
 import projectService from '../services/projectService';
 import partnerService from '../services/partnerService';
 import { DateEditor, SelectEditor } from '../components/grids/editors';
+import '../components/grids/DataGrid.css';
 
 const ApplicationList: React.FC = () => {
   const [applications, setApplications] = useState<Application[]>([]);
