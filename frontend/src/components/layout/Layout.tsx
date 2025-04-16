@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { useAuthStore } from '../../store/user/authStore';
+import { useAuthStore } from '../../store/authStore';
 import Sidebar from './Sidebar';
 import './Layout.css'; // CSSファイルをインポート
 

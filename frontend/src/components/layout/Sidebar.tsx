@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, Link } from 'react-router-dom';
-import { useAuthStore } from '../../store/user/authStore';
+import { useAuthStore } from '../../store/authStore';
 import NotificationBell from '../notifications/NotificationBell';
 import { menuItems, MenuItem } from '../../constants/menuItems';
 
