@@ -373,25 +373,20 @@ const PartnerList: React.FC = () => {
     <div>
       <DataGrid
         title="パートナー会社一覧"
-        rowData={displayPartners}
-        columnDefs={columnDefs}
+        data={displayPartners}
+        columns={columnDefs}
         actionButtons={actionButtons}
         onRowClick={handleRowClick}
         loading={isLoading}
-        error={error}
-        exportOptions={{
-          fileName: 'パートナー会社一覧',
-          sheetName: 'パートナー会社',
-        }}
-        height={600}
-        rowSelection={isEditable ? 'multiple' : 'single'}
-        editable={isEditable}
-        onCellValueChanged={handleCellValueChanged}
-        onRowDeleted={handleRowDeleted}
+        emptyMessage={error || 'データがありません'}
+        pageSize={10}
+        pagination={true}
+        checkboxSelection={isEditable}
       />
 
       {/* エクセルライクなグリッド表示のためのカスタムCSS */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{
+        __html: `
         /* 編集モード時のセルスタイル強化 */
         .ag-theme-alpine-edit-mode .ag-cell-editable {
           background-color: rgba(240, 248, 255, 0.2);
@@ -412,7 +407,8 @@ const PartnerList: React.FC = () => {
         .ag-row-modified {
           background-color: rgba(255, 255, 224, 0.4) !important;
         }
-      `}</style>
+        `
+      }} />
     </div>
   );
 };
