@@ -8,6 +8,7 @@ import contractService, { Contract } from '../services/contractService';
 import staffService from '../services/staffService';
 import projectService from '../services/projectService';
 import { DateEditor, SelectEditor, NumberEditor } from '../components/grids/editors';
+import '../components/grids/DataGrid.css';
 
 const ContractList: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -449,16 +450,8 @@ const ContractList: React.FC = () => {
           }
         }}
         actionButtons={actionButtons}
-        exportOptions={{
-          fileName: '契約一覧',
-          sheetName: '契約',
-        }}
         loading={isLoading}
-        error={error}
-        editable={isEditable}
-        onCellValueChanged={handleCellValueChanged}
-        onRowDeleted={handleRowDeleted}
-        height={600}
+        emptyMessage={error || 'データがありません'}
         checkboxSelection={isEditable}
       />
 
