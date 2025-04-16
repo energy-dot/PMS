@@ -1,4 +1,4 @@
-// components/notifications/NotificationBell.tsxの修正
+// components/notifications/NotificationBell.tsx
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -27,7 +27,8 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
       setError(null);
 
       try {
-        const data = await notificationService.getUserNotifications(userId);
+        // 修正: getUserNotifications関数の代わりにgetNotificationsByUser関数を使用
+        const data = await notificationService.getNotificationsByUser(userId);
         setNotifications(data);
         setUnreadCount(data.filter(n => !n.isRead).length);
       } catch (err) {
@@ -50,7 +51,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
   const handleNotificationClick = async (notification: Notification) => {
     if (!notification.isRead) {
       try {
-        await notificationService.markAsRead(notification.id || '');
+        await notificationService.markNotificationAsRead(notification.id || '');
 
         // 通知の既読状態を更新
         setNotifications(prev =>
@@ -73,49 +74,69 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
   };
 
   return (
-    <div className="notification-bell">
-      <button className="notification-bell-button" onClick={toggleDropdown} aria-label="通知">
-        <i className="icon-bell"></i>
-        {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+    <div className="relative">
+      <button 
+        className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 focus:outline-none" 
+        onClick={toggleDropdown} 
+        aria-label="通知"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+        </svg>
+        {unreadCount > 0 && (
+          <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+            {unreadCount}
+          </span>
+        )}
       </button>
 
       {showDropdown && (
-        <div className="notification-dropdown">
-          <div className="notification-header">
-            <h3>通知</h3>
-            <Link to="/notifications" onClick={() => setShowDropdown(false)}>
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg z-50 overflow-hidden">
+          <div className="px-4 py-2 bg-gray-50 border-b flex justify-between items-center">
+            <h3 className="text-sm font-medium text-gray-700">通知</h3>
+            <Link 
+              to="/notifications" 
+              onClick={() => setShowDropdown(false)}
+              className="text-xs text-blue-600 hover:text-blue-800"
+            >
               すべて表示
             </Link>
           </div>
 
-          <div className="notification-list">
+          <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="notification-loading">読み込み中...</div>
+              <div className="p-4 text-center text-sm text-gray-500">読み込み中...</div>
             ) : error ? (
-              <div className="notification-error">{error}</div>
+              <div className="p-4 text-center text-sm text-red-500">{error}</div>
             ) : notifications.length === 0 ? (
-              <div className="notification-empty">通知はありません</div>
+              <div className="p-4 text-center text-sm text-gray-500">通知はありません</div>
             ) : (
               notifications.slice(0, 5).map(notification => (
                 <div
                   key={notification.id}
-                  className={`notification-item ${!notification.isRead ? 'unread' : ''}`}
+                  className={`p-4 border-b hover:bg-gray-50 cursor-pointer ${!notification.isRead ? 'bg-blue-50' : ''}`}
                   onClick={() => handleNotificationClick(notification)}
                 >
-                  <div className="notification-title">{notification.title}</div>
-                  <div className="notification-message">{notification.message}</div>
-                  <div className="notification-time">{notification.createdAt}</div>
+                  <div className="font-medium text-sm">{notification.title}</div>
+                  <div className="text-sm text-gray-600 mt-1">{notification.message}</div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    {new Date(notification.createdAt).toLocaleString('ja-JP')}
+                  </div>
                 </div>
               ))
             )}
           </div>
 
-          <div className="notification-footer">
+          <div className="px-4 py-2 bg-gray-50 border-t">
             <button
-              className="mark-all-read"
+              className={`w-full py-1 text-xs rounded ${
+                unreadCount === 0 
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
               onClick={async () => {
                 try {
-                  await notificationService.markAllAsRead(userId);
+                  await notificationService.markAllNotificationsAsRead(userId);
                   setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
                   setUnreadCount(0);
                 } catch (err) {

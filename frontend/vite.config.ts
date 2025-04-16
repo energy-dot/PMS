@@ -53,7 +53,12 @@ export default defineConfig(({ mode }) => {
       port,
       host: true,  // ネットワーク上のすべてのアドレスでリッスン
       strictPort: false, // ポートが使用中の場合、自動的に次のポートを試行
-      allowedHosts: 'all', // すべてのホストを許可（本番環境では適切に制限すべき）
+      allowedHosts: [
+        'localhost',
+        '127.0.0.1',
+        '.manus.computer', // manusドメインのすべてのサブドメインを許可
+        '3002-i9e1wxfrfavydhnx4domd-faacec25.manus.computer' // 特定のドメインを明示的に許可
+      ],
       // 開発時にCORSエラーを防ぐためにプロキシを設定
       proxy: {
         '/api': {
@@ -62,6 +67,11 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, '')
         }
+      },
+      cors: {
+        origin: '*', // すべてのオリジンからのリクエストを許可
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        credentials: true
       }
     },
   };

@@ -52,6 +52,24 @@ export const getNotificationsByUser = async (userId: string): Promise<Notificati
 };
 
 /**
+ * ユーザーの通知一覧を取得する（getUserNotifications関数の追加）
+ * NotificationBellコンポーネントとの互換性のために追加
+ * @returns 通知の配列
+ */
+export const getUserNotifications = async (): Promise<Notification[]> => {
+  try {
+    // デフォルトユーザーIDを使用
+    const defaultUserId = 'user-1';
+    
+    // 既存の関数を呼び出す
+    return await getNotificationsByUser(defaultUserId);
+  } catch (error) {
+    console.error('通知情報の取得に失敗しました', error);
+    throw error;
+  }
+};
+
+/**
  * 特定の通知情報を取得する
  * @param id 通知ID
  * @returns 通知情報
@@ -157,6 +175,7 @@ export const deleteNotification = async (id: string): Promise<{ success: boolean
 // デフォルトエクスポートを追加
 const notificationService = {
   getNotificationsByUser,
+  getUserNotifications, // 新しく追加した関数をエクスポート
   getNotificationById,
   markNotificationAsRead,
   markAllNotificationsAsRead,

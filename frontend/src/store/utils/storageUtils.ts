@@ -24,10 +24,18 @@ export const safeStorage = {
 
       // テスト用のキーを設定して削除することでアクセス権を確認
       const testKey = '__storage_test__';
-      localStorage.setItem(testKey, 'test');
-      localStorage.removeItem(testKey);
-      return true;
+      
+      // try-catchブロックを分割して、より細かくエラーをキャッチ
+      try {
+        localStorage.setItem(testKey, 'test');
+        localStorage.removeItem(testKey);
+        return true;
+      } catch (e) {
+        console.warn('ローカルストレージへのアクセスが制限されています:', e);
+        return false;
+      }
     } catch (e) {
+      console.warn('ストレージ検証中にエラーが発生しました:', e);
       return false;
     }
   },
@@ -46,7 +54,7 @@ export const safeStorage = {
           return storageValue;
         }
       } catch (error) {
-        console.warn('ストレージ読み取りエラー、メモリストレージを使用します');
+        console.warn('ストレージ読み取りエラー、メモリストレージを使用します:', error);
       }
     }
 
@@ -63,7 +71,7 @@ export const safeStorage = {
       try {
         localStorage.setItem(key, value);
       } catch (error) {
-        console.warn('ストレージ書き込みエラー、メモリストレージのみ使用します');
+        console.warn('ストレージ書き込みエラー、メモリストレージのみ使用します:', error);
       }
     }
   },
@@ -77,7 +85,7 @@ export const safeStorage = {
       try {
         localStorage.removeItem(key);
       } catch (error) {
-        console.warn('ストレージ削除エラー');
+        console.warn('ストレージ削除エラー:', error);
       }
     }
   },
@@ -89,13 +97,26 @@ export const safeStorage = {
  */
 export const createSafeStorage = () => ({
   getItem: (name: string) => {
-    const value = safeStorage.getItem(name);
-    return value ? JSON.parse(value) : null;
+    try {
+      const value = safeStorage.getItem(name);
+      return value ? JSON.parse(value) : null;
+    } catch (error) {
+      console.error('ストレージからの読み取りに失敗しました:', error);
+      return null;
+    }
   },
   setItem: (name: string, value: any) => {
-    safeStorage.setItem(name, JSON.stringify(value));
+    try {
+      safeStorage.setItem(name, JSON.stringify(value));
+    } catch (error) {
+      console.error('ストレージへの書き込みに失敗しました:', error);
+    }
   },
   removeItem: (name: string) => {
-    safeStorage.removeItem(name);
+    try {
+      safeStorage.removeItem(name);
+    } catch (error) {
+      console.error('ストレージからの削除に失敗しました:', error);
+    }
   },
 });

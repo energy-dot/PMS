@@ -1,7 +1,5 @@
-// store/authStore.tsの修正 - StoreUser型定義の修正
-
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { User } from '../shared-types';
 
 // ストアで使用するユーザー型
@@ -25,6 +23,9 @@ interface AuthState {
   logout: () => void;
   clearError: () => void;
 }
+
+// メモリストレージ（フォールバック用）
+const memoryStorage: Record<string, any> = {};
 
 // 認証ストアの作成
 export const useAuthStore = create<AuthState>()(
@@ -58,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
           };
 
           // 認証成功時の処理
-          set({
+          const authState = {
             isAuthenticated: true,
             user: {
               id: mockResponse.user.id,
@@ -70,7 +71,19 @@ export const useAuthStore = create<AuthState>()(
             },
             token: mockResponse.token,
             loading: false,
-          });
+          };
+          
+          // メモリストレージに直接保存（フォールバック用）
+          memoryStorage['auth-storage'] = {
+            state: {
+              isAuthenticated: authState.isAuthenticated,
+              user: authState.user,
+              token: authState.token,
+            },
+            version: 0,
+          };
+          
+          set(authState);
         } catch (error) {
           // 認証失敗時の処理
           set({
@@ -85,6 +98,9 @@ export const useAuthStore = create<AuthState>()(
 
       // ログアウト処理
       logout: () => {
+        // メモリストレージからも削除
+        delete memoryStorage['auth-storage'];
+        
         set({
           isAuthenticated: false,
           user: null,
@@ -104,6 +120,71 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         token: state.token,
       }),
+      storage: {
+        getItem: (name) => {
+          try {
+            // まずメモリストレージをチェック
+            if (memoryStorage[name]) {
+              return Promise.resolve(memoryStorage[name]);
+            }
+            
+            // ブラウザ環境でない場合
+            if (typeof window === 'undefined' || !window.localStorage) {
+              return Promise.resolve(null);
+            }
+            
+            // localStorageを試行
+            try {
+              const value = localStorage.getItem(name);
+              if (value) {
+                const parsed = JSON.parse(value);
+                // メモリストレージにも保存
+                memoryStorage[name] = parsed;
+                return Promise.resolve(parsed);
+              }
+              return Promise.resolve(null);
+            } catch (e) {
+              console.warn('ローカルストレージの読み取りに失敗しました:', e);
+              return Promise.resolve(null);
+            }
+          } catch (e) {
+            console.error('ストレージアクセスエラー:', e);
+            return Promise.resolve(null);
+          }
+        },
+        setItem: (name, value) => {
+          // メモリストレージに保存
+          memoryStorage[name] = value;
+          
+          // ブラウザ環境でない場合
+          if (typeof window === 'undefined' || !window.localStorage) {
+            return Promise.resolve();
+          }
+          
+          try {
+            localStorage.setItem(name, JSON.stringify(value));
+          } catch (e) {
+            console.warn('ローカルストレージの書き込みに失敗しました:', e);
+          }
+          return Promise.resolve();
+        },
+        removeItem: (name) => {
+          // メモリストレージから削除
+          delete memoryStorage[name];
+          
+          // ブラウザ環境でない場合
+          if (typeof window === 'undefined' || !window.localStorage) {
+            return Promise.resolve();
+          }
+          
+          try {
+            localStorage.removeItem(name);
+          } catch (e) {
+            console.warn('ローカルストレージの削除に失敗しました:', e);
+          }
+          return Promise.resolve();
+        }
+      }
     }
   )
 );
