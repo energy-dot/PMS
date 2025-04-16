@@ -97,7 +97,10 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
+  const handleDeleteUser = async (userId: string, e: React.MouseEvent) => {
+    // イベント伝播を防止
+    e.stopPropagation();
+    
     if (window.confirm('このユーザーを削除してもよろしいですか？')) {
       try {
         await deleteUser(userId);
@@ -106,6 +109,17 @@ const UserManagement: React.FC = () => {
         console.error('Failed to delete user:', error);
       }
     }
+  };
+
+  const handleEditUser = (user: User, e: React.MouseEvent) => {
+    // イベント伝播を防止
+    e.stopPropagation();
+    handleOpenModal(user);
+  };
+
+  const handleRowClick = (user: User) => {
+    // 行クリック時の処理（必要に応じて実装）
+    console.log('Row clicked:', user);
   };
 
   return (
@@ -130,17 +144,24 @@ const UserManagement: React.FC = () => {
         </thead>
         <tbody>
           {users.map(user => (
-            <tr key={user.id}>
+            <tr key={user.id} onClick={() => handleRowClick(user)} style={{ cursor: 'pointer' }}>
               <td>{user.username}</td>
               <td>{user.fullName}</td>
               <td>{user.email}</td>
               <td>{user.role}</td>
               <td>{user.isActive ? '有効' : '無効'}</td>
               <td>
-                <Button variant="info" className="me-2" onClick={() => handleOpenModal(user)}>
+                <Button 
+                  variant="info" 
+                  className="me-2" 
+                  onClick={(e) => handleEditUser(user, e)}
+                >
                   編集
                 </Button>
-                <Button variant="danger" onClick={() => handleDeleteUser(user.id!)}>
+                <Button 
+                  variant="danger" 
+                  onClick={(e) => handleDeleteUser(user.id!, e)}
+                >
                   削除
                 </Button>
               </td>

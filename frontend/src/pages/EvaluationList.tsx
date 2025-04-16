@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/Button';
 import Alert from '../components/common/Alert';
@@ -76,6 +76,51 @@ const generateDummyEvaluations = (): Evaluation[] => {
   ];
 };
 
+// スコア表示用のカスタムセルレンダラー
+const ScoreCellRenderer: React.FC<ICellRendererParams> = (props) => {
+  const score = props.value;
+  let color = 'black';
+  if (score >= 4.5) color = 'green';
+  else if (score >= 3.5) color = 'blue';
+  else if (score >= 2.5) color = 'orange';
+  else color = 'red';
+
+  return <span style={{ color, fontWeight: 'bold' }}>{score}</span>;
+};
+
+// 操作ボタン用のカスタムセルレンダラー
+const ActionCellRenderer: React.FC<ICellRendererParams> = (props) => {
+  const navigate = useNavigate();
+  const evaluationId = props.data.id;
+
+  const handleView = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/evaluations/${evaluationId}`);
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/evaluations/${evaluationId}/edit`);
+  };
+
+  return (
+    <div>
+      <button 
+        className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs mr-2"
+        onClick={handleView}
+      >
+        詳細
+      </button>
+      <button 
+        className="bg-green-500 hover:bg-green-700 text-white py-1 px-2 rounded text-xs"
+        onClick={handleEdit}
+      >
+        編集
+      </button>
+    </div>
+  );
+};
+
 const EvaluationList: React.FC = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -126,40 +171,12 @@ const EvaluationList: React.FC = () => {
       sortable: true,
       filter: true,
       width: 120,
-      cellRenderer: (params: any) => {
-        const score = params.value;
-        let color = 'black';
-        if (score >= 4.5) color = 'green';
-        else if (score >= 3.5) color = 'blue';
-        else if (score >= 2.5) color = 'orange';
-        else color = 'red';
-
-        return `<span style="color:${color};font-weight:bold;">${score}</span>`;
-      },
+      cellRenderer: ScoreCellRenderer
     },
     {
       headerName: '操作',
       width: 180,
-      cellRenderer: (params: any) => {
-        return `
-          <button data-action="view" class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs mr-2">
-            詳細
-          </button>
-          <button data-action="edit" class="bg-green-500 hover:bg-green-700 text-white py-1 px-2 rounded text-xs">
-            編集
-          </button>
-        `;
-      },
-      onCellClicked: (params: any) => {
-        const action = params.event.target.getAttribute('data-action');
-        const evaluationId = params.data.id;
-
-        if (action === 'view') {
-          navigate(`/evaluations/${evaluationId}`);
-        } else if (action === 'edit') {
-          navigate(`/evaluations/${evaluationId}/edit`);
-        }
-      },
+      cellRenderer: ActionCellRenderer
     },
   ];
 

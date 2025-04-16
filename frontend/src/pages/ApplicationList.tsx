@@ -215,7 +215,14 @@ const ApplicationList: React.FC = () => {
       field: 'desiredRate',
       headerName: '希望単価',
       width: 120,
-      valueFormatter: params => params.value || '-',
+      valueFormatter: params => {
+        if (!params.value) return '-';
+        return new Intl.NumberFormat('ja-JP', {
+          style: 'currency',
+          currency: 'JPY',
+          maximumFractionDigits: 0,
+        }).format(params.value);
+      },
     },
     {
       field: 'skillSummary',
@@ -233,13 +240,19 @@ const ApplicationList: React.FC = () => {
           <div className="flex space-x-1">
             <button
               className="action-button px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 focus:outline-none"
-              onClick={() => handleViewApplication(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleViewApplication(id);
+              }}
             >
               詳細
             </button>
             <button
               className="action-button px-2 py-1 bg-red-100 text-red-800 text-xs rounded hover:bg-red-200 focus:outline-none"
-              onClick={() => handleDeleteApplication(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteApplication(id);
+              }}
             >
               削除
             </button>
@@ -248,6 +261,63 @@ const ApplicationList: React.FC = () => {
       },
     },
   ];
+
+  // APIがまだ整備されていない場合のフォールバックデータ
+  const fallbackData: Application[] = [
+    {
+      id: '1',
+      applicantName: '山田 太郎',
+      projectId: '1',
+      partnerId: '1',
+      applicationDate: new Date('2025-04-01'),
+      status: '書類選考中',
+      desiredRate: 750000,
+      skillSummary: 'React, TypeScript, Node.js, 5年の開発経験',
+    },
+    {
+      id: '2',
+      applicantName: '佐藤 次郎',
+      projectId: '2',
+      partnerId: '2',
+      applicationDate: new Date('2025-04-02'),
+      status: '面談調整中',
+      desiredRate: 800000,
+      skillSummary: 'Java, Spring Boot, AWS, 7年の開発経験',
+    },
+    {
+      id: '3',
+      applicantName: '鈴木 三郎',
+      projectId: '1',
+      partnerId: '3',
+      applicationDate: new Date('2025-04-03'),
+      status: '書類OK',
+      desiredRate: 700000,
+      skillSummary: 'Python, Django, Docker, 3年の開発経験',
+    },
+    {
+      id: '4',
+      applicantName: '高橋 四郎',
+      projectId: '3',
+      partnerId: '1',
+      applicationDate: new Date('2025-04-04'),
+      status: '面談NG',
+      desiredRate: 850000,
+      skillSummary: 'C#, .NET, Azure, 6年の開発経験',
+    },
+    {
+      id: '5',
+      applicantName: '田中 五郎',
+      projectId: '2',
+      partnerId: '2',
+      applicationDate: new Date('2025-04-05'),
+      status: '内定',
+      desiredRate: 900000,
+      skillSummary: 'PHP, Laravel, MySQL, 4年の開発経験',
+    },
+  ];
+
+  // 表示用のデータ（APIから取得したデータがない場合はフォールバックデータを使用）
+  const displayApplications = applications.length > 0 ? applications : fallbackData;
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -307,15 +377,14 @@ const ApplicationList: React.FC = () => {
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <DataGrid
-          rowData={applications}
-          columnDefs={columnDefs}
+          data={displayApplications}
+          columns={columnDefs}
           pagination={true}
-          paginationPageSize={10}
-          domLayout="autoHeight"
-          isLoading={isLoading}
-          onRowDoubleClicked={params => {
-            if (params.data) {
-              handleViewApplication(params.data.id);
+          pageSize={10}
+          loading={isLoading}
+          onRowClick={params => {
+            if (params.id) {
+              handleViewApplication(params.id);
             }
           }}
         />

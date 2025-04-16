@@ -634,6 +634,12 @@ const Reports: React.FC = () => {
                   pagination={true}
                   paginationPageSize={10}
                   domLayout="autoHeight"
+                  onCellClicked={(params) => {
+                    // セルクリック時のイベント伝播を防止
+                    if (params.event) {
+                      params.event.stopPropagation();
+                    }
+                  }}
                 />
               </div>
             )}

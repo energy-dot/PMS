@@ -31,22 +31,10 @@ export const menuItems: MenuItem[] = [
     roles: ['partner_manager', 'admin'],
   },
   {
-    path: '/staff',
-    label: 'スタッフ管理',
-    icon: 'people',
-    roles: ['partner_manager', 'admin'],
-  },
-  {
     path: '/projects',
-    label: 'プロジェクト管理',
+    label: '案件管理',
     icon: 'assignment',
-    roles: ['developer', 'partner_manager', 'admin', 'viewer'],
-  },
-  {
-    path: '/applications',
-    label: '申請管理',
-    icon: 'description',
-    roles: ['developer', 'partner_manager', 'admin'],
+    roles: ['partner_manager', 'admin'],
   },
   {
     path: '/contracts',
@@ -58,6 +46,12 @@ export const menuItems: MenuItem[] = [
     path: '/evaluations',
     label: '評価管理',
     icon: 'star',
+    roles: ['developer', 'partner_manager', 'admin'],
+  },
+  {
+    path: '/applications',
+    label: '申請管理',
+    icon: 'description',
     roles: ['developer', 'partner_manager', 'admin'],
   },
   {

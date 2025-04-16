@@ -346,7 +346,10 @@ const ContractList: React.FC = () => {
             <div className="flex space-x-1">
               <button
                 className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 focus:outline-none"
-                onClick={() => handleViewContract(id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewContract(id);
+                }}
               >
                 詳細
               </button>
@@ -436,11 +439,15 @@ const ContractList: React.FC = () => {
 
       <DataGrid
         title="契約一覧"
-        rowData={displayContracts}
-        columnDefs={columnDefs}
+        data={displayContracts}
+        columns={columnDefs}
         pagination={true}
-        paginationPageSize={10}
-        onRowClick={handleViewContract}
+        pageSize={10}
+        onRowClick={(data) => {
+          if (data.id) {
+            handleViewContract(data.id);
+          }
+        }}
         actionButtons={actionButtons}
         exportOptions={{
           fileName: '契約一覧',
@@ -452,7 +459,7 @@ const ContractList: React.FC = () => {
         onCellValueChanged={handleCellValueChanged}
         onRowDeleted={handleRowDeleted}
         height={600}
-        rowSelection={isEditable ? 'multiple' : 'single'}
+        checkboxSelection={isEditable}
       />
 
       {/* エクセルライクなグリッド表示のためのカスタムCSS */}

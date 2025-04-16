@@ -1,4 +1,4 @@
-// components/grids/DataGridCore.tsxの修正
+// components/grids/DataGridCore.tsx
 
 import React from 'react';
 
@@ -107,7 +107,7 @@ const DataGridCore: React.FC<DataGridCoreProps> = ({
                   </th>
                 )}
                 {columns.map((column, index) => (
-                  <th key={index} style={{ width: column.width }}>
+                  <th key={index} style={{ width: column.width ? `${column.width}px` : 'auto' }}>
                     {column.headerName}
                   </th>
                 ))}

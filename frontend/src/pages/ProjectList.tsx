@@ -551,18 +551,81 @@ const ProjectList: React.FC = () => {
           </div>
         );
       },
-      cellStyle: { textAlign: 'center' },
     },
   ];
 
-  // 事業部・部署フィルターの変更ハンドラ
-  const handleDepartmentChange = (departmentId: string | null) => {
-    setSelectedDepartmentId(departmentId);
-    setSelectedSectionId(null); // 事業部が変更されたら部署フィルターをリセット
-  };
+  // APIがまだ整備されていない場合のフォールバックデータ
+  const fallbackData: Project[] = [
+    {
+      id: '1',
+      name: 'Webアプリケーション開発',
+      departmentId: '1',
+      sectionId: '1',
+      startDate: new Date('2025-04-01'),
+      endDate: new Date('2025-09-30'),
+      status: '募集中',
+      requiredNumber: 3,
+      budget: 800000,
+      requiredSkills: 'React,TypeScript,Node.js',
+    },
+    {
+      id: '2',
+      name: 'モバイルアプリ開発',
+      departmentId: '1',
+      sectionId: '2',
+      startDate: new Date('2025-05-01'),
+      endDate: new Date('2025-10-31'),
+      status: '選考中',
+      requiredNumber: 2,
+      budget: 750000,
+      requiredSkills: 'Swift,Kotlin,Flutter',
+    },
+    {
+      id: '3',
+      name: 'インフラ構築プロジェクト',
+      departmentId: '2',
+      sectionId: '3',
+      startDate: new Date('2025-03-15'),
+      endDate: new Date('2025-08-15'),
+      status: '充足',
+      requiredNumber: 4,
+      budget: 900000,
+      requiredSkills: 'AWS,Docker,Kubernetes',
+    },
+    {
+      id: '4',
+      name: 'データ分析基盤構築',
+      departmentId: '2',
+      sectionId: '4',
+      startDate: new Date('2025-06-01'),
+      endDate: new Date('2025-12-31'),
+      status: '承認待ち',
+      requiredNumber: 2,
+      budget: 850000,
+      requiredSkills: 'Python,SQL,Tableau',
+    },
+    {
+      id: '5',
+      name: 'セキュリティ監査',
+      departmentId: '3',
+      sectionId: '5',
+      startDate: new Date('2025-04-15'),
+      endDate: new Date('2025-07-15'),
+      status: '差し戻し',
+      requiredNumber: 1,
+      budget: 950000,
+      requiredSkills: 'セキュリティ,ネットワーク,監査',
+    },
+  ];
 
-  const handleSectionChange = (sectionId: string | null) => {
-    setSelectedSectionId(sectionId);
+  // 表示用のデータ（APIから取得したデータがない場合はフォールバックデータを使用）
+  const displayProjects = projects.length > 0 ? projects : fallbackData;
+
+  // 行クリック時のハンドラ
+  const handleRowClick = (data: any) => {
+    if (!isEditable) {
+      navigate(`/projects/${data.id}`);
+    }
   };
 
   // アクションボタン定義
@@ -595,55 +658,27 @@ const ProjectList: React.FC = () => {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center gap-4">
-        <div className="flex-grow">
-          <DepartmentSectionFilter
-            onDepartmentChange={handleDepartmentChange}
-            onSectionChange={handleSectionChange}
-            selectedDepartmentId={selectedDepartmentId}
-            selectedSectionId={selectedSectionId}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Input
-            type="text"
-            placeholder="案件名で検索..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSearch()}
-            className="w-64"
-          />
-          <Button onClick={handleSearch} variant="primary" size="sm">
-            検索
-          </Button>
-        </div>
-      </div>
-
-      {error && <Alert variant="error" message={error} onClose={() => setError(null)} />}
-
       <DataGrid
         title="案件一覧"
-        rowData={projects}
-        columnDefs={columnDefs}
-        pagination={true}
-        paginationPageSize={10}
-        onRowClick={handleViewProject}
+        data={displayProjects}
+        columns={columnDefs}
         actionButtons={actionButtons}
+        onRowClick={handleRowClick}
+        loading={isLoading}
+        error={error}
         exportOptions={{
           fileName: '案件一覧',
           sheetName: '案件',
         }}
-        loading={isLoading}
-        error={error}
+        height={600}
+        rowSelection={isEditable ? 'multiple' : 'single'}
         editable={isEditable}
         onCellValueChanged={handleCellValueChanged}
         onRowDeleted={handleRowDeleted}
-        height={600}
-        rowSelection={isEditable ? 'multiple' : 'single'}
       />
 
       {/* エクセルライクなグリッド表示のためのカスタムCSS */}
-      <style jsx global>{`
+      <style jsx>{`
         /* 編集モード時のセルスタイル強化 */
         .ag-theme-alpine-edit-mode .ag-cell-editable {
           background-color: rgba(240, 248, 255, 0.2);
