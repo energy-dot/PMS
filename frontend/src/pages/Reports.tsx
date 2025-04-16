@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { ColDef } from 'ag-grid-community';
+import DataGrid from '../components/grids/DataGrid';
+import '../components/grids/DataGrid.css';
 import Button from '../components/common/Button';
 import Alert from '../components/common/Alert';
 import Input from '../components/common/Input';
@@ -627,21 +626,17 @@ const Reports: React.FC = () => {
 
             {/* テーブル表示 */}
             {tableData.length > 0 && (
-              <div className="ag-theme-alpine w-full" style={{ height: '400px' }}>
-                <AgGridReact
-                  rowData={tableData}
-                  columnDefs={getColumnDefs()}
-                  pagination={true}
-                  paginationPageSize={10}
-                  domLayout="autoHeight"
-                  onCellClicked={(params) => {
-                    // セルクリック時のイベント伝播を防止
-                    if (params.event) {
-                      params.event.stopPropagation();
-                    }
-                  }}
-                />
-              </div>
+              <DataGrid
+                data={tableData}
+                columns={getColumnDefs()}
+                pagination={true}
+                pageSize={10}
+                loading={loading}
+                emptyMessage={error || '表示するデータがありません'}
+                onRowClick={(data) => {
+                  // 行クリック時の処理
+                }}
+              />
             )}
           </div>
         </div>

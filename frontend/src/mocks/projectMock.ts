@@ -1,0 +1,40 @@
+import { Project } from '../shared-types';
+
+export const mockProjects: Project[] = [
+  {
+    id: '1',
+    name: 'ECサイトリニューアル',
+    partnerId: '101',
+    startDate: '2023-01-01',
+    endDate: '2023-06-30',
+    status: 'active',
+    description: '既存ECサイトのUI/UXの改善とバックエンドの刷新',
+    budget: 15000000,
+    assignedStaffs: ['201', '202', '203'],
+    skills: ['React', 'Node.js', 'MongoDB'],
+  },
+  {
+    id: '2',
+    name: '社内業務システム開発',
+    partnerId: '102',
+    startDate: '2023-02-15',
+    endDate: '2023-12-31',
+    status: 'active',
+    description: '人事・経理・営業支援のための統合業務システムの開発',
+    budget: 25000000,
+    assignedStaffs: ['204', '205', '206', '207'],
+    skills: ['Java', 'Spring', 'PostgreSQL', 'Angular'],
+  },
+  {
+    id: '3',
+    name: 'モバイルアプリ開発',
+    partnerId: '103',
+    startDate: '2022-10-01',
+    endDate: '2023-03-31',
+    status: 'completed',
+    description: 'iOSとAndroid向けの顧客向けモバイルアプリケーションの開発',
+    budget: 12000000,
+    assignedStaffs: ['208', '209'],
+    skills: ['Swift', 'Kotlin', 'Firebase'],
+  },
+];

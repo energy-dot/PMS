@@ -2,26 +2,29 @@
 
 import React, { ButtonHTMLAttributes } from 'react';
 
+// ボタンのバリアント型を定義
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'danger'
+  | 'warning'
+  | 'info'
+  | 'light'
+  | 'dark'
+  | 'link'
+  | 'outline-primary'
+  | 'outline-secondary'
+  | 'outline-success'
+  | 'outline-danger'
+  | 'outline-warning'
+  | 'outline-info'
+  | 'outline-light'
+  | 'outline-dark';
+
 // Buttonコンポーネントのプロパティ型を定義
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?:
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'danger'
-    | 'warning'
-    | 'info'
-    | 'light'
-    | 'dark'
-    | 'link'
-    | 'outline-primary'
-    | 'outline-secondary'
-    | 'outline-success'
-    | 'outline-danger'
-    | 'outline-warning'
-    | 'outline-info'
-    | 'outline-light'
-    | 'outline-dark';
+  variant?: ButtonVariant;
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   fullWidth?: boolean;

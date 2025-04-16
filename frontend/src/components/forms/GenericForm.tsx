@@ -1,15 +1,16 @@
 // components/forms/GenericForm.tsxの修正
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '../common/Button';
 import Alert from '../common/Alert';
 import Select from '../common/Select';
+import { validateForm, ValidationRule } from '../../utils/validation';
 
 // フォームフィールドの型定義
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'date' | 'select' | 'textarea' | 'checkbox';
+  type: 'text' | 'email' | 'password' | 'number' | 'date' | 'select' | 'textarea' | 'checkbox' | 'tel' | 'postal';
   placeholder?: string;
   required?: boolean;
   options?: { value: string; label: string }[];
@@ -18,6 +19,11 @@ export interface FormField {
   rows?: number;
   min?: number;
   max?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: RegExp;
+  match?: string;
+  customValidator?: (value: any, formData: Record<string, any>) => string | null;
 }
 
 // GenericFormのプロパティ型を定義
@@ -30,6 +36,8 @@ interface GenericFormProps {
   loading?: boolean;
   error?: string;
   initialValues?: Record<string, any>;
+  validateOnChange?: boolean;
+  validateOnBlur?: boolean;
 }
 
 // GenericFormコンポーネント
@@ -42,19 +50,83 @@ const GenericForm: React.FC<GenericFormProps> = ({
   loading = false,
   error,
   initialValues = {},
+  validateOnChange = false,
+  validateOnBlur = true,
 }) => {
   const [formData, setFormData] = React.useState<Record<string, any>>(initialValues);
   const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
+  const [touched, setTouched] = React.useState<Record<string, boolean>>({});
+
+  // 初期値が変更された場合にフォームデータを更新
+  useEffect(() => {
+    setFormData(initialValues);
+  }, [initialValues]);
+
+  // バリデーションルールの作成
+  const createValidationRules = (): ValidationRule[] => {
+    return fields.map(field => ({
+      field: field.name,
+      label: field.label,
+      rules: {
+        required: field.required,
+        minLength: field.minLength,
+        maxLength: field.maxLength,
+        pattern: field.pattern,
+        email: field.type === 'email',
+        match: field.match,
+        min: field.min,
+        max: field.max,
+        custom: field.customValidator,
+      }
+    }));
+  };
+
+  // フォームのバリデーション
+  const validateFormData = () => {
+    const rules = createValidationRules();
+    const errors = validateForm(formData, rules);
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   // フォーム値変更ハンドラー
   const handleChange = (name: string, value: any) => {
     setFormData(prev => ({ ...prev, [name]: value }));
+    setTouched(prev => ({ ...prev, [name]: true }));
 
-    // エラーをクリア
-    if (validationErrors[name]) {
+    // 変更時バリデーション
+    if (validateOnChange) {
+      const rules = createValidationRules().filter(rule => rule.field === name);
+      const fieldErrors = validateForm({ [name]: value }, rules);
+      
       setValidationErrors(prev => {
         const newErrors = { ...prev };
-        delete newErrors[name];
+        if (fieldErrors[name]) {
+          newErrors[name] = fieldErrors[name];
+        } else {
+          delete newErrors[name];
+        }
+        return newErrors;
+      });
+    }
+  };
+
+  // フォーカス喪失ハンドラー
+  const handleBlur = (name: string) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+
+    // ブラー時バリデーション
+    if (validateOnBlur) {
+      const rules = createValidationRules().filter(rule => rule.field === name);
+      const fieldErrors = validateForm(formData, rules);
+      
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        if (fieldErrors[name]) {
+          newErrors[name] = fieldErrors[name];
+        } else {
+          delete newErrors[name];
+        }
         return newErrors;
       });
     }
@@ -64,20 +136,31 @@ const GenericForm: React.FC<GenericFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // バリデーション
-    const errors: Record<string, string> = {};
+    // 全フィールドをタッチ済みにする
+    const allTouched: Record<string, boolean> = {};
     fields.forEach(field => {
-      if (field.required && !formData[field.name]) {
-        errors[field.name] = `${field.label}は必須です`;
-      }
+      allTouched[field.name] = true;
     });
+    setTouched(allTouched);
 
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
+    // バリデーション
+    if (!validateFormData()) {
       return;
     }
 
     onSubmit(formData);
+  };
+
+  // フィールドのクラス名を取得
+  const getFieldClassName = (fieldName: string) => {
+    const baseClass = "form-control";
+    if (touched[fieldName] && validationErrors[fieldName]) {
+      return `${baseClass} is-invalid`;
+    }
+    if (touched[fieldName] && !validationErrors[fieldName]) {
+      return `${baseClass} is-valid`;
+    }
+    return baseClass;
   };
 
   return (
@@ -96,18 +179,24 @@ const GenericForm: React.FC<GenericFormProps> = ({
               id={field.name}
               value={formData[field.name] || ''}
               onChange={value => handleChange(field.name, value)}
+              onBlur={() => handleBlur(field.name)}
               options={field.options || []}
               disabled={loading || field.disabled}
+              className={getFieldClassName(field.name)}
             />
           ) : field.type === 'textarea' ? (
             <textarea
               id={field.name}
-              className="form-control"
+              className={getFieldClassName(field.name)}
               value={formData[field.name] || ''}
               onChange={e => handleChange(field.name, e.target.value)}
+              onBlur={() => handleBlur(field.name)}
               placeholder={field.placeholder}
               disabled={loading || field.disabled}
               rows={field.rows || 3}
+              minLength={field.minLength}
+              maxLength={field.maxLength}
+              required={field.required}
             />
           ) : field.type === 'checkbox' ? (
             <div className="form-check">
@@ -117,24 +206,31 @@ const GenericForm: React.FC<GenericFormProps> = ({
                 className="form-check-input"
                 checked={formData[field.name] || false}
                 onChange={e => handleChange(field.name, e.target.checked)}
+                onBlur={() => handleBlur(field.name)}
                 disabled={loading || field.disabled}
+                required={field.required}
               />
             </div>
           ) : (
             <input
               type={field.type}
               id={field.name}
-              className="form-control"
+              className={getFieldClassName(field.name)}
               value={formData[field.name] || ''}
               onChange={e => handleChange(field.name, e.target.value)}
+              onBlur={() => handleBlur(field.name)}
               placeholder={field.placeholder}
               disabled={loading || field.disabled}
               min={field.min}
               max={field.max}
+              minLength={field.minLength}
+              maxLength={field.maxLength}
+              pattern={field.pattern?.source}
+              required={field.required}
             />
           )}
 
-          {validationErrors[field.name] && (
+          {touched[field.name] && validationErrors[field.name] && (
             <div className="invalid-feedback d-block">{validationErrors[field.name]}</div>
           )}
         </div>

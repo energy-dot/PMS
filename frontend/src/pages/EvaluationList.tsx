@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import { ColDef, ICellRendererParams } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
 import { useNavigate } from 'react-router-dom';
+import DataGrid from '../components/grids/DataGrid';
 import Button from '../components/common/Button';
 import Alert from '../components/common/Alert';
 import { useAuthStore } from '../store/authStore';
+import '../components/grids/DataGrid.css';
 
 // 評価データの型定義
 interface Evaluation {
@@ -77,8 +76,8 @@ const generateDummyEvaluations = (): Evaluation[] => {
 };
 
 // スコア表示用のカスタムセルレンダラー
-const ScoreCellRenderer: React.FC<ICellRendererParams> = (props) => {
-  const score = props.value;
+const ScoreCellRenderer = (params: any) => {
+  const score = params.value;
   let color = 'black';
   if (score >= 4.5) color = 'green';
   else if (score >= 3.5) color = 'blue';
@@ -89,9 +88,9 @@ const ScoreCellRenderer: React.FC<ICellRendererParams> = (props) => {
 };
 
 // 操作ボタン用のカスタムセルレンダラー
-const ActionCellRenderer: React.FC<ICellRendererParams> = (props) => {
+const ActionCellRenderer = (params: any) => {
   const navigate = useNavigate();
-  const evaluationId = props.data.id;
+  const evaluationId = params.data.id;
 
   const handleView = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -231,19 +230,19 @@ const EvaluationList: React.FC = () => {
         <Alert variant="error" message={error} onClose={() => setError(null)} className="mb-4" />
       )}
 
-      <div className="ag-theme-alpine w-full h-[600px]">
-        <AgGridReact
-          rowData={evaluations}
-          columnDefs={columnDefs}
-          pagination={true}
-          paginationPageSize={10}
-          rowSelection="single"
-          defaultColDef={{
-            resizable: true,
-          }}
-          overlayNoRowsTemplate="表示するデータがありません"
-        />
-      </div>
+      <DataGrid
+        data={evaluations}
+        columns={columnDefs}
+        pagination={true}
+        pageSize={10}
+        onRowClick={(data) => {
+          if (data.id) {
+            navigate(`/evaluations/${data.id}`);
+          }
+        }}
+        loading={loading}
+        emptyMessage={error || '表示するデータがありません'}
+      />
     </div>
   );
 };

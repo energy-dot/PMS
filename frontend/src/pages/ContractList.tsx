@@ -456,7 +456,7 @@ const ContractList: React.FC = () => {
       />
 
       {/* エクセルライクなグリッド表示のためのカスタムCSS */}
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{__html: `
         /* ステータス表示用の基本スタイル */
         .status-badge {
           padding: 0.25rem 0.5rem;
@@ -508,7 +508,7 @@ const ContractList: React.FC = () => {
         .ag-row-modified {
           background-color: rgba(255, 255, 224, 0.4) !important;
         }
-      `}</style>
+      `}} />
     </div>
   );
 };

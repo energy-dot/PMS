@@ -1,148 +1,82 @@
-// APIユーティリティ関数をエクスポート
+import axios from 'axios';
 
-// リクエストオプションの型定義
-interface RequestOptions {
-  headers?: Record<string, string>;
-  [key: string]: any;
-}
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+export const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
-// デフォルトエクスポートとしてAPIクライアントを提供
-const api = {
-  // 基本的なHTTPメソッド
-  get: async <T = any>(url: string, options: RequestOptions = {}) => {
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        ...options,
-      });
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+// リクエストインターセプター
+api.interceptors.request.use(
+  (config) => {
+    // トークンの取得と設定
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// レスポンスインターセプター
+api.interceptors.response.use(
+  (response) => {
+    return response.data;
+  },
+  (error) => {
+    // エラーハンドリング
+    if (error.response) {
+      // サーバーからのレスポンスがある場合
+      console.error('API Error:', error.response.status, error.response.data);
+      
+      // 認証エラー（401）の場合はログアウト処理
+      if (error.response.status === 401) {
+        // ログアウト処理
+        localStorage.removeItem('auth_token');
+        window.location.href = '/login';
       }
+    } else if (error.request) {
+      // リクエストは送信されたがレスポンスがない場合
+      console.error('No response received:', error.request);
+    } else {
+      // リクエスト設定中にエラーが発生した場合
+      console.error('Request error:', error.message);
+    }
+    
+    return Promise.reject(error);
+  }
+);
 
-      return (await response.json()) as T;
+// リトライ機能付きAPI呼び出し
+export const callWithRetry = async (apiCall, maxRetries = 3, delay = 1000) => {
+  let lastError;
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await apiCall();
     } catch (error) {
-      console.error('API GET request failed:', error);
+      lastError = error;
+      
+      // ネットワークエラーまたは5xxエラーの場合のみリトライ
+      if (!error.response || (error.response && error.response.status >= 500)) {
+        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, attempt)));
+        continue;
+      }
+      
+      // その他のエラーはリトライしない
       throw error;
     }
-  },
-
-  post: async <T = any>(url: string, data: any, options: RequestOptions = {}) => {
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        body: JSON.stringify(data),
-        ...options,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      return (await response.json()) as T;
-    } catch (error) {
-      console.error('API POST request failed:', error);
-      throw error;
-    }
-  },
-
-  put: async <T = any>(url: string, data: any, options: RequestOptions = {}) => {
-    try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        body: JSON.stringify(data),
-        ...options,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      return (await response.json()) as T;
-    } catch (error) {
-      console.error('API PUT request failed:', error);
-      throw error;
-    }
-  },
-
-  patch: async <T = any>(url: string, data: any, options: RequestOptions = {}) => {
-    try {
-      const response = await fetch(url, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        body: JSON.stringify(data),
-        ...options,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      return (await response.json()) as T;
-    } catch (error) {
-      console.error('API PATCH request failed:', error);
-      throw error;
-    }
-  },
-
-  delete: async <T = any>(url: string, options: RequestOptions = {}) => {
-    try {
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        ...options,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      return (await response.json()) as T;
-    } catch (error) {
-      console.error('API DELETE request failed:', error);
-      throw error;
-    }
-  },
+  }
+  
+  throw lastError;
 };
 
 export default api;
-
-// APIユーティリティ関数
-export const callWithRetry = async <T>(
-  fn: () => Promise<T>,
-  retries = 3,
-  delay = 1000
-): Promise<T> => {
-  try {
-    return await fn();
-  } catch (error) {
-    if (retries <= 0) {
-      throw error;
-    }
-
-    console.log(
-      `API呼び出しに失敗しました。${delay}ms後に再試行します。残り再試行回数: ${retries}`
-    );
-
-    await new Promise(resolve => setTimeout(resolve, delay));
-    return callWithRetry(fn, retries - 1, delay * 2);
-  }
-};

@@ -5,6 +5,8 @@ import { getUsers, createUser, updateUser, deleteUser } from '../services/userSe
 import { User } from '../shared-types';
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
+import DataGrid from '../components/grids/DataGrid';
+import '../components/grids/DataGrid.css';
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -131,44 +133,53 @@ const UserManagement: React.FC = () => {
         </Button>
       </div>
 
-      <table className="table table-striped table-bordered">
-        <thead>
-          <tr>
-            <th>ユーザー名</th>
-            <th>氏名</th>
-            <th>メールアドレス</th>
-            <th>役割</th>
-            <th>ステータス</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.id} onClick={() => handleRowClick(user)} style={{ cursor: 'pointer' }}>
-              <td>{user.username}</td>
-              <td>{user.fullName}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>{user.isActive ? '有効' : '無効'}</td>
-              <td>
+      <DataGrid
+        data={users}
+        columns={[
+          { field: 'username', headerName: 'ユーザー名', flex: 1 },
+          { field: 'fullName', headerName: '氏名', flex: 1 },
+          { field: 'email', headerName: 'メールアドレス', flex: 1 },
+          { field: 'role', headerName: '役割', width: 150 },
+          { 
+            field: 'isActive', 
+            headerName: 'ステータス', 
+            width: 120,
+            cellRenderer: (params: any) => (
+              <span>{params.value ? '有効' : '無効'}</span>
+            )
+          },
+          {
+            headerName: '操作',
+            width: 180,
+            cellRenderer: (params: any) => (
+              <div className="flex space-x-2">
                 <Button 
                   variant="info" 
                   className="me-2" 
-                  onClick={(e) => handleEditUser(user, e)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditUser(params.data, e);
+                  }}
                 >
                   編集
                 </Button>
                 <Button 
                   variant="danger" 
-                  onClick={(e) => handleDeleteUser(user.id!, e)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteUser(params.data.id!, e);
+                  }}
                 >
                   削除
                 </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            )
+          }
+        ]}
+        pagination={true}
+        pageSize={10}
+        onRowClick={handleRowClick}
+      />
 
       <Modal
         isOpen={showModal}

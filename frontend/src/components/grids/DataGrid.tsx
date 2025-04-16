@@ -24,7 +24,11 @@ export interface DataGridProps {
     field: string;
     headerName: string;
     width?: number;
-    renderCell?: (params: any) => React.ReactNode;
+    flex?: number;
+    cellRenderer?: (params: any) => React.ReactNode;
+    valueFormatter?: (params: any) => string;
+    valueGetter?: (params: any) => any;
+    cellStyle?: React.CSSProperties | ((params: any) => React.CSSProperties);
   }[];
   title?: string;
   loading?: boolean;
@@ -63,6 +67,29 @@ const DataGrid: React.FC<DataGridProps> = ({
   searchPlaceholder = '検索...',
   emptyMessage = 'データがありません',
 }) => {
+  // DataGridCoreに渡すカラム定義を変換
+  const coreColumns = columns.map(column => ({
+    field: column.field,
+    headerName: column.headerName,
+    width: column.width,
+    flex: column.flex,
+    renderCell: column.cellRenderer || ((params: any) => {
+      // valueFormatterがある場合は適用
+      if (column.valueFormatter && params[column.field] !== undefined) {
+        return column.valueFormatter({ value: params[column.field], data: params });
+      }
+      
+      // valueGetterがある場合は適用
+      if (column.valueGetter) {
+        const value = column.valueGetter({ data: params });
+        return value;
+      }
+      
+      return params[column.field];
+    }),
+    cellStyle: column.cellStyle
+  }));
+
   return (
     <div className="data-grid">
       {(title || actionButtons || onSearch || filters) && (
@@ -76,7 +103,7 @@ const DataGrid: React.FC<DataGridProps> = ({
       )}
       <DataGridCore
         data={data}
-        columns={columns}
+        columns={coreColumns}
         loading={loading}
         pagination={pagination}
         pageSize={pageSize}

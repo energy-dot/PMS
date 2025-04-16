@@ -1,140 +1,162 @@
-// services/userService.tsの修正 - APIのインポート方法を修正
+// services/userService.ts - モックデータから本番環境APIへの移行
 
-import api from './api';
+import api, { callWithRetry, USE_MOCK_DATA } from './api';
 import { User } from '../shared-types';
+import { mockUsers } from '../mocks/userMock';
+import { handleApiError, logError } from '../utils/errorHandler';
 
 // ユーザーデータの取得
 export const getUsers = async (): Promise<User[]> => {
   try {
-    // 本番環境では実際のAPIエンドポイントを呼び出す
-    // const response = await api.get('/users');
-    // return response.data;
-
-    // デモ用のモックデータ
-    return [
-      {
-        id: '1',
-        username: 'admin',
-        email: 'admin@example.com',
-        name: '管理者',
-        role: 'admin',
-        department: '管理部',
-        position: 'マネージャー',
-        isActive: true,
-      },
-      {
-        id: '2',
-        username: 'user1',
-        email: 'user1@example.com',
-        name: '一般ユーザー1',
-        role: 'developer',
-        department: '営業部',
-        position: '担当者',
-        isActive: true,
-      },
-      {
-        id: '3',
-        username: 'user2',
-        email: 'user2@example.com',
-        name: '一般ユーザー2',
-        role: 'developer',
-        department: '技術部',
-        position: 'エンジニア',
-        isActive: true,
-      },
-    ];
+    if (USE_MOCK_DATA) {
+      // モックデータを使用
+      return mockUsers;
+    }
+    
+    // 本番環境APIを使用
+    return await callWithRetry(() => api.get('/users'));
   } catch (error) {
-    console.error('Failed to fetch users:', error);
-    throw error;
+    logError(error, 'getUsers');
+    throw handleApiError(error, 'ユーザー情報の取得に失敗しました');
   }
 };
 
 // ユーザーデータの取得（ID指定）
 export const getUserById = async (id: string): Promise<User> => {
   try {
-    // 本番環境では実際のAPIエンドポイントを呼び出す
-    // const response = await api.get(`/users/${id}`);
-    // return response.data;
-
-    // デモ用のモックデータ
-    const users = await getUsers();
-    const user = users.find(u => u.id === id);
-
-    if (!user) {
-      throw new Error(`User with ID ${id} not found`);
+    if (USE_MOCK_DATA) {
+      // モックデータを使用
+      const user = mockUsers.find(u => u.id === id);
+      if (!user) {
+        throw new Error(`User with ID ${id} not found`);
+      }
+      return user;
     }
-
-    return user;
+    
+    // 本番環境APIを使用
+    return await callWithRetry(() => api.get(`/users/${id}`));
   } catch (error) {
-    console.error(`Failed to fetch user with ID ${id}:`, error);
-    throw error;
+    logError(error, `getUserById(${id})`);
+    throw handleApiError(error, `ユーザー情報(ID: ${id})の取得に失敗しました`);
   }
 };
 
 // ユーザーデータの作成
 export const createUser = async (data: Omit<User, 'id'>): Promise<User> => {
   try {
-    // 本番環境では実際のAPIエンドポイントを呼び出す
-    // const response = await api.post('/users', data);
-    // return response.data;
-
-    // デモ用のモックデータ
-    const newId = Math.floor(Math.random() * 1000).toString();
-    const newUser: User = {
-      id: newId,
-      ...data,
-    };
-
-    return newUser;
+    if (USE_MOCK_DATA) {
+      // モックデータを使用
+      const newId = Math.floor(Math.random() * 1000).toString();
+      const newUser: User = {
+        id: newId,
+        ...data,
+      };
+      return newUser;
+    }
+    
+    // 本番環境APIを使用
+    return await callWithRetry(() => api.post('/users', data));
   } catch (error) {
-    console.error('Failed to create user:', error);
-    throw error;
+    logError(error, 'createUser');
+    throw handleApiError(error, 'ユーザーの作成に失敗しました');
   }
 };
 
 // ユーザーデータの更新
 export const updateUser = async (id: string, data: Partial<User>): Promise<User> => {
   try {
-    // 本番環境では実際のAPIエンドポイントを呼び出す
-    // const response = await api.put(`/users/${id}`, data);
-    // return response.data;
-
-    // デモ用のモックデータ
-    const user = await getUserById(id);
-    const updatedUser: User = {
-      ...user,
-      ...data,
-    };
-
-    return updatedUser;
+    if (USE_MOCK_DATA) {
+      // モックデータを使用
+      const user = mockUsers.find(u => u.id === id);
+      if (!user) {
+        throw new Error(`User with ID ${id} not found`);
+      }
+      const updatedUser: User = {
+        ...user,
+        ...data,
+      };
+      return updatedUser;
+    }
+    
+    // 本番環境APIを使用
+    return await callWithRetry(() => api.put(`/users/${id}`, data));
   } catch (error) {
-    console.error(`Failed to update user with ID ${id}:`, error);
-    throw error;
+    logError(error, `updateUser(${id})`);
+    throw handleApiError(error, `ユーザー情報(ID: ${id})の更新に失敗しました`);
   }
 };
 
 // ユーザーデータの削除
 export const deleteUser = async (id: string): Promise<void> => {
   try {
-    // 本番環境では実際のAPIエンドポイントを呼び出す
-    // await api.delete(`/users/${id}`);
-
-    // デモ用のモックデータ
-    // 実際には何もしない
-    console.log(`User with ID ${id} deleted`);
+    if (USE_MOCK_DATA) {
+      // モックデータを使用（実際には何もしない）
+      console.log(`Mock: User with ID ${id} deleted`);
+      return;
+    }
+    
+    // 本番環境APIを使用
+    await callWithRetry(() => api.delete(`/users/${id}`));
   } catch (error) {
-    console.error(`Failed to delete user with ID ${id}:`, error);
-    throw error;
+    logError(error, `deleteUser(${id})`);
+    throw handleApiError(error, `ユーザー(ID: ${id})の削除に失敗しました`);
   }
 };
 
-// デフォルトエクスポートを追加
+// ユーザー検索
+export const searchUsers = async (query: string): Promise<User[]> => {
+  try {
+    if (USE_MOCK_DATA) {
+      // モックデータを使用
+      return mockUsers.filter(user => 
+        user.name.includes(query) || 
+        user.username.includes(query) || 
+        user.email.includes(query) ||
+        user.department.includes(query)
+      );
+    }
+    
+    // 本番環境APIを使用
+    return await callWithRetry(() => api.get('/users/search', { params: { query } }));
+  } catch (error) {
+    logError(error, `searchUsers(${query})`);
+    throw handleApiError(error, 'ユーザー検索に失敗しました');
+  }
+};
+
+// ユーザー認証
+export const authenticateUser = async (username: string, password: string): Promise<{ user: User; token: string }> => {
+  try {
+    if (USE_MOCK_DATA) {
+      // モックデータを使用
+      const user = mockUsers.find(u => u.username === username);
+      if (!user || password !== 'password') { // モック環境では全てのユーザーのパスワードは 'password'
+        throw new Error('Invalid credentials');
+      }
+      
+      return {
+        user,
+        token: 'mock-jwt-token'
+      };
+    }
+    
+    // 本番環境APIを使用
+    return await callWithRetry(() => api.post('/auth/login', { username, password }));
+  } catch (error) {
+    logError(error, 'authenticateUser');
+    throw handleApiError(error, '認証に失敗しました。ユーザー名とパスワードを確認してください');
+  }
+};
+
+// デフォルトエクスポート
 const userService = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
+  searchUsers,
+  authenticateUser
 };
 
 export default userService;
