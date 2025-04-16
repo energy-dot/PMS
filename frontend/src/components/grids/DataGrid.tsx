@@ -5,6 +5,7 @@ import DataGridCore from './DataGridCore';
 import DataGridToolbar from './DataGridToolbar';
 import { ButtonVariant } from '../common/Button';
 import { ReactNode } from 'react';
+import './DataGrid.css';
 
 // アクションボタンの型定義
 export interface ActionButton {

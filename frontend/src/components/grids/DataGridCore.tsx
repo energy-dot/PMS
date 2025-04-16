@@ -87,66 +87,68 @@ const DataGridCore: React.FC<DataGridCoreProps> = ({
         <div className="data-grid-empty">{emptyMessage}</div>
       ) : (
         <>
-          <table className="table">
-            <thead>
-              <tr>
-                {checkboxSelection && (
-                  <th className="selection-column">
-                    <input
-                      type="checkbox"
-                      checked={selected.length === currentData.length}
-                      onChange={() => {
-                        const newSelected =
-                          selected.length === currentData.length ? [] : [...currentData];
-                        setSelected(newSelected);
-                        if (onSelectionChange) {
-                          onSelectionChange(newSelected);
-                        }
-                      }}
-                    />
-                  </th>
-                )}
-                {columns.map((column, index) => (
-                  <th key={index} style={{ width: column.width ? `${column.width}px` : 'auto' }}>
-                    {column.headerName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentData.map((row, rowIndex) => (
-                <tr
-                  key={rowIndex}
-                  onClick={() => handleRowClick(row)}
-                  className={onRowClick ? 'clickable' : ''}
-                >
+          <div className="overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr>
                   {checkboxSelection && (
-                    <td className="selection-column">
+                    <th className="selection-column">
                       <input
                         type="checkbox"
-                        checked={selected.some(item => item.id === row.id)}
-                        onChange={e => {
-                          e.stopPropagation();
-                          handleRowSelect(row);
+                        checked={selected.length === currentData.length}
+                        onChange={() => {
+                          const newSelected =
+                            selected.length === currentData.length ? [] : [...currentData];
+                          setSelected(newSelected);
+                          if (onSelectionChange) {
+                            onSelectionChange(newSelected);
+                          }
                         }}
                       />
-                    </td>
+                    </th>
                   )}
-                  {columns.map((column, colIndex) => (
-                    <td key={colIndex}>
-                      {column.renderCell ? column.renderCell(row) : row[column.field]}
-                    </td>
+                  {columns.map((column, index) => (
+                    <th key={index} style={{ width: column.width ? `${column.width}px` : 'auto' }}>
+                      {column.headerName}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentData.map((row, rowIndex) => (
+                  <tr
+                    key={rowIndex}
+                    onClick={() => handleRowClick(row)}
+                    className={onRowClick ? 'clickable' : ''}
+                  >
+                    {checkboxSelection && (
+                      <td className="selection-column">
+                        <input
+                          type="checkbox"
+                          checked={selected.some(item => item.id === row.id)}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            handleRowSelect(row);
+                          }}
+                        />
+                      </td>
+                    )}
+                    {columns.map((column, colIndex) => (
+                      <td key={colIndex}>
+                        {column.renderCell ? column.renderCell(row) : row[column.field]}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {pagination && totalPages > 1 && (
             <div className="data-grid-pagination">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="btn btn-sm btn-outline-secondary"
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 前へ
               </button>
@@ -156,7 +158,7 @@ const DataGridCore: React.FC<DataGridCoreProps> = ({
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="btn btn-sm btn-outline-secondary"
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 次へ
               </button>

@@ -1,0 +1,103 @@
+/* DataGrid.css */
+.data-grid {
+  @apply bg-white rounded-lg shadow-md overflow-hidden mb-6;
+}
+
+.data-grid-core {
+  @apply w-full overflow-x-auto;
+}
+
+.data-grid-loading {
+  @apply p-4 text-center text-gray-500;
+}
+
+.data-grid-empty {
+  @apply p-4 text-center text-gray-500;
+}
+
+.data-grid-pagination {
+  @apply flex items-center justify-between p-3 bg-gray-50 border-t border-gray-200;
+}
+
+.pagination-info {
+  @apply text-sm text-gray-700;
+}
+
+/* テーブルスタイル */
+.table {
+  @apply min-w-full divide-y divide-gray-200 border-collapse;
+}
+
+.table thead {
+  @apply bg-gray-50;
+}
+
+.table th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200;
+}
+
+.table tbody {
+  @apply bg-white divide-y divide-gray-200;
+}
+
+.table td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-100;
+}
+
+.table tr.clickable {
+  @apply cursor-pointer hover:bg-gray-50;
+}
+
+.selection-column {
+  @apply w-10 text-center;
+}
+
+/* アクションボタン */
+.action-button {
+  @apply inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-2;
+}
+
+.action-button-secondary {
+  @apply inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-2;
+}
+
+.action-button-danger {
+  @apply inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mr-2;
+}
+
+.action-button-success {
+  @apply inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mr-2;
+}
+
+.action-button-icon {
+  @apply -ml-0.5 mr-1 h-4 w-4;
+}
+
+/* ツールバー */
+.data-grid-toolbar {
+  @apply flex flex-wrap items-center justify-between p-4 bg-white border-b border-gray-200;
+}
+
+.data-grid-toolbar-title {
+  @apply text-lg font-medium text-gray-900 mb-2 sm:mb-0;
+}
+
+.data-grid-toolbar-actions {
+  @apply flex flex-wrap items-center space-x-2 mt-2 sm:mt-0;
+}
+
+.data-grid-toolbar-search {
+  @apply relative mt-2 sm:mt-0 w-full sm:w-64;
+}
+
+.data-grid-toolbar-search input {
+  @apply block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+}
+
+.data-grid-toolbar-search-icon {
+  @apply absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400;
+}
+
+.data-grid-toolbar-filters {
+  @apply mt-2 w-full;
+}
