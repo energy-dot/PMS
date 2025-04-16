@@ -6,7 +6,7 @@ import { registerDecorator, ValidationOptions, ValidationArguments } from 'class
  * @param validationOptions バリデーションオプション
  */
 export function IsAfterDate(property: string, validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isAfterDate',
       target: object.constructor,
@@ -17,14 +17,14 @@ export function IsAfterDate(property: string, validationOptions?: ValidationOpti
         validate(value: any, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
           const relatedValue = (args.object as any)[relatedPropertyName];
-          
+
           // 両方の値が存在する場合のみ検証
           if (value && relatedValue) {
             const endDate = new Date(value);
             const startDate = new Date(relatedValue);
             return endDate > startDate;
           }
-          
+
           // どちらかの値が存在しない場合は検証をスキップ
           return true;
         },

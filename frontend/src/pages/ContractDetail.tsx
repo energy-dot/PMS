@@ -86,18 +86,18 @@ const ContractDetail: React.FC = () => {
   // 契約終了処理
   const handleTerminateContract = async () => {
     if (!id || !contract) return;
-    
+
     if (!window.confirm('この契約を終了してもよろしいですか？')) {
       return;
     }
-    
+
     try {
       await contractService.terminateContract(id);
-      
+
       // 契約情報を再取得して表示を更新
       const updatedContract = await contractService.getContract(id);
       setContract(updatedContract);
-      
+
       setError(null);
     } catch (err: any) {
       setError(err.response?.data?.message || '契約終了処理に失敗しました');
@@ -108,20 +108,20 @@ const ContractDetail: React.FC = () => {
   // ファイルアップロード処理
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!id || !event.target.files || event.target.files.length === 0) return;
-    
+
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
     formData.append('entityType', 'contract');
     formData.append('entityId', id);
-    
+
     try {
       await fileUploadService.uploadFile(formData);
-      
+
       // ドキュメント一覧を再取得
       const updatedDocuments = await fileUploadService.getFilesByEntity('contract', id);
       setDocuments(updatedDocuments);
-      
+
       setError(null);
     } catch (err: any) {
       setError(err.response?.data?.message || 'ファイルアップロードに失敗しました');
@@ -141,10 +141,7 @@ const ContractDetail: React.FC = () => {
     return (
       <div className="text-center p-8">
         <p>契約情報が見つかりません。</p>
-        <Button
-          onClick={() => navigate('/contracts')}
-          className="mt-4"
-        >
+        <Button onClick={() => navigate('/contracts')} className="mt-4">
           一覧に戻る
         </Button>
       </div>
@@ -154,7 +151,7 @@ const ContractDetail: React.FC = () => {
   const tabs = [
     { id: 'info', label: '基本情報' },
     { id: 'documents', label: '契約書類' },
-    { id: 'history', label: '更新履歴' }
+    { id: 'history', label: '更新履歴' },
   ];
 
   return (
@@ -162,41 +159,25 @@ const ContractDetail: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="page-title">契約詳細</h1>
         <div>
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/contracts')}
-            className="mr-2"
-          >
+          <Button variant="secondary" onClick={() => navigate('/contracts')} className="mr-2">
             一覧に戻る
           </Button>
           {contract.status === '契約中' && (
             <>
-              <Button
-                onClick={handleRenewContract}
-                className="mr-2"
-                variant="primary"
-              >
+              <Button onClick={handleRenewContract} className="mr-2" variant="primary">
                 契約更新
               </Button>
-              <Button
-                onClick={handleTerminateContract}
-                className="mr-2"
-                variant="danger"
-              >
+              <Button onClick={handleTerminateContract} className="mr-2" variant="danger">
                 契約終了
               </Button>
             </>
           )}
-          <Button
-            onClick={() => navigate(`/contracts/${id}/edit`)}
-          >
-            編集
-          </Button>
+          <Button onClick={() => navigate(`/contracts/${id}/edit`)}>編集</Button>
         </div>
       </div>
-      
+
       {error && <Alert variant="error" message={error} onClose={() => setError(null)} />}
-      
+
       <div className="card p-6 mb-6">
         <div className="flex justify-between mb-4">
           <div>
@@ -205,14 +186,17 @@ const ContractDetail: React.FC = () => {
           <div>
             <strong>登録日:</strong> {formatDate(contract.createdAt)}
             {contract.updatedAt && contract.updatedAt !== contract.createdAt && (
-              <span> / <strong>更新日:</strong> {formatDate(contract.updatedAt)}</span>
+              <span>
+                {' '}
+                / <strong>更新日:</strong> {formatDate(contract.updatedAt)}
+              </span>
             )}
           </div>
         </div>
       </div>
-      
+
       <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-      
+
       <div className="mt-6">
         {activeTab === 'info' && (
           <div className="card p-6">
@@ -224,7 +208,10 @@ const ContractDetail: React.FC = () => {
                     <tr className="border-b">
                       <th className="py-2 text-left">要員名</th>
                       <td className="py-2">
-                        <a href={`/staff/${contract.staffId}`} className="text-blue-600 hover:underline">
+                        <a
+                          href={`/staff/${contract.staffId}`}
+                          className="text-blue-600 hover:underline"
+                        >
                           {contract.staff?.name || contract.staffId}
                         </a>
                       </td>
@@ -232,7 +219,10 @@ const ContractDetail: React.FC = () => {
                     <tr className="border-b">
                       <th className="py-2 text-left">案件名</th>
                       <td className="py-2">
-                        <a href={`/projects/${contract.projectId}`} className="text-blue-600 hover:underline">
+                        <a
+                          href={`/projects/${contract.projectId}`}
+                          className="text-blue-600 hover:underline"
+                        >
                           {contract.project?.name || contract.projectId}
                         </a>
                       </td>
@@ -280,7 +270,7 @@ const ContractDetail: React.FC = () => {
             </div>
           </div>
         )}
-        
+
         {activeTab === 'documents' && (
           <div className="card p-6">
             <div className="flex justify-between items-center mb-4">
@@ -293,17 +283,13 @@ const ContractDetail: React.FC = () => {
                   onChange={handleFileUpload}
                 />
                 <label htmlFor="contract-document">
-                  <Button
-                    as="span"
-                    variant="primary"
-                    className="cursor-pointer"
-                  >
+                  <Button as="span" variant="primary" className="cursor-pointer">
                     書類アップロード
                   </Button>
                 </label>
               </div>
             </div>
-            
+
             {isDocumentsLoading ? (
               <div className="text-center py-4">書類データを読み込み中...</div>
             ) : documents.length > 0 ? (
@@ -318,7 +304,7 @@ const ContractDetail: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {documents.map((doc) => (
+                  {documents.map(doc => (
                     <tr key={doc.id} className="border-b">
                       <td className="py-2 px-4">{doc.originalName}</td>
                       <td className="py-2 px-4">{doc.mimeType}</td>
@@ -363,14 +349,12 @@ const ContractDetail: React.FC = () => {
             )}
           </div>
         )}
-        
+
         {activeTab === 'history' && (
           <div className="card p-6">
             <h3 className="text-lg font-semibold mb-4">契約更新履歴</h3>
-            
-            <div className="text-center py-4">
-              この契約の更新履歴はまだありません。
-            </div>
+
+            <div className="text-center py-4">この契約の更新履歴はまだありません。</div>
           </div>
         )}
       </div>

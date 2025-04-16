@@ -55,7 +55,7 @@ export class CreateDepartmentSectionTables1743815123456 implements MigrationInte
     await queryRunner.query(`
       ALTER TABLE "projects" ADD COLUMN "section_id" varchar
     `);
-    
+
     // プロジェクトの事業部IDインデックス
     await queryRunner.query(`
       CREATE INDEX "IDX_PROJECT_DEPARTMENT" ON "projects" ("department_id")
@@ -153,16 +153,16 @@ export class CreateDepartmentSectionTables1743815123456 implements MigrationInte
     // プロジェクトからの外部キー削除
     await queryRunner.query(`DROP INDEX "IDX_PROJECT_SECTION"`);
     await queryRunner.query(`DROP INDEX "IDX_PROJECT_DEPARTMENT"`);
-    
+
     // 部と外部キー削除
     await queryRunner.query(`DROP INDEX "IDX_SECTION_DEPARTMENT"`);
     await queryRunner.query(`DROP INDEX "IDX_SECTION_CODE"`);
     await queryRunner.query(`DROP TABLE "sections"`);
-    
+
     // 事業部削除
     await queryRunner.query(`DROP INDEX "IDX_DEPARTMENT_CODE"`);
     await queryRunner.query(`DROP TABLE "departments"`);
-    
+
     // プロジェクトテーブルから列削除
     await queryRunner.query(`ALTER TABLE "projects" DROP COLUMN "section_id"`);
     await queryRunner.query(`ALTER TABLE "projects" DROP COLUMN "department_id"`);

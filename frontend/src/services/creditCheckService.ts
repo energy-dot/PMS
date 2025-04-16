@@ -36,19 +36,24 @@ const creditCheckService = {
     return response.data;
   },
 
-  createCreditCheck: async (creditCheck: Omit<CreditCheck, 'id' | 'createdAt' | 'updatedAt'>): Promise<CreditCheck> => {
+  createCreditCheck: async (
+    creditCheck: Omit<CreditCheck, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<CreditCheck> => {
     const response = await axios.post(`${API_BASE_URL}/credit-checks`, creditCheck);
     return response.data;
   },
 
-  updateCreditCheck: async (id: string, creditCheck: Partial<CreditCheck>): Promise<CreditCheck> => {
+  updateCreditCheck: async (
+    id: string,
+    creditCheck: Partial<CreditCheck>
+  ): Promise<CreditCheck> => {
     const response = await axios.patch(`${API_BASE_URL}/credit-checks/${id}`, creditCheck);
     return response.data;
   },
 
   deleteCreditCheck: async (id: string): Promise<void> => {
     await axios.delete(`${API_BASE_URL}/credit-checks/${id}`);
-  }
+  },
 };
 
 export default creditCheckService;

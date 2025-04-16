@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsUUID, IsOptional, IsString, IsInt, IsDateString, Min, Max } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsUUID,
+  IsOptional,
+  IsString,
+  IsInt,
+  IsDateString,
+  Min,
+  Max,
+} from 'class-validator';
 
 export class CreateEvaluationDto {
   @IsNotEmpty()

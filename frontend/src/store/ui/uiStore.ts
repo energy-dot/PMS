@@ -7,12 +7,12 @@ interface UIState {
   sidebarOpen: boolean;
   darkMode: boolean;
   currentView: string;
-  
+
   // セレクター
   getIsSidebarOpen: () => boolean;
   getIsDarkMode: () => boolean;
   getCurrentView: () => string;
-  
+
   // アクション
   toggleSidebar: () => void;
   setSidebarOpen: (isOpen: boolean) => void;
@@ -32,36 +32,41 @@ const useUIStore = create<UIState>()(
       sidebarOpen: true,
       darkMode: false,
       currentView: 'dashboard',
-      
+
       // セレクター - メモ化されたデータアクセス
       getIsSidebarOpen: () => get().sidebarOpen,
       getIsDarkMode: () => get().darkMode,
       getCurrentView: () => get().currentView,
-      
+
       // アクション
-      toggleSidebar: () => set(state => ({ 
-        sidebarOpen: !state.sidebarOpen 
-      })),
-      
-      setSidebarOpen: (isOpen) => set({ 
-        sidebarOpen: isOpen 
-      }),
-      
-      toggleDarkMode: () => set(state => ({ 
-        darkMode: !state.darkMode 
-      })),
-      
-      setDarkMode: (isDark) => set({ 
-        darkMode: isDark 
-      }),
-      
-      setCurrentView: (view) => set({ 
-        currentView: view 
-      }),
+      toggleSidebar: () =>
+        set(state => ({
+          sidebarOpen: !state.sidebarOpen,
+        })),
+
+      setSidebarOpen: isOpen =>
+        set({
+          sidebarOpen: isOpen,
+        }),
+
+      toggleDarkMode: () =>
+        set(state => ({
+          darkMode: !state.darkMode,
+        })),
+
+      setDarkMode: isDark =>
+        set({
+          darkMode: isDark,
+        }),
+
+      setCurrentView: view =>
+        set({
+          currentView: view,
+        }),
     }),
     {
       name: 'pms-ui-storage',
-      storage: createJSONStorage(createSafeStorage)
+      storage: createJSONStorage(createSafeStorage),
     }
   )
 );

@@ -27,7 +27,7 @@ const typeormConfig = new DataSource({
     // 依存関係のあるエンティティはその後に
     Section,
     Project,
-    Contract
+    Contract,
   ],
   migrations: [CreateDepartmentSectionTables1743815123456],
   synchronize: true, // 開発中は自動同期を有効にする

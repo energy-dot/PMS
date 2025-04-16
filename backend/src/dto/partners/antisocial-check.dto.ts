@@ -19,8 +19,8 @@ export class AntisocialCheckDto {
   @IsOptional()
   checkMethod?: string;
 
-  @IsEnum(['問題なし', '要確認', 'NG'], { 
-    message: 'チェック結果は「問題なし」「要確認」「NG」のいずれかである必要があります' 
+  @IsEnum(['問題なし', '要確認', 'NG'], {
+    message: 'チェック結果は「問題なし」「要確認」「NG」のいずれかである必要があります',
   })
   @IsNotEmpty({ message: 'チェック結果は必須です' })
   result: string;
@@ -57,8 +57,8 @@ export class UpdateAntisocialCheckDto {
   @IsOptional()
   checkMethod?: string;
 
-  @IsEnum(['問題なし', '要確認', 'NG'], { 
-    message: 'チェック結果は「問題なし」「要確認」「NG」のいずれかである必要があります' 
+  @IsEnum(['問題なし', '要確認', 'NG'], {
+    message: 'チェック結果は「問題なし」「要確認」「NG」のいずれかである必要があります',
   })
   @IsOptional()
   result?: string;

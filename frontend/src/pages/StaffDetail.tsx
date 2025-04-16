@@ -122,20 +122,20 @@ const StaffDetail: React.FC = () => {
   // スキルシートアップロード処理
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!id || !event.target.files || event.target.files.length === 0) return;
-    
+
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
     formData.append('entityType', 'staff');
     formData.append('entityId', id);
-    
+
     try {
       await fileUploadService.uploadFile(formData);
-      
+
       // スキルシート一覧を再取得
       const updatedSkillSheets = await fileUploadService.getFilesByEntity('staff', id);
       setSkillSheets(updatedSkillSheets);
-      
+
       setError(null);
     } catch (err: any) {
       setError(err.response?.data?.message || 'ファイルアップロードに失敗しました');
@@ -155,10 +155,7 @@ const StaffDetail: React.FC = () => {
     return (
       <div className="text-center p-8">
         <p>要員情報が見つかりません。</p>
-        <Button
-          onClick={() => navigate('/staff')}
-          className="mt-4"
-        >
+        <Button onClick={() => navigate('/staff')} className="mt-4">
           一覧に戻る
         </Button>
       </div>
@@ -170,7 +167,7 @@ const StaffDetail: React.FC = () => {
     { id: 'skills', label: 'スキル情報' },
     { id: 'contracts', label: '契約履歴' },
     { id: 'evaluations', label: '評価履歴' },
-    { id: 'skillsheets', label: 'スキルシート' }
+    { id: 'skillsheets', label: 'スキルシート' },
   ];
 
   return (
@@ -178,11 +175,7 @@ const StaffDetail: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="page-title">{staff.fullName}</h1>
         <div>
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/staff')}
-            className="mr-2"
-          >
+          <Button variant="secondary" onClick={() => navigate('/staff')} className="mr-2">
             一覧に戻る
           </Button>
           <Button
@@ -192,32 +185,33 @@ const StaffDetail: React.FC = () => {
           >
             評価登録
           </Button>
-          <Button
-            onClick={() => navigate(`/staff/${id}/edit`)}
-          >
-            編集
-          </Button>
+          <Button onClick={() => navigate(`/staff/${id}/edit`)}>編集</Button>
         </div>
       </div>
-      
+
       {error && <Alert variant="error" message={error} onClose={() => setError(null)} />}
-      
+
       <div className="card p-6 mb-6">
         <div className="flex justify-between mb-4">
           <div>
-            <span className={getStatusStyle(staff.availability)}>{staffService.getAvailabilityText(staff.availability)}</span>
+            <span className={getStatusStyle(staff.availability)}>
+              {staffService.getAvailabilityText(staff.availability)}
+            </span>
           </div>
           <div>
             <strong>登録日:</strong> {formatDate(staff.createdAt)}
             {staff.updatedAt && staff.updatedAt !== staff.createdAt && (
-              <span> / <strong>更新日:</strong> {formatDate(staff.updatedAt)}</span>
+              <span>
+                {' '}
+                / <strong>更新日:</strong> {formatDate(staff.updatedAt)}
+              </span>
             )}
           </div>
         </div>
       </div>
-      
+
       <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-      
+
       <div className="mt-6">
         {activeTab === 'info' && (
           <div className="card p-6">
@@ -237,7 +231,10 @@ const StaffDetail: React.FC = () => {
                     <tr className="border-b">
                       <th className="py-2 text-left">所属会社</th>
                       <td className="py-2">
-                        <a href={`/partners/${staff.partnerId}`} className="text-blue-600 hover:underline">
+                        <a
+                          href={`/partners/${staff.partnerId}`}
+                          className="text-blue-600 hover:underline"
+                        >
                           {staff.partner?.name || staff.partnerId}
                         </a>
                       </td>
@@ -267,7 +264,9 @@ const StaffDetail: React.FC = () => {
                   <tbody>
                     <tr className="border-b">
                       <th className="py-2 text-left">現在のステータス</th>
-                      <td className="py-2">{staffService.getAvailabilityText(staff.availability)}</td>
+                      <td className="py-2">
+                        {staffService.getAvailabilityText(staff.availability)}
+                      </td>
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">契約形態</th>
@@ -275,7 +274,9 @@ const StaffDetail: React.FC = () => {
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">経験年数</th>
-                      <td className="py-2">{staff.yearsOfExperience ? `${staff.yearsOfExperience}年` : '-'}</td>
+                      <td className="py-2">
+                        {staff.yearsOfExperience ? `${staff.yearsOfExperience}年` : '-'}
+                      </td>
                     </tr>
                     <tr className="border-b">
                       <th className="py-2 text-left">スキルレベル</th>
@@ -291,26 +292,26 @@ const StaffDetail: React.FC = () => {
             </div>
           </div>
         )}
-        
+
         {activeTab === 'skills' && (
           <div className="card p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">スキル情報</h3>
-              <Button
-                onClick={() => navigate(`/staff/${id}/skills/edit`)}
-                variant="primary"
-              >
+              <Button onClick={() => navigate(`/staff/${id}/skills/edit`)} variant="primary">
                 スキル編集
               </Button>
             </div>
-            
+
             {staff.skills ? (
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold mb-2">言語・フレームワーク</h4>
                   <div className="flex flex-wrap gap-2">
                     {staff.skills.split(',').map((skill, index) => (
-                      <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                      <span
+                        key={index}
+                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm"
+                      >
                         {skill.trim()}
                       </span>
                     ))}
@@ -318,17 +319,15 @@ const StaffDetail: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-4">
-                スキル情報が登録されていません。
-              </div>
+              <div className="text-center py-4">スキル情報が登録されていません。</div>
             )}
           </div>
         )}
-        
+
         {activeTab === 'contracts' && (
           <div className="card p-6">
             <h3 className="text-lg font-semibold mb-4">契約履歴</h3>
-            
+
             {isContractsLoading ? (
               <div className="text-center py-4">契約データを読み込み中...</div>
             ) : contracts.length > 0 ? (
@@ -343,10 +342,13 @@ const StaffDetail: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {contracts.map((contract) => (
+                  {contracts.map(contract => (
                     <tr key={contract.id} className="border-b">
                       <td className="py-2 px-4">
-                        <a href={`/projects/${contract.projectId}`} className="text-blue-600 hover:underline">
+                        <a
+                          href={`/projects/${contract.projectId}`}
+                          className="text-blue-600 hover:underline"
+                        >
                           {contract.project?.name || contract.projectId}
                         </a>
                       </td>
@@ -358,7 +360,10 @@ const StaffDetail: React.FC = () => {
                         <span className={getStatusStyle(contract.status)}>{contract.status}</span>
                       </td>
                       <td className="py-2 px-4">
-                        <a href={`/contracts/${contract.id}`} className="text-blue-600 hover:underline">
+                        <a
+                          href={`/contracts/${contract.id}`}
+                          className="text-blue-600 hover:underline"
+                        >
                           詳細
                         </a>
                       </td>
@@ -367,13 +372,11 @@ const StaffDetail: React.FC = () => {
                 </tbody>
               </table>
             ) : (
-              <div className="text-center py-4">
-                契約履歴はまだありません。
-              </div>
+              <div className="text-center py-4">契約履歴はまだありません。</div>
             )}
           </div>
         )}
-        
+
         {activeTab === 'evaluations' && (
           <div className="card p-6">
             <div className="flex justify-between items-center mb-4">
@@ -385,7 +388,7 @@ const StaffDetail: React.FC = () => {
                 新規評価登録
               </Button>
             </div>
-            
+
             {isEvaluationsLoading ? (
               <div className="text-center py-4">評価データを読み込み中...</div>
             ) : evaluations.length > 0 ? (
@@ -400,18 +403,26 @@ const StaffDetail: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {evaluations.map((evaluation) => (
+                  {evaluations.map(evaluation => (
                     <tr key={evaluation.id} className="border-b">
                       <td className="py-2 px-4">{formatDate(evaluation.evaluationDate)}</td>
                       <td className="py-2 px-4">
-                        <a href={`/projects/${evaluation.projectId}`} className="text-blue-600 hover:underline">
+                        <a
+                          href={`/projects/${evaluation.projectId}`}
+                          className="text-blue-600 hover:underline"
+                        >
                           {evaluation.project?.name || evaluation.projectId}
                         </a>
                       </td>
-                      <td className="py-2 px-4">{evaluation.evaluator?.fullName || evaluation.evaluatorId}</td>
+                      <td className="py-2 px-4">
+                        {evaluation.evaluator?.fullName || evaluation.evaluatorId}
+                      </td>
                       <td className="py-2 px-4">{evaluation.overallRating} / 5</td>
                       <td className="py-2 px-4">
-                        <a href={`/staff-evaluations/${evaluation.id}`} className="text-blue-600 hover:underline">
+                        <a
+                          href={`/staff-evaluations/${evaluation.id}`}
+                          className="text-blue-600 hover:underline"
+                        >
                           詳細
                         </a>
                       </td>
@@ -420,13 +431,11 @@ const StaffDetail: React.FC = () => {
                 </tbody>
               </table>
             ) : (
-              <div className="text-center py-4">
-                評価履歴はまだありません。
-              </div>
+              <div className="text-center py-4">評価履歴はまだありません。</div>
             )}
           </div>
         )}
-        
+
         {activeTab === 'skillsheets' && (
           <div className="card p-6">
             <div className="flex justify-between items-center mb-4">
@@ -439,17 +448,13 @@ const StaffDetail: React.FC = () => {
                   onChange={handleFileUpload}
                 />
                 <label htmlFor="skill-sheet">
-                  <Button
-                    as="span"
-                    variant="primary"
-                    className="cursor-pointer"
-                  >
+                  <Button as="span" variant="primary" className="cursor-pointer">
                     スキルシートアップロード
                   </Button>
                 </label>
               </div>
             </div>
-            
+
             {isSkillSheetsLoading ? (
               <div className="text-center py-4">スキルシートを読み込み中...</div>
             ) : skillSheets.length > 0 ? (
@@ -464,7 +469,7 @@ const StaffDetail: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {skillSheets.map((sheet) => (
+                  {skillSheets.map(sheet => (
                     <tr key={sheet.id} className="border-b">
                       <td className="py-2 px-4">{sheet.originalName}</td>
                       <td className="py-2 px-4">{sheet.mimeType}</td>
@@ -503,9 +508,7 @@ const StaffDetail: React.FC = () => {
                 </tbody>
               </table>
             ) : (
-              <div className="text-center py-4">
-                スキルシートはまだアップロードされていません。
-              </div>
+              <div className="text-center py-4">スキルシートはまだアップロードされていません。</div>
             )}
           </div>
         )}

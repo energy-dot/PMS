@@ -14,7 +14,7 @@ declare namespace NodeJS {
     extname: jest.Mock & ((path: string) => string);
     basename: jest.Mock & ((path: string, suffix?: string) => string);
   }
-  
+
   interface FS {
     existsSync: jest.Mock & ((path: string) => boolean);
     readdirSync: jest.Mock & ((path: string) => string[]);

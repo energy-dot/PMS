@@ -15,12 +15,12 @@ interface UserState {
   // 状態
   user: User | null;
   isAuthenticated: boolean;
-  
+
   // セレクター
   getUser: () => User | null;
   getIsAuthenticated: () => boolean;
   getUserRole: () => string | null;
-  
+
   // アクション
   setUser: (user: User | null) => void;
   clearUser: () => void;
@@ -36,26 +36,28 @@ export const useUserStore = create<UserState>()(
       // 初期状態
       user: null,
       isAuthenticated: false,
-      
+
       // セレクター - メモ化されたデータアクセス
       getUser: () => get().user,
       getIsAuthenticated: () => get().isAuthenticated,
       getUserRole: () => get().user?.role || null,
-      
+
       // アクション
-      setUser: (user) => set({ 
-        user, 
-        isAuthenticated: !!user 
-      }),
-      
-      clearUser: () => set({ 
-        user: null, 
-        isAuthenticated: false 
-      }),
+      setUser: user =>
+        set({
+          user,
+          isAuthenticated: !!user,
+        }),
+
+      clearUser: () =>
+        set({
+          user: null,
+          isAuthenticated: false,
+        }),
     }),
     {
       name: USER_STORE_KEY,
-      storage: createJSONStorage(createSafeStorage)
+      storage: createJSONStorage(createSafeStorage),
     }
   )
 );

@@ -1,139 +1,93 @@
-import api from './api';
-import { Department, Section } from 'shared-types';
-
-// 部門リスト（キャッシュ）
-let departmentsCache: Department[] = [];
-// 部リスト（キャッシュ）
-let sectionsCache: Section[] = [];
-// 最終取得時刻
-let lastFetchTime = 0;
-// キャッシュの有効期限（ミリ秒）
-const CACHE_EXPIRY = 5 * 60 * 1000; // 5分
+import api, { callWithRetry } from './api';
+import { Department } from '../shared-types';
 
 /**
- * 事業部関連のAPI操作を行うサービス
+ * 部署情報を取得する
+ * @returns 部署情報の配列
  */
-const departmentService = {
-  /**
-   * 事業部一覧を取得
-   * @returns 事業部一覧
-   */
-  async getDepartments(): Promise<Department[]> {
-    try {
-      // キャッシュが有効な場合はキャッシュから返す
-      if (departmentsCache.length > 0 && Date.now() - lastFetchTime < CACHE_EXPIRY) {
-        return departmentsCache;
-      }
+export const getDepartments = async (): Promise<Department[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Department[]>('/departments'));
 
-      const response = await api.get<Department[]>('/departments');
-      // キャッシュを更新
-      departmentsCache = response.data;
-      lastFetchTime = Date.now();
-      return response.data;
-    } catch (error) {
-      console.error('Get departments error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 事業部と所属する部を一度に取得
-   * @returns 部情報を含む事業部一覧
-   */
-  async getDepartmentsWithSections(): Promise<Department[]> {
-    try {
-      // キャッシュが有効な場合はキャッシュから返す
-      if (departmentsCache.length > 0 && sectionsCache.length > 0 && Date.now() - lastFetchTime < CACHE_EXPIRY) {
-        return departmentsCache;
-      }
-
-      const response = await api.get<Department[]>('/departments/with-sections');
-      
-      // キャッシュを更新
-      departmentsCache = response.data;
-      
-      // セクションキャッシュを更新
-      sectionsCache = [];
-      response.data.forEach(dept => {
-        if (dept.sections && dept.sections.length > 0) {
-          sectionsCache = [...sectionsCache, ...dept.sections];
-        }
-      });
-      
-      lastFetchTime = Date.now();
-      return response.data;
-    } catch (error) {
-      console.error('Get departments with sections error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 事業部に所属する部一覧を取得
-   * @param departmentId 事業部ID
-   * @returns 部一覧
-   */
-  async getSectionsByDepartment(departmentId: string): Promise<Section[]> {
-    try {
-      // キャッシュが有効でセクションが存在する場合はキャッシュからフィルタリングして返す
-      if (sectionsCache.length > 0 && Date.now() - lastFetchTime < CACHE_EXPIRY) {
-        return sectionsCache.filter(section => section.departmentId === departmentId);
-      }
-
-      const response = await api.get<Section[]>(`/departments/${departmentId}/sections`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get sections for department ${departmentId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 部一覧を取得
-   * @returns 部一覧
-   */
-  async getSections(): Promise<Section[]> {
-    try {
-      // キャッシュが有効な場合はキャッシュから返す
-      if (sectionsCache.length > 0 && Date.now() - lastFetchTime < CACHE_EXPIRY) {
-        return sectionsCache;
-      }
-
-      const response = await api.get<Section[]>('/sections');
-      // キャッシュを更新
-      sectionsCache = response.data;
-      lastFetchTime = Date.now();
-      return response.data;
-    } catch (error) {
-      console.error('Get sections error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * キャッシュから部一覧を取得（同期版）
-   * すでにキャッシュがあることを前提とする
-   */
-  getSectionsFromCache(): Section[] {
-    return sectionsCache;
-  },
-
-  /**
-   * キャッシュから事業部一覧を取得（同期版）
-   * すでにキャッシュがあることを前提とする
-   */
-  getDepartmentsFromCache(): Department[] {
-    return departmentsCache;
-  },
-
-  /**
-   * キャッシュをクリア
-   */
-  clearCache() {
-    departmentsCache = [];
-    sectionsCache = [];
-    lastFetchTime = 0;
+    // デモ用のモックデータ
+    return [
+      {
+        id: 'dept-1',
+        code: 'DEV',
+        name: '開発部',
+        managerId: 'user-1',
+        sections: [
+          { id: 'section-1', name: 'フロントエンド開発チーム' },
+          { id: 'section-2', name: 'バックエンド開発チーム' },
+        ],
+      },
+      {
+        id: 'dept-2',
+        code: 'SALES',
+        name: '営業部',
+        managerId: 'user-2',
+        sections: [
+          { id: 'section-3', name: '国内営業チーム' },
+          { id: 'section-4', name: '海外営業チーム' },
+        ],
+      },
+    ];
+  } catch (error) {
+    console.error('部署情報の取得に失敗しました', error);
+    throw error;
   }
+};
+
+/**
+ * 特定の部署情報を取得する
+ * @param id 部署ID
+ * @returns 部署情報
+ */
+export const getDepartmentById = async (id: string): Promise<Department> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Department>(`/departments/${id}`));
+
+    // デモ用のモックデータ
+    const departments = await getDepartments();
+    const department = departments.find(d => d.id === id);
+
+    if (!department) {
+      throw new Error(`部署ID ${id} が見つかりません`);
+    }
+
+    return department;
+  } catch (error) {
+    console.error(`部署ID ${id} の情報取得に失敗しました`, error);
+    throw error;
+  }
+};
+
+/**
+ * 部署のセクション情報を取得する
+ * @param departmentId 部署ID
+ * @returns セクション情報の配列
+ */
+export const getDepartmentSections = async (departmentId: string): Promise<any[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<any[]>(`/departments/${departmentId}/sections`));
+
+    // デモ用のモックデータ
+    const department = await getDepartmentById(departmentId);
+    return department?.sections || [];
+  } catch (error) {
+    console.error(`部署ID ${departmentId} のセクション情報取得に失敗しました`, error);
+    throw error;
+  }
+};
+
+// デフォルトエクスポートを追加
+const departmentService = {
+  getDepartments,
+  getDepartmentById,
+  getDepartmentSections,
 };
 
 export default departmentService;

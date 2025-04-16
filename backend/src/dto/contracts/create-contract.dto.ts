@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsOptional, IsDateString, IsNumber, IsString, IsEnum, IsBoolean, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsDateString,
+  IsNumber,
+  IsString,
+  IsEnum,
+  IsBoolean,
+  IsUUID,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { Staff } from '../../entities/staff.entity';
 import { Project } from '../../entities/project.entity';
@@ -50,8 +59,8 @@ export class CreateContractDto {
   @IsOptional()
   paymentTerms?: string;
 
-  @IsEnum(['契約中', '更新待ち', '契約終了'], { 
-    message: 'ステータスは「契約中」「更新待ち」「契約終了」のいずれかである必要があります' 
+  @IsEnum(['契約中', '更新待ち', '契約終了'], {
+    message: 'ステータスは「契約中」「更新待ち」「契約終了」のいずれかである必要があります',
   })
   @IsOptional()
   status?: string;

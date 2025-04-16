@@ -19,7 +19,7 @@ const MasterData: React.FC = () => {
   const [masterDataTypes, setMasterDataTypes] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState<string>('');
   const [masterData, setMasterData] = useState<any[]>([]);
-  
+
   // モーダル関連の状態
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
@@ -29,63 +29,63 @@ const MasterData: React.FC = () => {
     displayName: '',
     description: '',
     sortOrder: 0,
-    isActive: true
+    isActive: true,
   });
-  
+
   // 列定義
   const columnDefs: ColDef[] = [
-    { 
-      headerName: 'ID', 
-      field: 'id', 
-      sortable: true, 
-      filter: true, 
-      width: 100 
+    {
+      headerName: 'ID',
+      field: 'id',
+      sortable: true,
+      filter: true,
+      width: 100,
     },
-    { 
-      headerName: '名前', 
-      field: 'name', 
-      sortable: true, 
-      filter: true, 
-      flex: 1 
+    {
+      headerName: '名前',
+      field: 'name',
+      sortable: true,
+      filter: true,
+      flex: 1,
     },
-    { 
-      headerName: '表示名', 
-      field: 'displayName', 
-      sortable: true, 
-      filter: true, 
-      flex: 1 
+    {
+      headerName: '表示名',
+      field: 'displayName',
+      sortable: true,
+      filter: true,
+      flex: 1,
     },
-    { 
-      headerName: '説明', 
-      field: 'description', 
-      sortable: true, 
-      filter: true, 
-      flex: 2 
+    {
+      headerName: '説明',
+      field: 'description',
+      sortable: true,
+      filter: true,
+      flex: 2,
     },
-    { 
-      headerName: '表示順', 
-      field: 'sortOrder', 
-      sortable: true, 
-      filter: true, 
-      width: 100 
+    {
+      headerName: '表示順',
+      field: 'sortOrder',
+      sortable: true,
+      filter: true,
+      width: 100,
     },
-    { 
-      headerName: '状態', 
-      field: 'isActive', 
-      sortable: true, 
-      filter: true, 
+    {
+      headerName: '状態',
+      field: 'isActive',
+      sortable: true,
+      filter: true,
       width: 100,
       cellRenderer: (params: any) => {
-        return params.value 
-          ? '<span class="px-2 py-1 rounded-full text-xs bg-green-200 text-green-800">有効</span>' 
+        return params.value
+          ? '<span class="px-2 py-1 rounded-full text-xs bg-green-200 text-green-800">有効</span>'
           : '<span class="px-2 py-1 rounded-full text-xs bg-red-200 text-red-800">無効</span>';
-      }
+      },
     },
-    { 
-      headerName: '操作', 
-      field: 'id', 
-      sortable: false, 
-      filter: false, 
+    {
+      headerName: '操作',
+      field: 'id',
+      sortable: false,
+      filter: false,
       width: 150,
       cellRenderer: (params: any) => {
         return `
@@ -96,23 +96,23 @@ const MasterData: React.FC = () => {
         `;
       },
       cellRendererParams: {
-        clicked: function(field: string) {
+        clicked: function (field: string) {
           alert(`${field} was clicked`);
-        }
+        },
       },
       onCellClicked: (params: any) => {
         const { event } = params;
         const target = event.target as HTMLElement;
-        
+
         if (target.classList.contains('edit-btn')) {
           handleEdit(params.data);
         } else if (target.classList.contains('delete-btn')) {
           handleDelete(params.data.id);
         }
-      }
-    }
+      },
+    },
   ];
-  
+
   // マスターデータタイプの取得
   useEffect(() => {
     const fetchMasterDataTypes = async () => {
@@ -120,7 +120,7 @@ const MasterData: React.FC = () => {
         setLoading(true);
         const types = await masterDataService.getMasterDataTypes();
         setMasterDataTypes(types);
-        
+
         if (types.length > 0) {
           setSelectedType(types[0]);
           fetchMasterDataByType(types[0]);
@@ -132,33 +132,33 @@ const MasterData: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchMasterDataTypes();
   }, []);
-  
+
   // 選択されたタイプのマスターデータを取得
   const fetchMasterDataByType = async (type: string) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const data = await masterDataService.getMasterDataByType(type);
       setMasterData(data);
-      
+
       setLoading(false);
     } catch (err: any) {
       setError('マスターデータの取得に失敗しました: ' + (err.message || '不明なエラー'));
       setLoading(false);
     }
   };
-  
+
   // タイプ選択変更ハンドラー
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const type = e.target.value;
     setSelectedType(type);
     fetchMasterDataByType(type);
   };
-  
+
   // 新規作成ボタンハンドラー
   const handleCreate = () => {
     setModalMode('create');
@@ -168,11 +168,11 @@ const MasterData: React.FC = () => {
       displayName: '',
       description: '',
       sortOrder: 0,
-      isActive: true
+      isActive: true,
     });
     setShowModal(true);
   };
-  
+
   // 編集ボタンハンドラー
   const handleEdit = (item: any) => {
     setModalMode('edit');
@@ -182,24 +182,24 @@ const MasterData: React.FC = () => {
       displayName: item.displayName,
       description: item.description,
       sortOrder: item.sortOrder,
-      isActive: item.isActive
+      isActive: item.isActive,
     });
     setShowModal(true);
   };
-  
+
   // 削除ボタンハンドラー
   const handleDelete = async (id: string) => {
     if (!window.confirm('このマスターデータを削除してもよろしいですか？')) {
       return;
     }
-    
+
     try {
       setLoading(true);
       await masterDataService.deleteMasterData(id);
-      
+
       // 再取得
       await fetchMasterDataByType(selectedType);
-      
+
       setSuccess('マスターデータを削除しました');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -207,24 +207,26 @@ const MasterData: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   // フォーム入力変更ハンドラー
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target as HTMLInputElement;
-    
+
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     });
   };
-  
+
   // フォーム送信ハンドラー
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
-      
+
       if (modalMode === 'create') {
         await masterDataService.createMasterData(selectedType, formData);
         setSuccess('マスターデータを作成しました');
@@ -232,42 +234,42 @@ const MasterData: React.FC = () => {
         await masterDataService.updateMasterData(currentItem.id, formData);
         setSuccess('マスターデータを更新しました');
       }
-      
+
       setShowModal(false);
-      
+
       // 再取得
       await fetchMasterDataByType(selectedType);
-      
+
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
       setError('マスターデータの保存に失敗しました: ' + (err.message || '不明なエラー'));
       setLoading(false);
     }
   };
-  
+
   // モーダルを閉じるハンドラー
   const handleCloseModal = () => {
     setShowModal(false);
   };
-  
+
   // 新しいマスターデータタイプを作成するハンドラー
   const handleCreateNewType = async () => {
     const typeName = prompt('新しいマスターデータタイプの名前を入力してください');
-    
+
     if (!typeName) return;
-    
+
     try {
       setLoading(true);
       await masterDataService.createMasterDataType(typeName);
-      
+
       // マスターデータタイプを再取得
       const types = await masterDataService.getMasterDataTypes();
       setMasterDataTypes(types);
-      
+
       // 新しいタイプを選択
       setSelectedType(typeName);
       fetchMasterDataByType(typeName);
-      
+
       setSuccess('新しいマスターデータタイプを作成しました');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -275,14 +277,14 @@ const MasterData: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-6">マスターデータ管理</h1>
-      
+
       {error && <Alert type="error" message={error} className="mb-4" />}
       {success && <Alert type="success" message={success} className="mb-4" />}
-      
+
       <div className="bg-white p-4 rounded-lg shadow-md mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div className="flex-1 min-w-[300px]">
@@ -293,11 +295,11 @@ const MasterData: React.FC = () => {
               onChange={handleTypeChange}
               options={masterDataTypes.map(type => ({
                 value: type,
-                label: type
+                label: type,
               }))}
             />
           </div>
-          
+
           <div className="flex space-x-2">
             {user?.role === 'admin' && (
               <>
@@ -322,14 +324,14 @@ const MasterData: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="bg-white rounded-lg shadow-md">
         <div className="p-4 border-b">
           <h2 className="text-lg font-semibold">
             {selectedType ? `${selectedType} - ${masterData.length}件` : 'マスターデータ'}
           </h2>
         </div>
-        
+
         <div className="ag-theme-alpine w-full" style={{ height: '600px' }}>
           <AgGridReact
             rowData={masterData}
@@ -340,7 +342,7 @@ const MasterData: React.FC = () => {
           />
         </div>
       </div>
-      
+
       {/* マスターデータ編集モーダル */}
       <Modal
         isOpen={showModal}
@@ -356,7 +358,7 @@ const MasterData: React.FC = () => {
               onChange={handleFormChange}
               required
             />
-            
+
             <Input
               label="表示名"
               name="displayName"
@@ -364,11 +366,9 @@ const MasterData: React.FC = () => {
               onChange={handleFormChange}
               required
             />
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                説明
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">説明</label>
               <textarea
                 name="description"
                 value={formData.description}
@@ -377,7 +377,7 @@ const MasterData: React.FC = () => {
                 rows={3}
               />
             </div>
-            
+
             <Input
               label="表示順"
               name="sortOrder"
@@ -386,7 +386,7 @@ const MasterData: React.FC = () => {
               onChange={handleFormChange}
               required
             />
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -401,20 +401,12 @@ const MasterData: React.FC = () => {
               </label>
             </div>
           </div>
-          
+
           <div className="mt-6 flex justify-end space-x-3">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleCloseModal}
-            >
+            <Button type="button" variant="secondary" onClick={handleCloseModal}>
               キャンセル
             </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={loading}
-            >
+            <Button type="submit" variant="primary" disabled={loading}>
               {loading ? '保存中...' : '保存'}
             </Button>
           </div>

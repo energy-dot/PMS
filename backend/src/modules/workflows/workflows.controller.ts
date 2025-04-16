@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { WorkflowsService } from './workflows.service';
 import { RequestHistory } from '../../entities/request-history.entity';
@@ -22,22 +32,30 @@ export class WorkflowsController {
   }
 
   @Get('request-histories/project/:projectId')
-  findRequestHistoriesByProjectId(@Param('projectId') projectId: string): Promise<RequestHistory[]> {
+  findRequestHistoriesByProjectId(
+    @Param('projectId') projectId: string,
+  ): Promise<RequestHistory[]> {
     return this.workflowsService.findRequestHistoriesByProjectId(projectId);
   }
 
   @Get('request-histories/requester/:requesterId')
-  findRequestHistoriesByRequesterId(@Param('requesterId') requesterId: string): Promise<RequestHistory[]> {
+  findRequestHistoriesByRequesterId(
+    @Param('requesterId') requesterId: string,
+  ): Promise<RequestHistory[]> {
     return this.workflowsService.findRequestHistoriesByRequesterId(requesterId);
   }
 
   @Get('request-histories/status/:requestStatus')
-  findRequestHistoriesByStatus(@Param('requestStatus') requestStatus: string): Promise<RequestHistory[]> {
+  findRequestHistoriesByStatus(
+    @Param('requestStatus') requestStatus: string,
+  ): Promise<RequestHistory[]> {
     return this.workflowsService.findRequestHistoriesByStatus(requestStatus);
   }
 
   @Post('request-histories')
-  createRequestHistory(@Body() createRequestHistoryDto: CreateRequestHistoryDto): Promise<RequestHistory> {
+  createRequestHistory(
+    @Body() createRequestHistoryDto: CreateRequestHistoryDto,
+  ): Promise<RequestHistory> {
     return this.workflowsService.createRequestHistory(createRequestHistoryDto);
   }
 

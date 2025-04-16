@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Staff } from './staff.entity';
 import { AntisocialCheck } from './antisocial-check.entity';
 import { BaseContract } from './base-contract.entity';
@@ -64,7 +72,7 @@ export class Partner {
 
   @OneToMany(() => ContactPerson, contactPerson => contactPerson.partner)
   contactPersons: ContactPerson[];
-  
+
   @OneToMany(() => CreditCheck, creditCheck => creditCheck.partner)
   creditChecks: CreditCheck[];
 

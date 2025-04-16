@@ -21,13 +21,13 @@ const loadTestData = (filename: string) => {
 
 /**
  * 統合テスト
- * 
+ *
  * このテストファイルでは、実際のAPIエンドポイントを呼び出し、
  * システム全体の統合機能を検証します。
  */
 describe('Integration Tests (e2e)', () => {
   let app: INestApplication;
-  
+
   // モックリポジトリ
   let partnerRepo: any;
   let projectRepo: any;
@@ -45,75 +45,75 @@ describe('Integration Tests (e2e)', () => {
       const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule],
       })
-      .overrideProvider(getRepositoryToken(Partner))
-      .useValue({
-        find: jest.fn().mockResolvedValue(partners),
-        findOne: jest.fn().mockImplementation((options) => {
-          const id = options.where.id;
-          return Promise.resolve(partners.find((p: any) => p.id === id) || null);
-        }),
-        save: jest.fn().mockImplementation((entity) => {
-          if (Array.isArray(entity)) {
-            return Promise.resolve(entity);
-          }
-          return Promise.resolve({ id: 'new-id', ...entity });
-        }),
-        create: jest.fn().mockImplementation((dto) => ({ id: 'new-id', ...dto })),
-        delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
-        clear: jest.fn().mockResolvedValue(true),
-      })
-      .overrideProvider(getRepositoryToken(Project))
-      .useValue({
-        find: jest.fn().mockResolvedValue(projects),
-        findOne: jest.fn().mockImplementation((options) => {
-          const id = options.where.id;
-          return Promise.resolve(projects.find((p: any) => p.id === id) || null);
-        }),
-        save: jest.fn().mockImplementation((entity) => {
-          if (Array.isArray(entity)) {
-            return Promise.resolve(entity);
-          }
-          return Promise.resolve({ id: 'new-id', ...entity });
-        }),
-        create: jest.fn().mockImplementation((dto) => ({ id: 'new-id', ...dto })),
-        delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
-        clear: jest.fn().mockResolvedValue(true),
-      })
-      .overrideProvider(getRepositoryToken(Staff))
-      .useValue({
-        find: jest.fn().mockResolvedValue(staffs),
-        findOne: jest.fn().mockImplementation((options) => {
-          const id = options.where.id;
-          return Promise.resolve(staffs.find((s: any) => s.id === id) || null);
-        }),
-        save: jest.fn().mockImplementation((entity) => {
-          if (Array.isArray(entity)) {
-            return Promise.resolve(entity);
-          }
-          return Promise.resolve({ id: 'new-id', ...entity });
-        }),
-        create: jest.fn().mockImplementation((dto) => ({ id: 'new-id', ...dto })),
-        delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
-        clear: jest.fn().mockResolvedValue(true),
-      })
-      .overrideProvider(getRepositoryToken(Contract))
-      .useValue({
-        find: jest.fn().mockResolvedValue(contracts),
-        findOne: jest.fn().mockImplementation((options) => {
-          const id = options.where.id;
-          return Promise.resolve(contracts.find((c: any) => c.id === id) || null);
-        }),
-        save: jest.fn().mockImplementation((entity) => {
-          if (Array.isArray(entity)) {
-            return Promise.resolve(entity);
-          }
-          return Promise.resolve({ id: 'new-id', ...entity });
-        }),
-        create: jest.fn().mockImplementation((dto) => ({ id: 'new-id', ...dto })),
-        delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
-        clear: jest.fn().mockResolvedValue(true),
-      })
-      .compile();
+        .overrideProvider(getRepositoryToken(Partner))
+        .useValue({
+          find: jest.fn().mockResolvedValue(partners),
+          findOne: jest.fn().mockImplementation(options => {
+            const id = options.where.id;
+            return Promise.resolve(partners.find((p: any) => p.id === id) || null);
+          }),
+          save: jest.fn().mockImplementation(entity => {
+            if (Array.isArray(entity)) {
+              return Promise.resolve(entity);
+            }
+            return Promise.resolve({ id: 'new-id', ...entity });
+          }),
+          create: jest.fn().mockImplementation(dto => ({ id: 'new-id', ...dto })),
+          delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
+          clear: jest.fn().mockResolvedValue(true),
+        })
+        .overrideProvider(getRepositoryToken(Project))
+        .useValue({
+          find: jest.fn().mockResolvedValue(projects),
+          findOne: jest.fn().mockImplementation(options => {
+            const id = options.where.id;
+            return Promise.resolve(projects.find((p: any) => p.id === id) || null);
+          }),
+          save: jest.fn().mockImplementation(entity => {
+            if (Array.isArray(entity)) {
+              return Promise.resolve(entity);
+            }
+            return Promise.resolve({ id: 'new-id', ...entity });
+          }),
+          create: jest.fn().mockImplementation(dto => ({ id: 'new-id', ...dto })),
+          delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
+          clear: jest.fn().mockResolvedValue(true),
+        })
+        .overrideProvider(getRepositoryToken(Staff))
+        .useValue({
+          find: jest.fn().mockResolvedValue(staffs),
+          findOne: jest.fn().mockImplementation(options => {
+            const id = options.where.id;
+            return Promise.resolve(staffs.find((s: any) => s.id === id) || null);
+          }),
+          save: jest.fn().mockImplementation(entity => {
+            if (Array.isArray(entity)) {
+              return Promise.resolve(entity);
+            }
+            return Promise.resolve({ id: 'new-id', ...entity });
+          }),
+          create: jest.fn().mockImplementation(dto => ({ id: 'new-id', ...dto })),
+          delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
+          clear: jest.fn().mockResolvedValue(true),
+        })
+        .overrideProvider(getRepositoryToken(Contract))
+        .useValue({
+          find: jest.fn().mockResolvedValue(contracts),
+          findOne: jest.fn().mockImplementation(options => {
+            const id = options.where.id;
+            return Promise.resolve(contracts.find((c: any) => c.id === id) || null);
+          }),
+          save: jest.fn().mockImplementation(entity => {
+            if (Array.isArray(entity)) {
+              return Promise.resolve(entity);
+            }
+            return Promise.resolve({ id: 'new-id', ...entity });
+          }),
+          create: jest.fn().mockImplementation(dto => ({ id: 'new-id', ...dto })),
+          delete: jest.fn().mockResolvedValue({ affected: 1, raw: {} }),
+          clear: jest.fn().mockResolvedValue(true),
+        })
+        .compile();
 
       app = moduleFixture.createNestApplication();
       partnerRepo = moduleFixture.get(getRepositoryToken(Partner));
@@ -160,9 +160,7 @@ describe('Integration Tests (e2e)', () => {
 
     it('/partners/:id (GET) - 存在しないパートナーの場合は404エラー', async () => {
       if (!app) return;
-      return request(app.getHttpServer())
-        .get('/partners/999')
-        .expect(404);
+      return request(app.getHttpServer()).get('/partners/999').expect(404);
     });
 
     it('/partners (POST) - 新規パートナーの作成', async () => {
@@ -172,7 +170,7 @@ describe('Integration Tests (e2e)', () => {
         address: '東京都新宿区',
         phone: '03-9999-8888',
         email: 'new@example.com',
-        status: '取引中'
+        status: '取引中',
       };
 
       return request(app.getHttpServer())
@@ -189,7 +187,7 @@ describe('Integration Tests (e2e)', () => {
       if (!app) return;
       const updateData = {
         name: '更新後パートナー名',
-        status: '取引中'
+        status: '取引中',
       };
 
       return request(app.getHttpServer())
@@ -204,9 +202,7 @@ describe('Integration Tests (e2e)', () => {
 
     it('/partners/:id (DELETE) - パートナーの削除', async () => {
       if (!app) return;
-      return request(app.getHttpServer())
-        .delete(`/partners/${partners[0].id}`)
-        .expect(200);
+      return request(app.getHttpServer()).delete(`/partners/${partners[0].id}`).expect(200);
     });
   });
 
@@ -242,7 +238,7 @@ describe('Integration Tests (e2e)', () => {
         endDate: '2025-12-31',
         status: '募集中',
         budget: '12000000',
-        department: 'テスト部門'
+        department: 'テスト部門',
       };
 
       return request(app.getHttpServer())
@@ -261,32 +257,24 @@ describe('Integration Tests (e2e)', () => {
   describe('Staff API', () => {
     it('/staff (GET) - スタッフ一覧の取得', async () => {
       if (!app) return;
-      return request(app.getHttpServer())
-        .get('/staff')
-        .expect(401); // 認証エラーを期待
+      return request(app.getHttpServer()).get('/staff').expect(401); // 認証エラーを期待
     });
 
     it('/staff/:id (GET) - 特定のスタッフ情報の取得', async () => {
       if (!app) return;
-      return request(app.getHttpServer())
-        .get(`/staff/${staffs[0].id}`)
-        .expect(401); // 認証エラーを期待
+      return request(app.getHttpServer()).get(`/staff/${staffs[0].id}`).expect(401); // 認証エラーを期待
     });
   });
 
   describe('Contracts API', () => {
     it('/contracts (GET) - 契約一覧の取得', async () => {
       if (!app) return;
-      return request(app.getHttpServer())
-        .get('/contracts')
-        .expect(401); // 認証エラーを期待
+      return request(app.getHttpServer()).get('/contracts').expect(401); // 認証エラーを期待
     });
 
     it('/contracts/:id (GET) - 特定の契約情報の取得', async () => {
       if (!app) return;
-      return request(app.getHttpServer())
-        .get(`/contracts/${contracts[0].id}`)
-        .expect(401); // 認証エラーを期待
+      return request(app.getHttpServer()).get(`/contracts/${contracts[0].id}`).expect(401); // 認証エラーを期待
     });
   });
 });

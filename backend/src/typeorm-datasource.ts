@@ -33,9 +33,9 @@ export default new DataSource({
     ContactPerson,
     Section,
     Project,
-    Contract
+    Contract,
   ],
   migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
   synchronize: false, // マイグレーション実行時は同期を無効化
-  logging: true
+  logging: true,
 });

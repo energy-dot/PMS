@@ -1,19 +1,19 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 export class CreateInitialUsers1744500000008 implements MigrationInterface {
-    name = 'CreateInitialUsers1744500000008'
+  name = 'CreateInitialUsers1744500000008';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // パスワードのハッシュ化
-        const salt = await bcrypt.genSalt();
-        const adminPassword = await bcrypt.hash('admin123', salt);
-        const developerPassword = await bcrypt.hash('dev123', salt);
-        const partnerMgrPassword = await bcrypt.hash('partner123', salt);
-        const viewerPassword = await bcrypt.hash('viewer123', salt);
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // パスワードのハッシュ化
+    const salt = await bcrypt.genSalt();
+    const adminPassword = await bcrypt.hash('admin123', salt);
+    const developerPassword = await bcrypt.hash('dev123', salt);
+    const partnerMgrPassword = await bcrypt.hash('partner123', salt);
+    const viewerPassword = await bcrypt.hash('viewer123', salt);
 
-        // 初期ユーザーデータの挿入
-        await queryRunner.query(`
+    // 初期ユーザーデータの挿入
+    await queryRunner.query(`
             INSERT INTO "user" (
                 "id", 
                 "username", 
@@ -80,18 +80,20 @@ export class CreateInitialUsers1744500000008 implements MigrationInterface {
                 datetime('now')
             )
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DELETE FROM "user" WHERE username IN ('admin', 'developer1', 'partner_mgr1', 'viewer1')`);
-    }
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `DELETE FROM "user" WHERE username IN ('admin', 'developer1', 'partner_mgr1', 'viewer1')`,
+    );
+  }
 
-    // UUIDを生成するヘルパーメソッド
-    private generateUUID(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
+  // UUIDを生成するヘルパーメソッド
+  private generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
 }

@@ -18,7 +18,7 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // デフォルト設定
   const delimiter = props.delimiter || ',';
   const maxTags = props.maxTags || 0; // 0は無制限
@@ -29,8 +29,13 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
     if (props.value) {
       // 文字列の場合はデリミタで分割
       if (typeof props.value === 'string') {
-        setTags(props.value.split(delimiter).map(tag => tag.trim()).filter(Boolean));
-      } 
+        setTags(
+          props.value
+            .split(delimiter)
+            .map(tag => tag.trim())
+            .filter(Boolean)
+        );
+      }
       // 配列の場合はそのまま使用
       else if (Array.isArray(props.value)) {
         setTags(props.value.map(String));
@@ -38,7 +43,7 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
     } else {
       setTags([]);
     }
-    
+
     // フォーカスを当てる
     if (inputRef.current) {
       inputRef.current.focus();
@@ -53,19 +58,19 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
         // デリミタで結合して返す
         return tags.join(delimiter + ' ');
       },
-      
+
       // フォーカス時の挙動
       afterGuiAttached() {
         if (inputRef.current) {
           inputRef.current.focus();
         }
       },
-      
+
       // 入力がないときの扱い
       isPopup() {
         // ポップアップとして扱わないようにfalseを返す
         return false;
-      }
+      },
     };
   });
 
@@ -73,7 +78,7 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
-    
+
     // サジェスト候補を更新
     if (value.trim() && availableTags.length > 0) {
       const filtered = availableTags.filter(
@@ -94,14 +99,14 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
       setTags(tags.slice(0, -1));
       return;
     }
-    
+
     // タグ追加: Enter, Tab, デリミタ
     if ((e.key === 'Enter' || e.key === 'Tab' || e.key === delimiter) && inputValue.trim()) {
       e.preventDefault();
       addTag(inputValue);
       return;
     }
-    
+
     // ESCキー: サジェスト非表示
     if (e.key === 'Escape') {
       setShowSuggestions(false);
@@ -115,14 +120,14 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
       .split(delimiter)
       .map(tag => tag.trim())
       .filter(tag => tag && !tags.includes(tag));
-    
+
     if (newTags.length > 0) {
       // 最大タグ数のチェック
       if (maxTags > 0 && tags.length + newTags.length > maxTags) {
         alert(`タグは最大${maxTags}個までです`);
         return;
       }
-      
+
       setTags([...tags, ...newTags]);
       setInputValue('');
       setSuggestions([]);
@@ -139,7 +144,7 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
   const selectSuggestion = (suggestion: string) => {
     addTag(suggestion);
     setShowSuggestions(false);
-    
+
     // 入力にフォーカスを戻す
     if (inputRef.current) {
       inputRef.current.focus();
@@ -153,7 +158,7 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
         setShowSuggestions(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -161,14 +166,14 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
   }, []);
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="tag-editor-container w-full h-full p-1 bg-white border-2 border-blue-500 rounded-sm flex flex-wrap items-center gap-1 overflow-y-auto relative"
     >
       {/* タグ表示エリア */}
       {tags.map((tag, index) => (
-        <div 
-          key={index} 
+        <div
+          key={index}
           className="tag-item bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs flex items-center"
         >
           <span className="tag-text mr-1">{tag}</span>
@@ -182,7 +187,7 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
           </button>
         </div>
       ))}
-      
+
       {/* 入力エリア */}
       <input
         ref={inputRef}
@@ -190,14 +195,17 @@ const TagEditor = forwardRef((props: TagEditorProps, ref) => {
         value={inputValue}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder={tags.length === 0 ? "タグを入力..." : ""}
+        placeholder={tags.length === 0 ? 'タグを入力...' : ''}
         className="tag-input flex-grow outline-none border-none px-1 py-0.5 text-sm min-w-[50px]"
         style={{ width: 'auto', minWidth: '50px' }}
       />
-      
+
       {/* サジェスト候補 */}
       {showSuggestions && (
-        <div className="suggestions absolute left-0 mt-1 w-full bg-white shadow-lg rounded-md py-1 z-10 border border-gray-300 max-h-40 overflow-y-auto" style={{ top: '100%' }}>
+        <div
+          className="suggestions absolute left-0 mt-1 w-full bg-white shadow-lg rounded-md py-1 z-10 border border-gray-300 max-h-40 overflow-y-auto"
+          style={{ top: '100%' }}
+        >
           {suggestions.map((suggestion, index) => (
             <div
               key={index}

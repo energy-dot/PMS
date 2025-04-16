@@ -12,7 +12,7 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
     }
@@ -20,8 +20,8 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { 
-      sub: user.id, 
+    const payload = {
+      sub: user.id,
       username: user.username,
       role: user.role,
     };
@@ -32,7 +32,7 @@ export class AuthService {
         username: user.username,
         name: user.name,
         role: user.role,
-      }
+      },
     };
   }
 }

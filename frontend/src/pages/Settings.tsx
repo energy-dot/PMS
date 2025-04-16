@@ -19,7 +19,7 @@ const darkModeStyles = {
     primary: 'text-white',
     secondary: 'text-gray-300',
     muted: 'text-gray-400',
-  }
+  },
 };
 
 // ライトモード用のスタイル定義
@@ -36,7 +36,7 @@ const lightModeStyles = {
     primary: 'text-gray-900',
     secondary: 'text-gray-700',
     muted: 'text-gray-500',
-  }
+  },
 };
 
 const Settings: React.FC = () => {
@@ -44,7 +44,7 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   // ユーザー設定
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [notificationSettings, setNotificationSettings] = useState({
@@ -55,7 +55,7 @@ const Settings: React.FC = () => {
     notifyOnApplicationChanges: true,
     notifyOnApprovalRequests: true,
   });
-  
+
   // 表示設定
   const [displaySettings, setDisplaySettings] = useState({
     itemsPerPage: 10,
@@ -63,13 +63,13 @@ const Settings: React.FC = () => {
     compactMode: false,
     showFilters: true,
   });
-  
+
   // 初期設定の読み込み
   useEffect(() => {
     const loadSettings = async () => {
       try {
         setLoading(true);
-        
+
         // ローカルストレージからダークモード設定を読み込む
         let savedDarkMode = false;
         try {
@@ -79,7 +79,7 @@ const Settings: React.FC = () => {
           // メモリ内の状態を使用して続行
         }
         setDarkMode(savedDarkMode);
-        
+
         // ダークモードを適用
         try {
           if (savedDarkMode) {
@@ -90,36 +90,40 @@ const Settings: React.FC = () => {
         } catch (domError) {
           console.warn('DOM操作エラー:', domError);
         }
-        
+
         // APIから通知設定を読み込む
         if (user && user.id) {
           try {
-            const notificationResponse = await axios.get(`${API_BASE_URL}/users/${user.id}/notification-settings`);
+            const notificationResponse = await axios.get(
+              `${API_BASE_URL}/users/${user.id}/notification-settings`
+            );
             setNotificationSettings(notificationResponse.data);
-            
-            const displayResponse = await axios.get(`${API_BASE_URL}/users/${user.id}/display-settings`);
+
+            const displayResponse = await axios.get(
+              `${API_BASE_URL}/users/${user.id}/display-settings`
+            );
             setDisplaySettings(displayResponse.data);
           } catch (apiError: any) {
             console.warn('API呼び出しエラー:', apiError);
             // エラーがあっても続行（デフォルト設定を使用）
           }
         }
-        
+
         setLoading(false);
       } catch (err: any) {
         setError('設定の読み込みに失敗しました: ' + (err.message || '不明なエラー'));
         setLoading(false);
       }
     };
-    
+
     loadSettings();
   }, [user]);
-  
+
   // ダークモード切り替え
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
-    
+
     // ローカルストレージに保存
     try {
       localStorage.setItem('darkMode', String(newDarkMode));
@@ -127,7 +131,7 @@ const Settings: React.FC = () => {
       console.warn('ローカルストレージへの保存エラー:', storageError);
       // ストレージエラーがあっても続行
     }
-    
+
     // HTML要素にクラスを適用
     try {
       if (newDarkMode) {
@@ -139,64 +143,67 @@ const Settings: React.FC = () => {
       console.warn('DOM操作エラー:', domError);
     }
   };
-  
+
   // 通知設定の変更ハンドラー
   const handleNotificationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
     setNotificationSettings(prev => ({
       ...prev,
-      [name]: checked
+      [name]: checked,
     }));
   };
-  
+
   // 表示設定の変更ハンドラー
   const handleDisplayChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
-    
+
     setDisplaySettings(prev => ({
       ...prev,
-      [name]: type === 'number' ? Number(newValue) : newValue
+      [name]: type === 'number' ? Number(newValue) : newValue,
     }));
   };
-  
+
   // 設定保存ハンドラー
   const handleSaveSettings = async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       if (user && user.id) {
         // 通知設定の保存
-        await axios.put(`${API_BASE_URL}/users/${user.id}/notification-settings`, notificationSettings);
-        
+        await axios.put(
+          `${API_BASE_URL}/users/${user.id}/notification-settings`,
+          notificationSettings
+        );
+
         // 表示設定の保存
         await axios.put(`${API_BASE_URL}/users/${user.id}/display-settings`, displaySettings);
-        
+
         setSuccess('設定を保存しました');
         setTimeout(() => setSuccess(null), 3000);
       }
-      
+
       setLoading(false);
     } catch (err: any) {
       setError('設定の保存に失敗しました: ' + (err.message || '不明なエラー'));
       setLoading(false);
     }
   };
-  
+
   // 現在のモードに基づいたスタイルを取得
   const styles = darkMode ? darkModeStyles : lightModeStyles;
-  
+
   return (
     <div className={`p-4 ${styles.body}`}>
       <h1 className={`text-2xl font-bold mb-6 ${styles.text.primary}`}>設定</h1>
-      
+
       {error && <Alert type="error" message={error} className="mb-4" />}
       {success && <Alert type="success" message={success} className="mb-4" />}
-      
+
       <div className={`p-4 rounded-lg shadow-md mb-6 ${styles.card}`}>
         <h2 className={`text-xl font-semibold mb-4 ${styles.text.primary}`}>表示設定</h2>
-        
+
         <div className="mb-4">
           <div className="flex items-center justify-between">
             <label className={`font-medium ${styles.text.secondary}`}>ダークモード</label>
@@ -222,11 +229,15 @@ const Settings: React.FC = () => {
               ></label>
             </div>
           </div>
-          <p className={`text-sm mt-1 ${styles.text.muted}`}>ダークモードを有効にすると、画面の背景が暗くなります</p>
+          <p className={`text-sm mt-1 ${styles.text.muted}`}>
+            ダークモードを有効にすると、画面の背景が暗くなります
+          </p>
         </div>
-        
+
         <div className="mb-4">
-          <label className={`block font-medium mb-1 ${styles.text.secondary}`}>1ページあたりの表示件数</label>
+          <label className={`block font-medium mb-1 ${styles.text.secondary}`}>
+            1ページあたりの表示件数
+          </label>
           <select
             name="itemsPerPage"
             value={displaySettings.itemsPerPage}
@@ -240,9 +251,11 @@ const Settings: React.FC = () => {
             <option value={100}>100件</option>
           </select>
         </div>
-        
+
         <div className="mb-4">
-          <label className={`block font-medium mb-1 ${styles.text.secondary}`}>デフォルト表示</label>
+          <label className={`block font-medium mb-1 ${styles.text.secondary}`}>
+            デフォルト表示
+          </label>
           <select
             name="defaultView"
             value={displaySettings.defaultView}
@@ -254,7 +267,7 @@ const Settings: React.FC = () => {
             <option value="kanban">カンバン表示</option>
           </select>
         </div>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -269,9 +282,11 @@ const Settings: React.FC = () => {
               コンパクトモード
             </label>
           </div>
-          <p className={`text-sm mt-1 ${styles.text.muted}`}>UI要素の間隔を狭くして、より多くの情報を表示します</p>
+          <p className={`text-sm mt-1 ${styles.text.muted}`}>
+            UI要素の間隔を狭くして、より多くの情報を表示します
+          </p>
         </div>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -286,13 +301,15 @@ const Settings: React.FC = () => {
               フィルターを常に表示
             </label>
           </div>
-          <p className={`text-sm mt-1 ${styles.text.muted}`}>リスト画面でフィルターパネルを常に表示します</p>
+          <p className={`text-sm mt-1 ${styles.text.muted}`}>
+            リスト画面でフィルターパネルを常に表示します
+          </p>
         </div>
       </div>
-      
+
       <div className={`p-4 rounded-lg shadow-md mb-6 ${styles.card}`}>
         <h2 className={`text-xl font-semibold mb-4 ${styles.text.primary}`}>通知設定</h2>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -309,7 +326,7 @@ const Settings: React.FC = () => {
           </div>
           <p className={`text-sm mt-1 ${styles.text.muted}`}>重要な通知をメールで受け取ります</p>
         </div>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -326,7 +343,7 @@ const Settings: React.FC = () => {
           </div>
           <p className={`text-sm mt-1 ${styles.text.muted}`}>アプリ内で通知を受け取ります</p>
         </div>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -341,11 +358,13 @@ const Settings: React.FC = () => {
               デイリーダイジェスト
             </label>
           </div>
-          <p className={`text-sm mt-1 ${styles.text.muted}`}>1日1回、すべての通知をまとめて受け取ります</p>
+          <p className={`text-sm mt-1 ${styles.text.muted}`}>
+            1日1回、すべての通知をまとめて受け取ります
+          </p>
         </div>
-        
+
         <h3 className={`font-semibold mt-4 mb-2 ${styles.text.secondary}`}>通知を受け取る項目</h3>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -356,12 +375,15 @@ const Settings: React.FC = () => {
               onChange={handleNotificationChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="notifyOnProjectChanges" className={`ml-2 block ${styles.text.secondary}`}>
+            <label
+              htmlFor="notifyOnProjectChanges"
+              className={`ml-2 block ${styles.text.secondary}`}
+            >
               案件の変更
             </label>
           </div>
         </div>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -372,12 +394,15 @@ const Settings: React.FC = () => {
               onChange={handleNotificationChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="notifyOnApplicationChanges" className={`ml-2 block ${styles.text.secondary}`}>
+            <label
+              htmlFor="notifyOnApplicationChanges"
+              className={`ml-2 block ${styles.text.secondary}`}
+            >
               応募状況の変更
             </label>
           </div>
         </div>
-        
+
         <div className="mb-4">
           <div className="flex items-center">
             <input
@@ -388,13 +413,16 @@ const Settings: React.FC = () => {
               onChange={handleNotificationChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="notifyOnApprovalRequests" className={`ml-2 block ${styles.text.secondary}`}>
+            <label
+              htmlFor="notifyOnApprovalRequests"
+              className={`ml-2 block ${styles.text.secondary}`}
+            >
               承認リクエスト
             </label>
           </div>
         </div>
       </div>
-      
+
       <div className="flex justify-end">
         <Button
           type="button"

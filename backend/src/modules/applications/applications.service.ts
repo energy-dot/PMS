@@ -22,7 +22,7 @@ export class ApplicationsService {
   async findAllApplications(): Promise<Application[]> {
     return this.findAll();
   }
-  
+
   async findAll(): Promise<Application[]> {
     return this.applicationsRepository.find({
       relations: ['project', 'partner', 'contactPerson', 'documentScreener', 'interviewRecords'],
@@ -32,7 +32,7 @@ export class ApplicationsService {
   async findApplicationById(id: string): Promise<Application> {
     return this.findOne(id);
   }
-  
+
   async findOne(id: string): Promise<Application> {
     const application = await this.applicationsRepository.findOne({
       where: { id },
@@ -49,7 +49,7 @@ export class ApplicationsService {
   async findApplicationsByProjectId(projectId: string): Promise<Application[]> {
     return this.findByProject(projectId);
   }
-  
+
   async findByProject(projectId: string): Promise<Application[]> {
     return this.applicationsRepository.find({
       where: { projectId },
@@ -60,7 +60,7 @@ export class ApplicationsService {
   async findApplicationsByPartnerId(partnerId: string): Promise<Application[]> {
     return this.findByStaff(partnerId);
   }
-  
+
   async findByStaff(partnerId: string): Promise<Application[]> {
     return this.applicationsRepository.find({
       where: { partnerId },
@@ -71,7 +71,7 @@ export class ApplicationsService {
   async findApplicationsByStatus(status: string): Promise<Application[]> {
     return this.findByStatus(status);
   }
-  
+
   async findByStatus(status: string): Promise<Application[]> {
     return this.applicationsRepository.find({
       where: { status },
@@ -82,14 +82,14 @@ export class ApplicationsService {
   async createApplication(createApplicationDto: CreateApplicationDto): Promise<Application> {
     return this.create(createApplicationDto);
   }
-  
+
   async create(createApplicationDto: CreateApplicationDto): Promise<Application> {
     // Create a properly typed object that matches the entity structure
     const applicationData: Partial<Application> = {
       ...createApplicationDto,
       applicationDate: new Date(createApplicationDto.applicationDate),
-      finalResultNotificationDate: createApplicationDto.finalResultNotificationDate 
-        ? new Date(createApplicationDto.finalResultNotificationDate) 
+      finalResultNotificationDate: createApplicationDto.finalResultNotificationDate
+        ? new Date(createApplicationDto.finalResultNotificationDate)
         : undefined,
     };
 
@@ -97,10 +97,13 @@ export class ApplicationsService {
     return this.applicationsRepository.save(newApplication);
   }
 
-  async updateApplication(id: string, updateApplicationDto: UpdateApplicationDto): Promise<Application> {
+  async updateApplication(
+    id: string,
+    updateApplicationDto: UpdateApplicationDto,
+  ): Promise<Application> {
     return this.update(id, updateApplicationDto);
   }
-  
+
   async update(id: string, updateApplicationDto: UpdateApplicationDto): Promise<Application> {
     const application = await this.findOne(id);
 
@@ -108,21 +111,23 @@ export class ApplicationsService {
     if (updateApplicationDto.applicationDate) {
       updateApplicationDto.applicationDate = new Date(updateApplicationDto.applicationDate) as any;
     }
-    
+
     if (updateApplicationDto.finalResultNotificationDate) {
-      updateApplicationDto.finalResultNotificationDate = new Date(updateApplicationDto.finalResultNotificationDate) as any;
+      updateApplicationDto.finalResultNotificationDate = new Date(
+        updateApplicationDto.finalResultNotificationDate,
+      ) as any;
     }
 
     // 更新対象のエンティティをマージ
     const updatedApplication = this.applicationsRepository.merge(application, updateApplicationDto);
-    
+
     return this.applicationsRepository.save(updatedApplication);
   }
 
   async removeApplication(id: string): Promise<void> {
     return this.remove(id);
   }
-  
+
   async remove(id: string): Promise<void> {
     const application = await this.findOne(id);
     await this.applicationsRepository.remove(application);
@@ -137,7 +142,10 @@ export class ApplicationsService {
   }
 
   // 以下のメソッドはエイリアスまたは内部使用
-  async addInterviewRecord(applicationId: string, createInterviewRecordDto: CreateInterviewRecordDto): Promise<InterviewRecord> {
+  async addInterviewRecord(
+    applicationId: string,
+    createInterviewRecordDto: CreateInterviewRecordDto,
+  ): Promise<InterviewRecord> {
     // 既存のcreateInterviewRecordメソッドを活用
     return this.createInterviewRecord({
       ...createInterviewRecordDto,
@@ -177,14 +185,18 @@ export class ApplicationsService {
     });
   }
 
-  async createInterviewRecord(createInterviewRecordDto: CreateInterviewRecordDto): Promise<InterviewRecord> {
+  async createInterviewRecord(
+    createInterviewRecordDto: CreateInterviewRecordDto,
+  ): Promise<InterviewRecord> {
     // 関連する応募者が存在するか確認
     const application = await this.applicationsRepository.findOne({
       where: { id: createInterviewRecordDto.applicationId },
     });
 
     if (!application) {
-      throw new BadRequestException(`応募ID ${createInterviewRecordDto.applicationId} は存在しません`);
+      throw new BadRequestException(
+        `応募ID ${createInterviewRecordDto.applicationId} は存在しません`,
+      );
     }
 
     const newInterviewRecord = this.interviewRecordsRepository.create({
@@ -195,17 +207,25 @@ export class ApplicationsService {
     return this.interviewRecordsRepository.save(newInterviewRecord);
   }
 
-  async updateInterviewRecord(id: string, updateInterviewRecordDto: UpdateInterviewRecordDto): Promise<InterviewRecord> {
+  async updateInterviewRecord(
+    id: string,
+    updateInterviewRecordDto: UpdateInterviewRecordDto,
+  ): Promise<InterviewRecord> {
     const interviewRecord = await this.findInterviewRecordById(id);
 
     // 日付フィールドの変換
     if (updateInterviewRecordDto.interviewDate) {
-      updateInterviewRecordDto.interviewDate = new Date(updateInterviewRecordDto.interviewDate) as any;
+      updateInterviewRecordDto.interviewDate = new Date(
+        updateInterviewRecordDto.interviewDate,
+      ) as any;
     }
 
     // 更新対象のエンティティをマージ
-    const updatedInterviewRecord = this.interviewRecordsRepository.merge(interviewRecord, updateInterviewRecordDto);
-    
+    const updatedInterviewRecord = this.interviewRecordsRepository.merge(
+      interviewRecord,
+      updateInterviewRecordDto,
+    );
+
     return this.interviewRecordsRepository.save(updatedInterviewRecord);
   }
 

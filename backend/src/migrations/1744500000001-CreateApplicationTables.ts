@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateApplicationTables1744500000001 implements MigrationInterface {
-    name = 'CreateApplicationTables1744500000001'
+  name = 'CreateApplicationTables1744500000001';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // 応募者（applications）テーブルの作成
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // 応募者（applications）テーブルの作成
+    await queryRunner.query(`
             CREATE TABLE "applications" (
                 "id" varchar PRIMARY KEY NOT NULL,
                 "project_id" varchar NOT NULL,
@@ -34,8 +34,8 @@ export class CreateApplicationTables1744500000001 implements MigrationInterface 
             )
         `);
 
-        // 面談記録（interview_records）テーブルの作成
-        await queryRunner.query(`
+    // 面談記録（interview_records）テーブルの作成
+    await queryRunner.query(`
             CREATE TABLE "interview_records" (
                 "id" varchar PRIMARY KEY NOT NULL,
                 "application_id" varchar NOT NULL,
@@ -51,49 +51,49 @@ export class CreateApplicationTables1744500000001 implements MigrationInterface 
             )
         `);
 
-        // インデックスの作成
-        await queryRunner.query(`
+    // インデックスの作成
+    await queryRunner.query(`
             CREATE INDEX "IDX_applications_project_id" ON "applications" ("project_id")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_applications_partner_id" ON "applications" ("partner_id")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_applications_status" ON "applications" ("status")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_interview_records_application_id" ON "interview_records" ("application_id")
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        // インデックスの削除
-        await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // インデックスの削除
+    await queryRunner.query(`
             DROP INDEX "IDX_interview_records_application_id"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_applications_status"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_applications_partner_id"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_applications_project_id"
         `);
 
-        // テーブルの削除
-        await queryRunner.query(`
+    // テーブルの削除
+    await queryRunner.query(`
             DROP TABLE "interview_records"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP TABLE "applications"
         `);
-    }
+  }
 }

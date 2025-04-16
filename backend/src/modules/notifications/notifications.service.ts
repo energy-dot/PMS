@@ -59,12 +59,18 @@ export class NotificationsService {
     return this.notificationsRepository.save(newNotification);
   }
 
-  async updateNotification(id: string, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
+  async updateNotification(
+    id: string,
+    updateNotificationDto: UpdateNotificationDto,
+  ): Promise<Notification> {
     const notification = await this.findNotificationById(id);
-    
+
     // 更新対象のエンティティをマージ
-    const updatedNotification = this.notificationsRepository.merge(notification, updateNotificationDto);
-    
+    const updatedNotification = this.notificationsRepository.merge(
+      notification,
+      updateNotificationDto,
+    );
+
     return this.notificationsRepository.save(updatedNotification);
   }
 
@@ -75,10 +81,7 @@ export class NotificationsService {
   }
 
   async markAllAsRead(userId: string): Promise<void> {
-    await this.notificationsRepository.update(
-      { userId, isRead: false },
-      { isRead: true }
-    );
+    await this.notificationsRepository.update({ userId, isRead: false }, { isRead: true });
   }
 
   async removeNotification(id: string): Promise<void> {
@@ -87,7 +90,11 @@ export class NotificationsService {
   }
 
   // 通知生成のヘルパーメソッド
-  async createSystemNotification(userId: string, title: string, content: string): Promise<Notification> {
+  async createSystemNotification(
+    userId: string,
+    title: string,
+    content: string,
+  ): Promise<Notification> {
     return this.createNotification({
       userId,
       title,
@@ -96,7 +103,12 @@ export class NotificationsService {
     });
   }
 
-  async createProjectNotification(userId: string, title: string, content: string, projectId: string): Promise<Notification> {
+  async createProjectNotification(
+    userId: string,
+    title: string,
+    content: string,
+    projectId: string,
+  ): Promise<Notification> {
     return this.createNotification({
       userId,
       title,
@@ -107,7 +119,12 @@ export class NotificationsService {
     });
   }
 
-  async createApplicationNotification(userId: string, title: string, content: string, applicationId: string): Promise<Notification> {
+  async createApplicationNotification(
+    userId: string,
+    title: string,
+    content: string,
+    applicationId: string,
+  ): Promise<Notification> {
     return this.createNotification({
       userId,
       title,
@@ -118,7 +135,12 @@ export class NotificationsService {
     });
   }
 
-  async createApprovalNotification(userId: string, title: string, content: string, requestHistoryId: string): Promise<Notification> {
+  async createApprovalNotification(
+    userId: string,
+    title: string,
+    content: string,
+    requestHistoryId: string,
+  ): Promise<Notification> {
     return this.createNotification({
       userId,
       title,

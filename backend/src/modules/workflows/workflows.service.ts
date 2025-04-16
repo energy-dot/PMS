@@ -56,43 +56,53 @@ export class WorkflowsService {
     });
   }
 
-  async createRequestHistory(createRequestHistoryDto: CreateRequestHistoryDto): Promise<RequestHistory> {
+  async createRequestHistory(
+    createRequestHistoryDto: CreateRequestHistoryDto,
+  ): Promise<RequestHistory> {
     // 関連するプロジェクトが存在するか確認
     const project = await this.projectsRepository.findOne({
       where: { id: createRequestHistoryDto.projectId },
     });
 
     if (!project) {
-      throw new BadRequestException(`プロジェクトID ${createRequestHistoryDto.projectId} は存在しません`);
+      throw new BadRequestException(
+        `プロジェクトID ${createRequestHistoryDto.projectId} は存在しません`,
+      );
     }
 
     const newRequestHistory = new RequestHistory();
     Object.assign(newRequestHistory, {
       ...createRequestHistoryDto,
       requestDate: new Date(createRequestHistoryDto.requestDate),
-      approvalDate: createRequestHistoryDto.approvalDate 
-        ? new Date(createRequestHistoryDto.approvalDate) 
+      approvalDate: createRequestHistoryDto.approvalDate
+        ? new Date(createRequestHistoryDto.approvalDate)
         : null,
     });
 
     return this.requestHistoriesRepository.save(newRequestHistory);
   }
 
-  async updateRequestHistory(id: string, updateRequestHistoryDto: UpdateRequestHistoryDto): Promise<RequestHistory> {
+  async updateRequestHistory(
+    id: string,
+    updateRequestHistoryDto: UpdateRequestHistoryDto,
+  ): Promise<RequestHistory> {
     const requestHistory = await this.findRequestHistoryById(id);
 
     // 日付フィールドの変換
     if (updateRequestHistoryDto.requestDate) {
       updateRequestHistoryDto.requestDate = new Date(updateRequestHistoryDto.requestDate) as any;
     }
-    
+
     if (updateRequestHistoryDto.approvalDate) {
       updateRequestHistoryDto.approvalDate = new Date(updateRequestHistoryDto.approvalDate) as any;
     }
 
     // 更新対象のエンティティをマージ
-    const updatedRequestHistory = this.requestHistoriesRepository.merge(requestHistory, updateRequestHistoryDto);
-    
+    const updatedRequestHistory = this.requestHistoriesRepository.merge(
+      requestHistory,
+      updateRequestHistoryDto,
+    );
+
     return this.requestHistoriesRepository.save(updatedRequestHistory);
   }
 
@@ -102,7 +112,11 @@ export class WorkflowsService {
   }
 
   // プロジェクト承認関連のメソッド
-  async requestProjectApproval(projectId: string, requesterId: string, remarks?: string): Promise<RequestHistory> {
+  async requestProjectApproval(
+    projectId: string,
+    requesterId: string,
+    remarks?: string,
+  ): Promise<RequestHistory> {
     // プロジェクトの存在確認
     const project = await this.projectsRepository.findOne({
       where: { id: projectId },
@@ -130,7 +144,11 @@ export class WorkflowsService {
     return this.requestHistoriesRepository.save(requestHistory);
   }
 
-  async approveProject(requestHistoryId: string, approverId: string, remarks?: string): Promise<RequestHistory> {
+  async approveProject(
+    requestHistoryId: string,
+    approverId: string,
+    remarks?: string,
+  ): Promise<RequestHistory> {
     // 申請履歴の存在確認
     const requestHistory = await this.findRequestHistoryById(requestHistoryId);
 
@@ -161,7 +179,11 @@ export class WorkflowsService {
     return this.requestHistoriesRepository.save(requestHistory);
   }
 
-  async rejectProject(requestHistoryId: string, approverId: string, rejectionReason: string): Promise<RequestHistory> {
+  async rejectProject(
+    requestHistoryId: string,
+    approverId: string,
+    rejectionReason: string,
+  ): Promise<RequestHistory> {
     // 申請履歴の存在確認
     const requestHistory = await this.findRequestHistoryById(requestHistoryId);
 

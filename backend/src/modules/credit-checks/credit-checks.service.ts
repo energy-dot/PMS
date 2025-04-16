@@ -44,7 +44,7 @@ export class CreditChecksService {
 
   async create(createCreditCheckDto: CreateCreditCheckDto): Promise<CreditCheck> {
     const { partnerId, ...creditCheckData } = createCreditCheckDto;
-    
+
     const partner = await this.partnerRepository.findOne({
       where: { id: partnerId },
     });
@@ -72,7 +72,7 @@ export class CreditChecksService {
 
   async update(id: string, updateCreditCheckDto: UpdateCreditCheckDto): Promise<CreditCheck> {
     const creditCheck = await this.findOne(id);
-    
+
     const updatedCreditCheck = Object.assign(creditCheck, updateCreditCheckDto);
     const savedCreditCheck = await this.creditCheckRepository.save(updatedCreditCheck);
 
@@ -81,7 +81,7 @@ export class CreditChecksService {
       const partner = await this.partnerRepository.findOne({
         where: { id: updatedCreditCheck.partner.id },
       });
-      
+
       if (partner) {
         partner.creditCheckCompleted = true;
         partner.creditCheckDate = updatedCreditCheck.checkDate;

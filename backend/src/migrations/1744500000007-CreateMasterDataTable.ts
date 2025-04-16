@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateMasterDataTable1744500000007 implements MigrationInterface {
-    name = 'CreateMasterDataTable1744500000007'
+  name = 'CreateMasterDataTable1744500000007';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // マスターデータテーブルの作成
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // マスターデータテーブルの作成
+    await queryRunner.query(`
             CREATE TABLE "master_data" (
                 "id" varchar PRIMARY KEY NOT NULL,
                 "name" varchar NOT NULL,
@@ -20,21 +20,21 @@ export class CreateMasterDataTable1744500000007 implements MigrationInterface {
             )
         `);
 
-        // インデックスの作成
-        await queryRunner.query(`
+    // インデックスの作成
+    await queryRunner.query(`
             CREATE INDEX "IDX_master_data_type" ON "master_data" ("type")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_master_data_category" ON "master_data" ("category")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_master_data_is_active" ON "master_data" ("is_active")
         `);
 
-        // 初期データの挿入 - スキル
-        await queryRunner.query(`
+    // 初期データの挿入 - スキル
+    await queryRunner.query(`
             INSERT INTO "master_data" ("id", "name", "description", "type", "category", "display_order", "is_active")
             VALUES 
                 ('${this.generateUUID()}', 'Java', 'プログラミング言語', 'skills', 'プログラミング言語', 1, 1),
@@ -51,8 +51,8 @@ export class CreateMasterDataTable1744500000007 implements MigrationInterface {
                 ('${this.generateUUID()}', 'GCP', 'クラウドプラットフォーム', 'skills', 'クラウド', 3, 1)
         `);
 
-        // 初期データの挿入 - 役職
-        await queryRunner.query(`
+    // 初期データの挿入 - 役職
+    await queryRunner.query(`
             INSERT INTO "master_data" ("id", "name", "description", "type", "display_order", "is_active")
             VALUES 
                 ('${this.generateUUID()}', '開発担当者', 'プロジェクトで要員の選考・評価を行う担当者', 'roles', 1, 1),
@@ -61,8 +61,8 @@ export class CreateMasterDataTable1744500000007 implements MigrationInterface {
                 ('${this.generateUUID()}', '閲覧者', '情報の閲覧のみが可能なユーザー', 'roles', 4, 1)
         `);
 
-        // 初期データの挿入 - 契約形態
-        await queryRunner.query(`
+    // 初期データの挿入 - 契約形態
+    await queryRunner.query(`
             INSERT INTO "master_data" ("id", "name", "description", "type", "display_order", "is_active")
             VALUES 
                 ('${this.generateUUID()}', '準委任', '業務の遂行を委託する契約形態', 'contractTypes', 1, 1),
@@ -70,8 +70,8 @@ export class CreateMasterDataTable1744500000007 implements MigrationInterface {
                 ('${this.generateUUID()}', '請負', '特定の業務の完了を約束する契約形態', 'contractTypes', 3, 1)
         `);
 
-        // 初期データの挿入 - 案件ステータス
-        await queryRunner.query(`
+    // 初期データの挿入 - 案件ステータス
+    await queryRunner.query(`
             INSERT INTO "master_data" ("id", "name", "description", "type", "display_order", "is_active")
             VALUES 
                 ('${this.generateUUID()}', '下書き', '案件情報を作成中の状態', 'projectStatuses', 1, 1),
@@ -84,8 +84,8 @@ export class CreateMasterDataTable1744500000007 implements MigrationInterface {
                 ('${this.generateUUID()}', '差し戻し', '承認申請が差し戻された状態', 'projectStatuses', 8, 1)
         `);
 
-        // 初期データの挿入 - 応募ステータス
-        await queryRunner.query(`
+    // 初期データの挿入 - 応募ステータス
+    await queryRunner.query(`
             INSERT INTO "master_data" ("id", "name", "description", "type", "display_order", "is_active")
             VALUES 
                 ('${this.generateUUID()}', '新規応募', '新しく応募があった状態', 'applicationStatuses', 1, 1),
@@ -102,8 +102,8 @@ export class CreateMasterDataTable1744500000007 implements MigrationInterface {
                 ('${this.generateUUID()}', '辞退', '応募者が辞退した状態', 'applicationStatuses', 12, 1)
         `);
 
-        // 初期データの挿入 - 評価項目
-        await queryRunner.query(`
+    // 初期データの挿入 - 評価項目
+    await queryRunner.query(`
             INSERT INTO "master_data" ("id", "name", "description", "type", "display_order", "is_active")
             VALUES 
                 ('${this.generateUUID()}', 'スキル合致度', '案件に必要なスキルをどの程度持っているか', 'evaluationItems', 1, 1),
@@ -112,34 +112,34 @@ export class CreateMasterDataTable1744500000007 implements MigrationInterface {
                 ('${this.generateUUID()}', '勤怠', '出勤率や時間厳守の姿勢はどうか', 'evaluationItems', 4, 1),
                 ('${this.generateUUID()}', '協調性', 'チームでの協調性やチームワークはどうか', 'evaluationItems', 5, 1)
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        // インデックスの削除
-        await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // インデックスの削除
+    await queryRunner.query(`
             DROP INDEX "IDX_master_data_is_active"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_master_data_category"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_master_data_type"
         `);
 
-        // テーブルの削除
-        await queryRunner.query(`
+    // テーブルの削除
+    await queryRunner.query(`
             DROP TABLE "master_data"
         `);
-    }
+  }
 
-    // UUIDを生成するヘルパーメソッド
-    private generateUUID(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
+  // UUIDを生成するヘルパーメソッド
+  private generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
 }

@@ -1,4 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { Contract } from './contract.entity';
 import { Application } from './application.entity';
 import { Evaluation } from './evaluation.entity';
@@ -19,7 +29,7 @@ export class Project {
 
   @ManyToOne(() => Department, department => department.projects, {
     cascade: false,
-    onDelete: 'RESTRICT'
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'department_id' })
   department: Department;
@@ -30,7 +40,7 @@ export class Project {
 
   @ManyToOne(() => Section, section => section.projects, {
     cascade: false,
-    onDelete: 'RESTRICT'
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'section_id' })
   section: Section;
@@ -77,8 +87,15 @@ export class Project {
   @Column({ nullable: true })
   remarks: string;
 
+  // 以下のプロパティはプロジェクトサービスで使用されている
   @Column({ nullable: true })
-  requiredNumber: number;
+  requiredHeadcount: number;
+
+  @Column({ nullable: true })
+  currentHeadcount: number;
+
+  @Column({ nullable: true })
+  approvalStatus: string;
 
   // プロジェクトの契約タイプ
   @Column({ nullable: true })
@@ -100,6 +117,13 @@ export class Project {
 
   @Column({ nullable: true })
   approvedAt: Date;
+
+  // 以下のプロパティはworkflowsサービスで使用されている
+  @Column({ nullable: true })
+  approverId: string;
+
+  @Column({ nullable: true })
+  approvalDate: Date;
 
   @OneToMany(() => Contract, contract => contract.project)
   contracts: Contract[];

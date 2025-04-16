@@ -1,4 +1,13 @@
-import { IsString, IsNotEmpty, IsOptional, IsEmail, IsUrl, IsEnum, IsNumber, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEmail,
+  IsUrl,
+  IsEnum,
+  IsNumber,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreatePartnerDto {
   @IsString()
@@ -21,7 +30,9 @@ export class CreatePartnerDto {
   @IsOptional()
   website?: string;
 
-  @IsEnum(['取引中', '取引停止', '候補'], { message: 'ステータスは「取引中」「取引停止」「候補」のいずれかである必要があります' })
+  @IsEnum(['取引中', '取引停止', '候補'], {
+    message: 'ステータスは「取引中」「取引停止」「候補」のいずれかである必要があります',
+  })
   @IsOptional()
   status?: string;
 

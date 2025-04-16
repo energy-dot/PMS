@@ -9,22 +9,22 @@ export class JwtAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    
+
     if (!token) {
       throw new UnauthorizedException('認証が必要です');
     }
-    
+
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET || 'your-secret-key'
+        secret: process.env.JWT_SECRET || 'your-secret-key',
       });
-      
+
       // リクエストにユーザー情報を追加
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException('無効なトークンです');
     }
-    
+
     return true;
   }
 

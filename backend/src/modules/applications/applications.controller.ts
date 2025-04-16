@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { ApplicationsService } from './applications.service';
 import { Application } from '../../entities/application.entity';
@@ -69,12 +79,16 @@ export class ApplicationsController {
   }
 
   @Get(':applicationId/interview-records')
-  findInterviewRecordsByApplicationId(@Param('applicationId') applicationId: string): Promise<InterviewRecord[]> {
+  findInterviewRecordsByApplicationId(
+    @Param('applicationId') applicationId: string,
+  ): Promise<InterviewRecord[]> {
     return this.applicationsService.findInterviewRecordsByApplicationId(applicationId);
   }
 
   @Post('interview-records')
-  createInterviewRecord(@Body() createInterviewRecordDto: CreateInterviewRecordDto): Promise<InterviewRecord> {
+  createInterviewRecord(
+    @Body() createInterviewRecordDto: CreateInterviewRecordDto,
+  ): Promise<InterviewRecord> {
     return this.applicationsService.createInterviewRecord(createInterviewRecordDto);
   }
 

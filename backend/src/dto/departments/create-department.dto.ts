@@ -1,4 +1,13 @@
-import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsNumber, Min, Max, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+  Min,
+  Max,
+  MaxLength,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateDepartmentDto {

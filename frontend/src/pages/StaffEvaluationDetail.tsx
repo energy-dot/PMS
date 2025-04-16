@@ -84,12 +84,10 @@ const StaffEvaluationDetail: React.FC = () => {
   const renderRatingStars = (rating: number): JSX.Element => {
     return (
       <div className="flex">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5].map(star => (
           <svg
             key={star}
-            className={`w-5 h-5 ${
-              star <= rating ? 'text-yellow-400' : 'text-gray-300'
-            }`}
+            className={`w-5 h-5 ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +107,9 @@ const StaffEvaluationDetail: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-6">
         <Alert type="error">{error}</Alert>
-        <Button onClick={handleBack} className="mt-4">一覧に戻る</Button>
+        <Button onClick={handleBack} className="mt-4">
+          一覧に戻る
+        </Button>
       </div>
     );
   }
@@ -118,7 +118,9 @@ const StaffEvaluationDetail: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-6">
         <Alert type="error">評価データが見つかりません</Alert>
-        <Button onClick={handleBack} className="mt-4">一覧に戻る</Button>
+        <Button onClick={handleBack} className="mt-4">
+          一覧に戻る
+        </Button>
       </div>
     );
   }
@@ -206,7 +208,7 @@ const StaffEvaluationDetail: React.FC = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">スキル評価</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {evaluation.skills.map((skill) => (
+            {evaluation.skills.map(skill => (
               <div key={skill.id}>
                 <h3 className="text-sm font-medium text-gray-500">{skill.skillName}</h3>
                 <div className="mt-1">{renderRatingStars(skill.skillLevel)}</div>

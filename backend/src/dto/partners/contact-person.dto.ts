@@ -30,8 +30,9 @@ export class ContactPersonDto {
   @IsOptional()
   mobilePhone?: string;
 
-  @IsEnum(['主要担当', '営業担当', '技術担当', 'その他'], { 
-    message: '担当区分は「主要担当」「営業担当」「技術担当」「その他」のいずれかである必要があります' 
+  @IsEnum(['主要担当', '営業担当', '技術担当', 'その他'], {
+    message:
+      '担当区分は「主要担当」「営業担当」「技術担当」「その他」のいずれかである必要があります',
   })
   @IsOptional()
   type?: string;
@@ -70,8 +71,9 @@ export class UpdateContactPersonDto {
   @IsOptional()
   mobilePhone?: string;
 
-  @IsEnum(['主要担当', '営業担当', '技術担当', 'その他'], { 
-    message: '担当区分は「主要担当」「営業担当」「技術担当」「その他」のいずれかである必要があります' 
+  @IsEnum(['主要担当', '営業担当', '技術担当', 'その他'], {
+    message:
+      '担当区分は「主要担当」「営業担当」「技術担当」「その他」のいずれかである必要があります',
   })
   @IsOptional()
   type?: string;

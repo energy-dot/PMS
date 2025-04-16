@@ -1,118 +1,148 @@
-import axios from 'axios';
-import { safeStorage } from '../store/authStore';
+// APIユーティリティ関数をエクスポート
 
-// APIの基本URL
-// 環境変数 > 自動検出 > デフォルト値 の優先順位
-const getBaseUrl = () => {
-  // 環境変数がある場合はそれを優先
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  
-  // ブラウザ環境の場合は現在のホストを基準に設定
-  if (typeof window !== 'undefined') {
-    // 常にプロキシを使用（/api）
-    return '/api';
-  }
-  
-  // デフォルト値
-  return '/api';
-};
+// リクエストオプションの型定義
+interface RequestOptions {
+  headers?: Record<string, string>;
+  [key: string]: any;
+}
 
-// APIクライアントの基本URL
-const API_URL = getBaseUrl();
-
-// トークンの保存キー
-const AUTH_TOKEN_KEY = 'pms_auth_token';
-
-// Axiosインスタンスの作成
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-  timeout: 15000, // 15秒でタイムアウト
-  withCredentials: true // CORSでクッキーを送信する
-});
-
-// リクエストインターセプター：認証トークンを追加
-api.interceptors.request.use(
-  (config) => {
-    // トークンの取得（安全な方法で）
+// デフォルトエクスポートとしてAPIクライアントを提供
+const api = {
+  // 基本的なHTTPメソッド
+  get: async <T = any>(url: string, options: RequestOptions = {}) => {
     try {
-      const token = safeStorage.getItem(AUTH_TOKEN_KEY);
-      
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
       }
+
+      return (await response.json()) as T;
     } catch (error) {
-      console.warn('トークンの取得に失敗しました:', error);
+      console.error('API GET request failed:', error);
+      throw error;
     }
-    
-    return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
-// レスポンスインターセプター：共通エラーハンドリング
-api.interceptors.response.use(
-  (response) => {
-    return response;
+  post: async <T = any>(url: string, data: any, options: RequestOptions = {}) => {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        body: JSON.stringify(data),
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      console.error('API POST request failed:', error);
+      throw error;
+    }
   },
-  (error) => {
-    // 認証エラー（401）の場合、ログアウト処理
-    if (error.response?.status === 401) {
-      try {
-        safeStorage.removeItem(AUTH_TOKEN_KEY);
-        safeStorage.removeItem('pms_user_data');
-      } catch (storageError) {
-        console.warn('ストレージへのアクセスに失敗しました:', storageError);
-      }
-      
-      // 現在のページがログインページでない場合のみリダイレクト
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
-      }
-    }
-    
-    // オリジナルのエラーを加工して詳細を追加
-    if (error.message && error.message.includes('Network Error')) {
-      error.isNetworkError = true;
-      error.friendlyMessage = 'サーバーに接続できません。サーバーが起動しているか確認してください。';
-    }
-    
-    return Promise.reject(error);
-  }
-);
 
-// リトライ機能付きのAPI呼び出し
-export const callWithRetry = async (fn: Function, retries = 3, delay = 1000) => {
-  try {
-    return await fn();
-  } catch (error: any) {
-    // ネットワークエラーの場合のみリトライ
-    if (
-      (error.message && (
-        error.message.includes('Network Error') ||
-        error.message.includes('net::ERR_CONNECTION_REFUSED') ||
-        error.message.includes('timeout')
-      )) || 
-      !error.response
-    ) {
-      if (retries > 0) {
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return callWithRetry(fn, retries - 1, delay * 1.5);
+  put: async <T = any>(url: string, data: any, options: RequestOptions = {}) => {
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        body: JSON.stringify(data),
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
       }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      console.error('API PUT request failed:', error);
+      throw error;
     }
-    
-    throw error;
-  }
+  },
+
+  patch: async <T = any>(url: string, data: any, options: RequestOptions = {}) => {
+    try {
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        body: JSON.stringify(data),
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      console.error('API PATCH request failed:', error);
+      throw error;
+    }
+  },
+
+  delete: async <T = any>(url: string, options: RequestOptions = {}) => {
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      console.error('API DELETE request failed:', error);
+      throw error;
+    }
+  },
 };
-
-// 外部からのインポート用に公開
-export const BASE_URL = API_URL;
 
 export default api;
+
+// APIユーティリティ関数
+export const callWithRetry = async <T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  delay = 1000
+): Promise<T> => {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries <= 0) {
+      throw error;
+    }
+
+    console.log(
+      `API呼び出しに失敗しました。${delay}ms後に再試行します。残り再試行回数: ${retries}`
+    );
+
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return callWithRetry(fn, retries - 1, delay * 2);
+  }
+};

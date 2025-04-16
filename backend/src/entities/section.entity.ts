@@ -1,4 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { Department } from './department.entity';
 import { Project } from './project.entity';
 
@@ -25,7 +35,7 @@ export class Section {
   isActive: boolean;
 
   @ManyToOne(() => Department, department => department.sections, {
-    onDelete: 'RESTRICT'
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'department_id' })
   department: Department;

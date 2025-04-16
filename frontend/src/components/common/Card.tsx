@@ -34,13 +34,11 @@ const Card: React.FC<CardProps> = ({
           </div>
         </div>
       )}
-      
+
       <div className="px-4 py-5 sm:p-6">{children}</div>
-      
+
       {footer && (
-        <div className="px-4 py-4 sm:px-6 bg-gray-50 border-t border-gray-200">
-          {footer}
-        </div>
+        <div className="px-4 py-4 sm:px-6 bg-gray-50 border-t border-gray-200">{footer}</div>
       )}
     </div>
   );

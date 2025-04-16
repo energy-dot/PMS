@@ -21,8 +21,8 @@ export class BaseContractDto {
   @IsNotEmpty({ message: '契約終了日は必須です' })
   endDate: Date;
 
-  @IsEnum(['有効', '更新待ち', '終了'], { 
-    message: 'ステータスは「有効」「更新待ち」「終了」のいずれかである必要があります' 
+  @IsEnum(['有効', '更新待ち', '終了'], {
+    message: 'ステータスは「有効」「更新待ち」「終了」のいずれかである必要があります',
   })
   @IsNotEmpty({ message: 'ステータスは必須です' })
   status: string;
@@ -68,8 +68,8 @@ export class UpdateBaseContractDto {
   @IsOptional()
   endDate?: Date;
 
-  @IsEnum(['有効', '更新待ち', '終了'], { 
-    message: 'ステータスは「有効」「更新待ち」「終了」のいずれかである必要があります' 
+  @IsEnum(['有効', '更新待ち', '終了'], {
+    message: 'ステータスは「有効」「更新待ち」「終了」のいずれかである必要があります',
   })
   @IsOptional()
   status?: string;

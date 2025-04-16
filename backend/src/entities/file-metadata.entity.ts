@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Contract } from './contract.entity';
 
 @Entity('file_metadata')
@@ -29,7 +37,7 @@ export class FileMetadata {
 
   @ManyToOne(() => Contract, contract => contract.documents, {
     onDelete: 'CASCADE',
-    nullable: true
+    nullable: true,
   })
   @JoinColumn({ name: 'contract_id' })
   contract: Contract;

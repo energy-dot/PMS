@@ -1,132 +1,140 @@
-import axios from 'axios';
-import { API_BASE_URL } from '../config';
+// services/userService.tsの修正 - APIのインポート方法を修正
 
-// ユーザーの型定義
-export interface User {
-  id: string;
-  username: string;
-  fullName: string;
-  email: string;
-  role: 'developer' | 'partner_manager' | 'admin' | 'viewer';
-  department: string;
-  isActive: boolean;
-  lastLogin: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+import api from './api';
+import { User } from '../shared-types';
 
-// ユーザー作成用のDTO
-export interface CreateUserDto {
-  username: string;
-  fullName: string;
-  email: string;
-  password: string;
-  role: 'developer' | 'partner_manager' | 'admin' | 'viewer';
-  department?: string;
-  isActive?: boolean;
-}
+// ユーザーデータの取得
+export const getUsers = async (): Promise<User[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.get('/users');
+    // return response.data;
 
-// ユーザー更新用のDTO
-export interface UpdateUserDto {
-  username?: string;
-  fullName?: string;
-  email?: string;
-  password?: string;
-  role?: 'developer' | 'partner_manager' | 'admin' | 'viewer';
-  department?: string;
-  isActive?: boolean;
-}
-
-// ユーザーサービスクラス
-class UserService {
-  // 全てのユーザーを取得
-  async getAllUsers(): Promise<User[]> {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/users`);
-      return response.data;
-    } catch (error) {
-      console.error('ユーザーの取得に失敗しました', error);
-      throw error;
-    }
+    // デモ用のモックデータ
+    return [
+      {
+        id: '1',
+        username: 'admin',
+        email: 'admin@example.com',
+        name: '管理者',
+        role: 'admin',
+        department: '管理部',
+        position: 'マネージャー',
+        isActive: true,
+      },
+      {
+        id: '2',
+        username: 'user1',
+        email: 'user1@example.com',
+        name: '一般ユーザー1',
+        role: 'developer',
+        department: '営業部',
+        position: '担当者',
+        isActive: true,
+      },
+      {
+        id: '3',
+        username: 'user2',
+        email: 'user2@example.com',
+        name: '一般ユーザー2',
+        role: 'developer',
+        department: '技術部',
+        position: 'エンジニア',
+        isActive: true,
+      },
+    ];
+  } catch (error) {
+    console.error('Failed to fetch users:', error);
+    throw error;
   }
+};
 
-  // 特定のユーザーを取得
-  async getUserById(id: string): Promise<User> {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/users/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} のユーザーの取得に失敗しました`, error);
-      throw error;
+// ユーザーデータの取得（ID指定）
+export const getUserById = async (id: string): Promise<User> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.get(`/users/${id}`);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const users = await getUsers();
+    const user = users.find(u => u.id === id);
+
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
     }
-  }
 
-  // ユーザーを作成
-  async createUser(data: CreateUserDto): Promise<User> {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/users`, data);
-      return response.data;
-    } catch (error) {
-      console.error('ユーザーの作成に失敗しました', error);
-      throw error;
-    }
+    return user;
+  } catch (error) {
+    console.error(`Failed to fetch user with ID ${id}:`, error);
+    throw error;
   }
+};
 
-  // ユーザーを更新
-  async updateUser(id: string, data: UpdateUserDto): Promise<User> {
-    try {
-      const response = await axios.patch(`${API_BASE_URL}/users/${id}`, data);
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} のユーザーの更新に失敗しました`, error);
-      throw error;
-    }
+// ユーザーデータの作成
+export const createUser = async (data: Omit<User, 'id'>): Promise<User> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.post('/users', data);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const newId = Math.floor(Math.random() * 1000).toString();
+    const newUser: User = {
+      id: newId,
+      ...data,
+    };
+
+    return newUser;
+  } catch (error) {
+    console.error('Failed to create user:', error);
+    throw error;
   }
+};
 
-  // ユーザーを削除
-  async deleteUser(id: string): Promise<void> {
-    try {
-      await axios.delete(`${API_BASE_URL}/users/${id}`);
-    } catch (error) {
-      console.error(`ID: ${id} のユーザーの削除に失敗しました`, error);
-      throw error;
-    }
+// ユーザーデータの更新
+export const updateUser = async (id: string, data: Partial<User>): Promise<User> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.put(`/users/${id}`, data);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const user = await getUserById(id);
+    const updatedUser: User = {
+      ...user,
+      ...data,
+    };
+
+    return updatedUser;
+  } catch (error) {
+    console.error(`Failed to update user with ID ${id}:`, error);
+    throw error;
   }
+};
 
-  // ユーザーのステータスを変更（有効/無効）
-  async toggleUserStatus(id: string, isActive: boolean): Promise<User> {
-    try {
-      const response = await axios.patch(`${API_BASE_URL}/users/${id}/status`, { isActive });
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} のユーザーのステータス変更に失敗しました`, error);
-      throw error;
-    }
+// ユーザーデータの削除
+export const deleteUser = async (id: string): Promise<void> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // await api.delete(`/users/${id}`);
+
+    // デモ用のモックデータ
+    // 実際には何もしない
+    console.log(`User with ID ${id} deleted`);
+  } catch (error) {
+    console.error(`Failed to delete user with ID ${id}:`, error);
+    throw error;
   }
+};
 
-  // 自分のプロフィールを取得
-  async getMyProfile(): Promise<User> {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/users/me`);
-      return response.data;
-    } catch (error) {
-      console.error('プロフィールの取得に失敗しました', error);
-      throw error;
-    }
-  }
+// デフォルトエクスポートを追加
+const userService = {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+};
 
-  // 自分のパスワードを変更
-  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-    try {
-      await axios.post(`${API_BASE_URL}/users/change-password`, {
-        oldPassword,
-        newPassword
-      });
-    } catch (error) {
-      console.error('パスワードの変更に失敗しました', error);
-      throw error;
-    }
-  }
-}
-
-export default new UserService();
+export default userService;

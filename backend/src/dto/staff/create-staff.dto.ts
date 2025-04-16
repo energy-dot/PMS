@@ -1,4 +1,16 @@
-import { IsString, IsNotEmpty, IsOptional, IsEmail, IsEnum, IsNumber, IsDateString, IsArray, IsObject, ValidateNested, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsArray,
+  IsObject,
+  ValidateNested,
+  IsUUID,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { Partner } from '../../entities/partner.entity';
 
@@ -21,8 +33,9 @@ export class CreateStaffDto {
   @IsOptional()
   phone?: string;
 
-  @IsEnum(['稼働中', '待機中', '契約終了', '選考中', '予約済み'], { 
-    message: 'ステータスは「稼働中」「待機中」「契約終了」「選考中」「予約済み」のいずれかである必要があります' 
+  @IsEnum(['稼働中', '待機中', '契約終了', '選考中', '予約済み'], {
+    message:
+      'ステータスは「稼働中」「待機中」「契約終了」「選考中」「予約済み」のいずれかである必要があります',
   })
   @IsOptional()
   status?: string;

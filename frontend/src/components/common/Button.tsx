@@ -1,92 +1,136 @@
-import React from 'react';
+// components/common/Button.tsxの修正 - variantプロパティの型定義を追加
 
-type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'text';
-type ButtonSize = 'sm' | 'md' | 'lg';
+import React, { ButtonHTMLAttributes } from 'react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-  variant?: ButtonVariant;
-  size?: ButtonSize;
+// Buttonコンポーネントのプロパティ型を定義
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'danger'
+    | 'warning'
+    | 'info'
+    | 'light'
+    | 'dark'
+    | 'link'
+    | 'outline-primary'
+    | 'outline-secondary'
+    | 'outline-success'
+    | 'outline-danger'
+    | 'outline-warning'
+    | 'outline-info'
+    | 'outline-light'
+    | 'outline-dark';
+  size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   fullWidth?: boolean;
-  icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
 }
 
-/**
- * 共通のボタンコンポーネント
- * 様々なスタイルバリエーションとサイズをサポート
- */
+// Buttonコンポーネント
 const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
-  size = 'md',
+  size,
   isLoading = false,
   fullWidth = false,
-  icon,
-  iconPosition = 'left',
   className = '',
-  disabled,
-  ...props
+  disabled = false,
+  ...rest
 }) => {
-  // バリアントに基づくスタイル
-  const variantClasses = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 border border-transparent',
-    secondary: 'bg-white text-gray-700 hover:bg-gray-50 focus:ring-primary-500 border border-gray-300',
-    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 border border-transparent',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 border border-transparent',
-    warning: 'bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500 border border-transparent',
-    info: 'bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500 border border-transparent',
-    text: 'bg-transparent text-primary-600 hover:text-primary-800 hover:bg-primary-50 focus:ring-primary-500',
-  };
+  // バリアントに基づいてスタイルクラスを決定
+  let variantClass = '';
 
-  // サイズに基づくスタイル
-  const sizeClasses = {
-    sm: 'text-xs px-2.5 py-1.5',
-    md: 'text-sm px-4 py-2',
-    lg: 'text-base px-6 py-3',
-  };
+  switch (variant) {
+    case 'primary':
+      variantClass = 'bg-blue-600 hover:bg-blue-700 text-white';
+      break;
+    case 'secondary':
+      variantClass = 'bg-gray-600 hover:bg-gray-700 text-white';
+      break;
+    case 'success':
+      variantClass = 'bg-green-600 hover:bg-green-700 text-white';
+      break;
+    case 'danger':
+      variantClass = 'bg-red-600 hover:bg-red-700 text-white';
+      break;
+    case 'warning':
+      variantClass = 'bg-yellow-500 hover:bg-yellow-600 text-white';
+      break;
+    case 'info':
+      variantClass = 'bg-blue-400 hover:bg-blue-500 text-white';
+      break;
+    case 'light':
+      variantClass = 'bg-gray-100 hover:bg-gray-200 text-gray-800';
+      break;
+    case 'dark':
+      variantClass = 'bg-gray-800 hover:bg-gray-900 text-white';
+      break;
+    case 'link':
+      variantClass = 'text-blue-600 hover:text-blue-800 underline bg-transparent';
+      break;
+    case 'outline-primary':
+      variantClass = 'border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white';
+      break;
+    case 'outline-secondary':
+      variantClass = 'border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white';
+      break;
+    case 'outline-success':
+      variantClass = 'border border-green-600 text-green-600 hover:bg-green-600 hover:text-white';
+      break;
+    case 'outline-danger':
+      variantClass = 'border border-red-600 text-red-600 hover:bg-red-600 hover:text-white';
+      break;
+    case 'outline-warning':
+      variantClass =
+        'border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white';
+      break;
+    case 'outline-info':
+      variantClass = 'border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white';
+      break;
+    case 'outline-light':
+      variantClass = 'border border-gray-100 text-gray-100 hover:bg-gray-100 hover:text-gray-800';
+      break;
+    case 'outline-dark':
+      variantClass = 'border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white';
+      break;
+    default:
+      variantClass = 'bg-blue-600 hover:bg-blue-700 text-white';
+  }
 
-  // ローディング状態またはdisabled状態のスタイル
-  const disabledClasses = (disabled || isLoading) 
-    ? 'opacity-60 cursor-not-allowed' 
-    : 'cursor-pointer';
+  // サイズに基づいてスタイルクラスを決定
+  let sizeClass = '';
 
-  // 幅のスタイル
+  switch (size) {
+    case 'sm':
+      sizeClass = 'py-1 px-2 text-sm';
+      break;
+    case 'lg':
+      sizeClass = 'py-3 px-6 text-lg';
+      break;
+    default:
+      sizeClass = 'py-2 px-4 text-base';
+  }
+
+  // 幅のクラスを決定
   const widthClass = fullWidth ? 'w-full' : '';
 
+  // 無効状態のクラスを決定
+  const disabledClass = disabled ? 'opacity-50 cursor-not-allowed' : '';
+
   return (
-    <button 
-      className={`
-        inline-flex items-center justify-center
-        font-medium rounded-md
-        focus:outline-none focus:ring-2 focus:ring-offset-2
-        transition-colors duration-200
-        ${sizeClasses[size]}
-        ${variantClasses[variant]}
-        ${disabledClasses}
-        ${widthClass}
-        ${className}
-      `}
+    <button
+      className={`button rounded transition-colors ${variantClass} ${sizeClass} ${widthClass} ${disabledClass} ${className}`}
       disabled={disabled || isLoading}
-      aria-busy={isLoading ? 'true' : 'false'}
-      {...props}
+      {...rest}
     >
-      {isLoading && (
-        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      )}
-      
-      {icon && iconPosition === 'left' && !isLoading && (
-        <span className={`${children ? 'mr-2' : ''}`}>{icon}</span>
-      )}
-      
-      {children}
-      
-      {icon && iconPosition === 'right' && (
-        <span className="ml-2">{icon}</span>
+      {isLoading ? (
+        <div className="flex items-center justify-center">
+          <div className="spinner-border animate-spin h-4 w-4 border-2 border-t-transparent rounded-full mr-2"></div>
+          <span>読み込み中...</span>
+        </div>
+      ) : (
+        children
       )}
     </button>
   );

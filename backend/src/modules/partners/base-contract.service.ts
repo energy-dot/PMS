@@ -52,7 +52,10 @@ export class BaseContractService {
     return this.baseContractRepository.save(baseContract);
   }
 
-  async update(id: string, updateBaseContractDto: UpdateBaseContractDto): Promise<BaseContract | null> {
+  async update(
+    id: string,
+    updateBaseContractDto: UpdateBaseContractDto,
+  ): Promise<BaseContract | null> {
     const baseContract = await this.findOne(id);
     if (!baseContract) {
       return null;

@@ -6,9 +6,7 @@ import { RequestHistory } from '../../entities/request-history.entity';
 import { Project } from '../../entities/project.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([RequestHistory, Project]),
-  ],
+  imports: [TypeOrmModule.forFeature([RequestHistory, Project])],
   controllers: [WorkflowsController],
   providers: [WorkflowsService],
   exports: [WorkflowsService],

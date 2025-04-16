@@ -6,9 +6,7 @@ import { Evaluation } from '../../entities/evaluation.entity';
 import { EvaluationSkill } from '../../entities/evaluation-skill.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Evaluation, EvaluationSkill]),
-  ],
+  imports: [TypeOrmModule.forFeature([Evaluation, EvaluationSkill])],
   controllers: [EvaluationsController],
   providers: [EvaluationsService],
   exports: [EvaluationsService],

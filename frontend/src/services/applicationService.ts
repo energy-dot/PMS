@@ -1,301 +1,163 @@
-import api from './api';
-
-// 応募者の型定義
-export interface Application {
-  id: string;
-  projectId: string;
-  partnerId: string;
-  contactPersonId?: string;
-  applicantName: string;
-  age?: number;
-  gender?: string;
-  nearestStation?: string;
-  desiredRate?: string;
-  skillSummary?: string;
-  skillSheetUrl?: string;
-  applicationDate: Date;
-  applicationSource?: string;
-  status: string;
-  documentScreenerId?: string;
-  documentScreeningComment?: string;
-  finalResultNotificationDate?: Date;
-  remarks?: string;
-  interviewRecords?: InterviewRecord[];
-  createdAt: Date;
-  updatedAt: Date;
-  // 関連エンティティ
-  project?: any;
-  partner?: any;
-  contactPerson?: any;
-  documentScreener?: any;
-}
-
-// 面談記録の型定義
-export interface InterviewRecord {
-  id: string;
-  applicationId: string;
-  interviewDate: Date;
-  interviewerId?: string;
-  interviewFormat: string;
-  evaluation?: string;
-  evaluationComment?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  // 関連エンティティ
-  application?: Application;
-  interviewer?: any;
-}
-
-// 応募者作成用DTO
-export interface CreateApplicationDto {
-  projectId: string;
-  partnerId: string;
-  contactPersonId?: string;
-  applicantName: string;
-  age?: number;
-  gender?: string;
-  nearestStation?: string;
-  desiredRate?: string;
-  skillSummary?: string;
-  skillSheetUrl?: string;
-  applicationDate: Date;
-  applicationSource?: string;
-  status?: string;
-  documentScreenerId?: string;
-  documentScreeningComment?: string;
-  finalResultNotificationDate?: Date;
-  remarks?: string;
-}
-
-// 応募者更新用DTO
-export interface UpdateApplicationDto extends Partial<CreateApplicationDto> {}
-
-// 面談記録作成用DTO
-export interface CreateInterviewRecordDto {
-  applicationId: string;
-  interviewDate: Date;
-  interviewerId?: string;
-  interviewFormat: string;
-  evaluation?: string;
-  evaluationComment?: string;
-}
-
-// 面談記録更新用DTO
-export interface UpdateInterviewRecordDto extends Partial<CreateInterviewRecordDto> {}
+import api, { callWithRetry } from './api';
+import { Application } from '../shared-types';
 
 /**
- * 応募者関連のAPI操作を行うサービス
+ * 応募情報を取得する
+ * @returns 応募情報の配列
  */
-const applicationService = {
-  /**
-   * 応募者一覧を取得
-   * @returns 応募者一覧
-   */
-  async getApplications(): Promise<Application[]> {
-    try {
-      const response = await api.get<Application[]>('/applications');
-      return response.data;
-    } catch (error) {
-      console.error('Get applications error:', error);
-      throw error;
-    }
-  },
+export const getApplications = async (): Promise<Application[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Application[]>('/applications'));
 
-  /**
-   * 応募者詳細を取得
-   * @param id 応募者ID
-   * @returns 応募者詳細
-   */
-  async getApplication(id: string): Promise<Application> {
-    try {
-      const response = await api.get<Application>(`/applications/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get application ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 案件IDを指定して応募者一覧を取得
-   * @param projectId 案件ID
-   * @returns 応募者一覧
-   */
-  async getApplicationsByProject(projectId: string): Promise<Application[]> {
-    try {
-      const response = await api.get<Application[]>(`/applications/project/${projectId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get applications by project ${projectId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * パートナー会社IDを指定して応募者一覧を取得
-   * @param partnerId パートナー会社ID
-   * @returns 応募者一覧
-   */
-  async getApplicationsByPartner(partnerId: string): Promise<Application[]> {
-    try {
-      const response = await api.get<Application[]>(`/applications/partner/${partnerId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get applications by partner ${partnerId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * ステータスを指定して応募者一覧を取得
-   * @param status ステータス
-   * @returns 応募者一覧
-   */
-  async getApplicationsByStatus(status: string): Promise<Application[]> {
-    try {
-      const response = await api.get<Application[]>(`/applications/status/${status}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get applications by status ${status} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 応募者を作成
-   * @param applicationData 応募者データ
-   * @returns 作成された応募者
-   */
-  async createApplication(applicationData: CreateApplicationDto): Promise<Application> {
-    try {
-      const response = await api.post<Application>('/applications', applicationData);
-      return response.data;
-    } catch (error) {
-      console.error('Create application error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 応募者を更新
-   * @param id 応募者ID
-   * @param applicationData 更新データ
-   * @returns 更新された応募者
-   */
-  async updateApplication(id: string, applicationData: UpdateApplicationDto): Promise<Application> {
-    try {
-      const response = await api.patch<Application>(`/applications/${id}`, applicationData);
-      return response.data;
-    } catch (error) {
-      console.error(`Update application ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 応募者を削除
-   * @param id 応募者ID
-   * @returns 削除結果
-   */
-  async deleteApplication(id: string): Promise<boolean> {
-    try {
-      const response = await api.delete(`/applications/${id}`);
-      return response.status === 200;
-    } catch (error) {
-      console.error(`Delete application ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 面談記録一覧を取得
-   * @returns 面談記録一覧
-   */
-  async getInterviewRecords(): Promise<InterviewRecord[]> {
-    try {
-      const response = await api.get<InterviewRecord[]>('/applications/interview-records');
-      return response.data;
-    } catch (error) {
-      console.error('Get interview records error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 面談記録詳細を取得
-   * @param id 面談記録ID
-   * @returns 面談記録詳細
-   */
-  async getInterviewRecord(id: string): Promise<InterviewRecord> {
-    try {
-      const response = await api.get<InterviewRecord>(`/applications/interview-records/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get interview record ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 応募者IDを指定して面談記録一覧を取得
-   * @param applicationId 応募者ID
-   * @returns 面談記録一覧
-   */
-  async getInterviewRecordsByApplication(applicationId: string): Promise<InterviewRecord[]> {
-    try {
-      const response = await api.get<InterviewRecord[]>(`/applications/${applicationId}/interview-records`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get interview records by application ${applicationId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 面談記録を作成
-   * @param interviewRecordData 面談記録データ
-   * @returns 作成された面談記録
-   */
-  async createInterviewRecord(interviewRecordData: CreateInterviewRecordDto): Promise<InterviewRecord> {
-    try {
-      const response = await api.post<InterviewRecord>('/applications/interview-records', interviewRecordData);
-      return response.data;
-    } catch (error) {
-      console.error('Create interview record error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 面談記録を更新
-   * @param id 面談記録ID
-   * @param interviewRecordData 更新データ
-   * @returns 更新された面談記録
-   */
-  async updateInterviewRecord(id: string, interviewRecordData: UpdateInterviewRecordDto): Promise<InterviewRecord> {
-    try {
-      const response = await api.patch<InterviewRecord>(`/applications/interview-records/${id}`, interviewRecordData);
-      return response.data;
-    } catch (error) {
-      console.error(`Update interview record ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 面談記録を削除
-   * @param id 面談記録ID
-   * @returns 削除結果
-   */
-  async deleteInterviewRecord(id: string): Promise<boolean> {
-    try {
-      const response = await api.delete(`/applications/interview-records/${id}`);
-      return response.status === 200;
-    } catch (error) {
-      console.error(`Delete interview record ${id} error:`, error);
-      throw error;
-    }
+    // デモ用のモックデータ
+    return [
+      {
+        id: 'app-1',
+        projectId: 'proj-1',
+        partnerId: 'partner-1',
+        staffId: 'staff-1',
+        applicationDate: '2023-03-15',
+        status: 'accepted',
+      },
+      {
+        id: 'app-2',
+        projectId: 'proj-2',
+        partnerId: 'partner-2',
+        applicationDate: '2023-04-20',
+        status: 'reviewing',
+      },
+    ];
+  } catch (error) {
+    console.error('応募情報の取得に失敗しました', error);
+    throw error;
   }
+};
+
+/**
+ * 特定の応募情報を取得する
+ * @param id 応募ID
+ * @returns 応募情報
+ */
+export const getApplicationById = async (id: string): Promise<Application> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Application>(`/applications/${id}`));
+
+    // デモ用のモックデータ
+    const applications = await getApplications();
+    const application = applications.find(a => a.id === id);
+
+    if (!application) {
+      throw new Error(`応募ID ${id} が見つかりません`);
+    }
+
+    return application;
+  } catch (error) {
+    console.error(`応募ID ${id} の情報取得に失敗しました`, error);
+    throw error;
+  }
+};
+
+/**
+ * 新しい応募を作成する
+ * @param data 応募データ
+ * @returns 作成された応募情報
+ */
+export const createApplication = async (data: Omit<Application, 'id'>): Promise<Application> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.post<Application>('/applications', data));
+
+    // デモ用のモックレスポンス
+    return {
+      id: `app-${Date.now()}`,
+      ...data,
+    };
+  } catch (error) {
+    console.error('応募の作成に失敗しました', error);
+    throw error;
+  }
+};
+
+/**
+ * 応募情報を更新する
+ * @param id 応募ID
+ * @param data 更新データ
+ * @returns 更新された応募情報
+ */
+export const updateApplication = async (
+  id: string,
+  data: Partial<Application>
+): Promise<Application> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.put<Application>(`/applications/${id}`, data));
+
+    // デモ用のモックレスポンス
+    const application = await getApplicationById(id);
+    return {
+      ...application,
+      ...data,
+    };
+  } catch (error) {
+    console.error(`応募ID ${id} の更新に失敗しました`, error);
+    throw error;
+  }
+};
+
+/**
+ * 応募情報の一部を更新する
+ * @param id 応募ID
+ * @param data 更新データ
+ * @returns 更新された応募情報
+ */
+export const patchApplication = async (
+  id: string,
+  data: Partial<Application>
+): Promise<Application> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.patch<Application>(`/applications/${id}`, data));
+
+    // デモ用のモックレスポンス
+    const application = await getApplicationById(id);
+    return {
+      ...application,
+      ...data,
+    };
+  } catch (error) {
+    console.error(`応募ID ${id} の部分更新に失敗しました`, error);
+    throw error;
+  }
+};
+
+/**
+ * 応募を削除する
+ * @param id 応募ID
+ * @returns 削除結果
+ */
+export const deleteApplication = async (id: string): Promise<{ success: boolean }> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.delete<{ success: boolean }>(`/applications/${id}`));
+
+    // デモ用のモックレスポンス
+    return { success: true };
+  } catch (error) {
+    console.error(`応募ID ${id} の削除に失敗しました`, error);
+    throw error;
+  }
+};
+
+// デフォルトエクスポートを追加
+const applicationService = {
+  getApplications,
+  getApplicationById,
+  createApplication,
+  updateApplication,
+  patchApplication,
+  deleteApplication,
 };
 
 export default applicationService;

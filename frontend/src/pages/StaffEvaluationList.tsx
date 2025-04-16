@@ -20,22 +20,20 @@ const StaffEvaluationList: React.FC = () => {
       try {
         const data = await evaluationService.getEvaluations();
         setEvaluations(data);
-        
+
         // 関連するスタッフと評価者の情報を取得
         const staffIds = [...new Set(data.map(item => item.staffId))];
         const evaluatorIds = [...new Set(data.map(item => item.evaluatorId))];
         const allUserIds = [...new Set([...staffIds, ...evaluatorIds])];
-        
+
         try {
-          const users = await Promise.all(
-            allUserIds.map(id => userService.getUser(id))
-          );
-          
+          const users = await Promise.all(allUserIds.map(id => userService.getUser(id)));
+
           const userMap: Record<string, any> = {};
           users.forEach(user => {
             userMap[user.id] = user;
           });
-          
+
           setStaffMap(userMap);
           setEvaluatorMap(userMap);
         } catch (err) {
@@ -47,7 +45,7 @@ const StaffEvaluationList: React.FC = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchEvaluations();
   }, []);
 
@@ -82,12 +80,10 @@ const StaffEvaluationList: React.FC = () => {
   const renderRatingStars = (rating: number): JSX.Element => {
     return (
       <div className="flex">
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5].map(star => (
           <svg
             key={star}
-            className={`w-4 h-4 ${
-              star <= rating ? 'text-yellow-400' : 'text-gray-300'
-            }`}
+            className={`w-4 h-4 ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +139,7 @@ const StaffEvaluationList: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {evaluations.map((evaluation) => (
+              {evaluations.map(evaluation => (
                 <tr key={evaluation.id} className="hover:bg-gray-50">
                   <td className="py-3 px-4">{formatDate(evaluation.evaluationDate)}</td>
                   <td className="py-3 px-4">{getStaffName(evaluation.staffId)}</td>

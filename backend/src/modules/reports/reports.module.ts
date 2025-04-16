@@ -10,16 +10,7 @@ import { Application } from '../../entities/application.entity';
 import { Evaluation } from '../../entities/evaluation.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Project,
-      Partner,
-      Staff,
-      Contract,
-      Application,
-      Evaluation
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Project, Partner, Staff, Contract, Application, Evaluation])],
   controllers: [ReportsController],
   providers: [ReportsService],
   exports: [ReportsService],

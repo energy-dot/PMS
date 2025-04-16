@@ -52,7 +52,10 @@ export class ContactPersonService {
     return this.contactPersonRepository.save(contactPerson);
   }
 
-  async update(id: string, updateContactPersonDto: UpdateContactPersonDto): Promise<ContactPerson | null> {
+  async update(
+    id: string,
+    updateContactPersonDto: UpdateContactPersonDto,
+  ): Promise<ContactPerson | null> {
     const contactPerson = await this.findOne(id);
     if (!contactPerson) {
       return null;

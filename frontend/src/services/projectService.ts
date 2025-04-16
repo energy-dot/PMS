@@ -1,183 +1,186 @@
+// services/projectService.tsの修正 - APIのインポート方法を修正
+
 import api from './api';
-import { API_BASE_URL } from '../config';
+import { Project } from '../shared-types';
 
-// 案件の型定義
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  status: string;
-  departmentId: string;
-  sectionId: string;
-  department?: {
-    id: string;
-    name: string;
-  };
-  section?: {
-    id: string;
-    name: string;
-  };
-  budget: number;
-  requiredHeadcount: number;
-  currentHeadcount: number;
-  requiredSkills: string;
-  contractType: string;
-  rateMin: number;
-  rateMax: number;
-  isApproved: boolean;
-  approvedBy: string | null;
-  approvedAt: string | null;
-  rejectionReason: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
+// プロジェクトデータの取得
+export const getProjects = async (): Promise<Project[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.get('/projects');
+    // return response.data;
 
-// 案件検索用のパラメータ
-export interface SearchProjectsParams {
+    // デモ用のモックデータ
+    return [
+      {
+        id: '1',
+        name: 'ECサイトリニューアル',
+        partnerId: '101',
+        startDate: '2023-01-01',
+        endDate: '2023-06-30',
+        status: 'active',
+        description: '既存ECサイトのUI/UXの改善とバックエンドの刷新',
+        budget: 15000000,
+        assignedStaffs: ['201', '202', '203'],
+        skills: ['React', 'Node.js', 'MongoDB'],
+      },
+      {
+        id: '2',
+        name: '社内業務システム開発',
+        partnerId: '102',
+        startDate: '2023-02-15',
+        endDate: '2023-12-31',
+        status: 'active',
+        description: '人事・経理・営業支援のための統合業務システムの開発',
+        budget: 25000000,
+        assignedStaffs: ['204', '205', '206', '207'],
+        skills: ['Java', 'Spring', 'PostgreSQL', 'Angular'],
+      },
+      {
+        id: '3',
+        name: 'モバイルアプリ開発',
+        partnerId: '103',
+        startDate: '2022-10-01',
+        endDate: '2023-03-31',
+        status: 'completed',
+        description: 'iOSとAndroid向けの顧客向けモバイルアプリケーションの開発',
+        budget: 12000000,
+        assignedStaffs: ['208', '209'],
+        skills: ['Swift', 'Kotlin', 'Firebase'],
+      },
+    ];
+  } catch (error) {
+    console.error('Failed to fetch projects:', error);
+    throw error;
+  }
+};
+
+// プロジェクトデータの取得（ID指定）
+export const getProjectById = async (id: string): Promise<Project> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.get(`/projects/${id}`);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const projects = await getProjects();
+    const project = projects.find(p => p.id === id);
+
+    if (!project) {
+      throw new Error(`Project with ID ${id} not found`);
+    }
+
+    return project;
+  } catch (error) {
+    console.error(`Failed to fetch project with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// プロジェクトデータの作成
+export const createProject = async (data: Omit<Project, 'id'>): Promise<Project> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.post('/projects', data);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const newId = Math.floor(Math.random() * 1000).toString();
+    const newProject: Project = {
+      id: newId,
+      ...data,
+    };
+
+    return newProject;
+  } catch (error) {
+    console.error('Failed to create project:', error);
+    throw error;
+  }
+};
+
+// プロジェクトデータの更新
+export const updateProject = async (id: string, data: Partial<Project>): Promise<Project> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.put(`/projects/${id}`, data);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const project = await getProjectById(id);
+    const updatedProject: Project = {
+      ...project,
+      ...data,
+    };
+
+    return updatedProject;
+  } catch (error) {
+    console.error(`Failed to update project with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// プロジェクトデータの削除
+export const deleteProject = async (id: string): Promise<void> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // await api.delete(`/projects/${id}`);
+
+    // デモ用のモックデータ
+    // 実際には何もしない
+    console.log(`Project with ID ${id} deleted`);
+  } catch (error) {
+    console.error(`Failed to delete project with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// プロジェクト検索
+export const searchProjects = async (params: {
   name?: string;
+  partnerId?: string;
   status?: string;
-  departmentId?: string;
-  sectionId?: string;
-  contractType?: string;
-  startDateFrom?: string;
-  startDateTo?: string;
-  endDateFrom?: string;
-  endDateTo?: string;
-  rateMin?: number;
-  rateMax?: number;
-  requiredSkills?: string;
-}
+  skills?: string[];
+}): Promise<Project[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.get('/projects/search', { params });
+    // return response.data;
 
-// プロジェクトサービスクラス
-class ProjectService {
-  // 全ての案件を取得
-  async getAllProjects(): Promise<Project[]> {
-    try {
-      const response = await api.get(`/projects`);
-      return response.data;
-    } catch (error) {
-      console.error('案件の取得に失敗しました', error);
-      throw error;
+    // デモ用のモックデータ
+    let projects = await getProjects();
+
+    // 検索条件によるフィルタリング
+    if (params.name) {
+      projects = projects.filter(p => p.name.toLowerCase().includes(params.name!.toLowerCase()));
     }
-  }
 
-  // 特定の案件を取得
-  async getProjectById(id: string): Promise<Project> {
-    try {
-      const response = await api.get(`/projects/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} の案件の取得に失敗しました`, error);
-      throw error;
+    if (params.partnerId) {
+      projects = projects.filter(p => p.partnerId === params.partnerId);
     }
-  }
 
-  // 案件を検索
-  async searchProjects(params: SearchProjectsParams): Promise<Project[]> {
-    try {
-      // URLクエリパラメータを構築
-      const queryParams = new URLSearchParams();
-      
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, String(value));
-        }
-      });
-      
-      const response = await api.get(`/projects/search?${queryParams.toString()}`);
-      return response.data;
-    } catch (error) {
-      console.error('案件の検索に失敗しました', error);
-      throw error;
+    if (params.status) {
+      projects = projects.filter(p => p.status === params.status);
     }
-  }
 
-  // 案件を作成
-  async createProject(data: Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'isApproved' | 'approvedBy' | 'approvedAt' | 'rejectionReason'>): Promise<Project> {
-    try {
-      const response = await api.post(`/projects`, data);
-      return response.data;
-    } catch (error) {
-      console.error('案件の作成に失敗しました', error);
-      throw error;
+    if (params.skills && params.skills.length > 0) {
+      projects = projects.filter(p => params.skills!.some(skill => p.skills?.includes(skill)));
     }
-  }
 
-  // 案件を更新
-  async updateProject(id: string, data: Partial<Project>): Promise<Project> {
-    try {
-      const response = await api.patch(`/projects/${id}`, data);
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} の案件の更新に失敗しました`, error);
-      throw error;
-    }
+    return projects;
+  } catch (error) {
+    console.error('Failed to search projects:', error);
+    throw error;
   }
+};
 
-  // 案件を削除
-  async deleteProject(id: string): Promise<void> {
-    try {
-      await api.delete(`/projects/${id}`);
-    } catch (error) {
-      console.error(`ID: ${id} の案件の削除に失敗しました`, error);
-      throw error;
-    }
-  }
+// デフォルトエクスポートを追加
+const projectService = {
+  getProjects,
+  getProjectById,
+  createProject,
+  updateProject,
+  deleteProject,
+  searchProjects,
+};
 
-  // 案件を承認
-  async approveProject(id: string): Promise<Project> {
-    try {
-      const response = await api.post(`/projects/${id}/approve`);
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} の案件の承認に失敗しました`, error);
-      throw error;
-    }
-  }
-
-  // 案件を差し戻し
-  async rejectProject(id: string, reason: string): Promise<Project> {
-    try {
-      const response = await api.post(`/projects/${id}/reject`, { reason });
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} の案件の差し戻しに失敗しました`, error);
-      throw error;
-    }
-  }
-
-  // 案件のステータスを更新
-  async updateProjectStatus(id: string, status: string): Promise<Project> {
-    try {
-      const response = await api.patch(`/projects/${id}/status`, { status });
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} の案件のステータス更新に失敗しました`, error);
-      throw error;
-    }
-  }
-
-  // 部署によるプロジェクト検索
-  async getProjectsByDepartment(departmentId: string): Promise<Project[]> {
-    return this.searchProjects({ departmentId });
-  }
-
-  // セクションによるプロジェクト検索
-  async getProjectsBySection(sectionId: string): Promise<Project[]> {
-    return this.searchProjects({ sectionId });
-  }
-
-  // 下位互換性のため
-  async getProjects(): Promise<Project[]> {
-    return this.getAllProjects();
-  }
-
-  // 下位互換性のため
-  async getProject(id: string): Promise<Project> {
-    return this.getProjectById(id);
-  }
-}
-
-export default new ProjectService();
+export default projectService;

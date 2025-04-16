@@ -6,9 +6,7 @@ import { Application } from '../../entities/application.entity';
 import { InterviewRecord } from '../../entities/interview-record.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Application, InterviewRecord]),
-  ],
+  imports: [TypeOrmModule.forFeature([Application, InterviewRecord])],
   controllers: [ApplicationsController],
   providers: [ApplicationsService],
   exports: [ApplicationsService],

@@ -82,7 +82,7 @@ describe('ContractsService', () => {
         staff: { id: '1' } as any,
         project: { id: '1' } as any,
       };
-      
+
       const result = await service.create(createContractDto);
       expect(result).toEqual(mockContract);
       expect(repo.create).toHaveBeenCalledWith(createContractDto);
@@ -96,7 +96,7 @@ describe('ContractsService', () => {
         price: 850000,
         status: '更新待ち',
       };
-      
+
       const result = await service.update('1', updateContractDto);
       expect(result).toEqual(mockContract);
       expect(repo.findOne).toHaveBeenCalledWith({
@@ -108,11 +108,11 @@ describe('ContractsService', () => {
 
     it('should return null if contract not found', async () => {
       jest.spyOn(repo, 'findOne').mockResolvedValueOnce(null);
-      
+
       const updateContractDto: UpdateContractDto = {
         price: 850000,
       };
-      
+
       const result = await service.update('999', updateContractDto);
       expect(result).toBeNull();
     });
@@ -127,14 +127,14 @@ describe('ContractsService', () => {
 
     it('should return false when no contract was deleted', async () => {
       jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0, raw: {} });
-      
+
       const result = await service.remove('999');
       expect(result).toBe(false);
     });
 
     it('should handle null affected value', async () => {
       jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null, raw: {} });
-      
+
       const result = await service.remove('1');
       expect(result).toBe(false);
     });

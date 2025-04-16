@@ -32,9 +32,9 @@ export class SectionsService {
 
   async findByDepartment(departmentId: string): Promise<Section[]> {
     return this.sectionsRepository.find({
-      where: { 
+      where: {
         departmentId,
-        isActive: true
+        isActive: true,
       },
       order: {
         displayOrder: 'ASC',
@@ -55,7 +55,7 @@ export class SectionsService {
     if (!section) {
       return null;
     }
-    
+
     Object.assign(section, updateSectionDto);
     return this.sectionsRepository.save(section);
   }
@@ -66,7 +66,7 @@ export class SectionsService {
     if (!section) {
       return false;
     }
-    
+
     section.isActive = false;
     await this.sectionsRepository.save(section);
     return true;

@@ -9,11 +9,7 @@ interface BadgeProps {
 /**
  * ステータス表示用のバッジコンポーネント
  */
-const Badge: React.FC<BadgeProps> = ({
-  children,
-  variant = 'default',
-  className = '',
-}) => {
+const Badge: React.FC<BadgeProps> = ({ children, variant = 'default', className = '' }) => {
   // バリアントに基づくスタイル
   const variantClasses = {
     default: 'bg-gray-100 text-gray-800',
@@ -22,7 +18,7 @@ const Badge: React.FC<BadgeProps> = ({
     danger: 'bg-red-100 text-red-800',
     info: 'bg-blue-100 text-blue-800',
   };
-  
+
   return (
     <span
       className={`

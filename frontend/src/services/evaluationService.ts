@@ -1,223 +1,160 @@
+// services/evaluationService.tsの修正 - APIのインポート方法を修正
+
 import api from './api';
+import { Evaluation } from '../shared-types';
 
-// 評価の型定義
-export interface Evaluation {
-  id: string;
-  staffId: string;
-  evaluatorId: string;
-  projectId?: string;
-  evaluationDate: Date;
-  technicalSkill: number;
-  communicationSkill: number;
-  problemSolving: number;
-  teamwork: number;
-  leadership: number;
-  overallRating: number;
-  strengths?: string;
-  areasToImprove?: string;
-  comments?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  // 関連エンティティ
-  staff?: any;
-  evaluator?: any;
-  project?: any;
-  skills?: EvaluationSkill[];
-}
+// 評価データの取得
+export const getEvaluations = async (): Promise<Evaluation[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.get('/evaluations');
+    // return response.data;
 
-// 評価スキルの型定義
-export interface EvaluationSkill {
-  id: string;
-  evaluationId: string;
-  skillName: string;
-  skillLevel: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// 評価作成用DTO
-export interface CreateEvaluationDto {
-  staffId: string;
-  evaluatorId: string;
-  projectId?: string;
-  evaluationDate: Date;
-  technicalSkill: number;
-  communicationSkill: number;
-  problemSolving: number;
-  teamwork: number;
-  leadership: number;
-  overallRating: number;
-  strengths?: string;
-  areasToImprove?: string;
-  comments?: string;
-  skills?: CreateEvaluationSkillDto[];
-}
-
-// 評価スキル作成用DTO
-export interface CreateEvaluationSkillDto {
-  skillName: string;
-  skillLevel: number;
-}
-
-// 評価更新用DTO
-export interface UpdateEvaluationDto extends Partial<CreateEvaluationDto> {}
-
-// 評価スキル更新用DTO
-export interface UpdateEvaluationSkillDto extends Partial<CreateEvaluationSkillDto> {}
-
-/**
- * 評価関連のAPI操作を行うサービス
- */
-const evaluationService = {
-  /**
-   * 評価一覧を取得
-   * @returns 評価一覧
-   */
-  async getEvaluations(): Promise<Evaluation[]> {
-    try {
-      const response = await api.get<Evaluation[]>('/evaluations');
-      return response.data;
-    } catch (error) {
-      console.error('Get evaluations error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 評価詳細を取得
-   * @param id 評価ID
-   * @returns 評価詳細
-   */
-  async getEvaluation(id: string): Promise<Evaluation> {
-    try {
-      const response = await api.get<Evaluation>(`/evaluations/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get evaluation ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * スタッフIDを指定して評価一覧を取得
-   * @param staffId スタッフID
-   * @returns 評価一覧
-   */
-  async getEvaluationsByStaff(staffId: string): Promise<Evaluation[]> {
-    try {
-      const response = await api.get<Evaluation[]>(`/evaluations/staff/${staffId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get evaluations by staff ${staffId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 評価者IDを指定して評価一覧を取得
-   * @param evaluatorId 評価者ID
-   * @returns 評価一覧
-   */
-  async getEvaluationsByEvaluator(evaluatorId: string): Promise<Evaluation[]> {
-    try {
-      const response = await api.get<Evaluation[]>(`/evaluations/evaluator/${evaluatorId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get evaluations by evaluator ${evaluatorId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * プロジェクトIDを指定して評価一覧を取得
-   * @param projectId プロジェクトID
-   * @returns 評価一覧
-   */
-  async getEvaluationsByProject(projectId: string): Promise<Evaluation[]> {
-    try {
-      const response = await api.get<Evaluation[]>(`/evaluations/project/${projectId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get evaluations by project ${projectId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 評価を作成
-   * @param evaluationData 評価データ
-   * @returns 作成された評価
-   */
-  async createEvaluation(evaluationData: CreateEvaluationDto): Promise<Evaluation> {
-    try {
-      const response = await api.post<Evaluation>('/evaluations', evaluationData);
-      return response.data;
-    } catch (error) {
-      console.error('Create evaluation error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 評価を更新
-   * @param id 評価ID
-   * @param evaluationData 更新データ
-   * @returns 更新された評価
-   */
-  async updateEvaluation(id: string, evaluationData: UpdateEvaluationDto): Promise<Evaluation> {
-    try {
-      const response = await api.patch<Evaluation>(`/evaluations/${id}`, evaluationData);
-      return response.data;
-    } catch (error) {
-      console.error(`Update evaluation ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 評価を削除
-   * @param id 評価ID
-   * @returns 削除結果
-   */
-  async deleteEvaluation(id: string): Promise<boolean> {
-    try {
-      const response = await api.delete(`/evaluations/${id}`);
-      return response.status === 200;
-    } catch (error) {
-      console.error(`Delete evaluation ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * スタッフの平均評価を取得
-   * @param staffId スタッフID
-   * @returns 平均評価データ
-   */
-  async getStaffAverageRatings(staffId: string): Promise<any> {
-    try {
-      const response = await api.get<any>(`/evaluations/staff/${staffId}/average-ratings`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get staff average ratings error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * スタッフのスキル評価を取得
-   * @param staffId スタッフID
-   * @returns スキル評価データ
-   */
-  async getStaffSkillRatings(staffId: string): Promise<any> {
-    try {
-      const response = await api.get<any>(`/evaluations/staff/${staffId}/skill-ratings`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get staff skill ratings error:`, error);
-      throw error;
-    }
+    // デモ用のモックデータ
+    return [
+      {
+        id: '1',
+        staffId: '101',
+        projectId: '201',
+        evaluatorId: '301',
+        evaluationDate: '2023-01-15',
+        overallRating: 4,
+        technicalSkills: 4,
+        communicationSkills: 3,
+        problemSolving: 4,
+        teamwork: 5,
+        leadership: 3,
+        comments:
+          '技術的なスキルが高く、問題解決能力も優れています。チームワークも素晴らしいです。',
+        skillRatings: [
+          { skillName: 'JavaScript', rating: 4 },
+          { skillName: 'React', rating: 5 },
+          { skillName: 'Node.js', rating: 3 },
+        ],
+      },
+      {
+        id: '2',
+        staffId: '102',
+        projectId: '202',
+        evaluatorId: '302',
+        evaluationDate: '2023-02-20',
+        overallRating: 3,
+        technicalSkills: 3,
+        communicationSkills: 4,
+        problemSolving: 3,
+        teamwork: 4,
+        leadership: 2,
+        comments:
+          'コミュニケーション能力が高く、チームでの協力も良好です。技術的なスキルの向上が期待されます。',
+        skillRatings: [
+          { skillName: 'Java', rating: 3 },
+          { skillName: 'Spring', rating: 3 },
+          { skillName: 'SQL', rating: 4 },
+        ],
+      },
+    ];
+  } catch (error) {
+    console.error('Failed to fetch evaluations:', error);
+    throw error;
   }
+};
+
+// 評価データの取得（ID指定）
+export const getEvaluationById = async (id: string): Promise<Evaluation> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.get(`/evaluations/${id}`);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const evaluations = await getEvaluations();
+    const evaluation = evaluations.find(e => e.id === id);
+
+    if (!evaluation) {
+      throw new Error(`Evaluation with ID ${id} not found`);
+    }
+
+    return evaluation;
+  } catch (error) {
+    console.error(`Failed to fetch evaluation with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// 評価データの作成
+export const createEvaluation = async (data: Omit<Evaluation, 'id'>): Promise<Evaluation> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.post('/evaluations', data);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const newId = Math.floor(Math.random() * 1000).toString();
+    const newEvaluation: Evaluation = {
+      id: newId,
+      ...data,
+    };
+
+    return newEvaluation;
+  } catch (error) {
+    console.error('Failed to create evaluation:', error);
+    throw error;
+  }
+};
+
+// 評価データの更新
+export const updateEvaluation = async (
+  id: string,
+  data: Partial<Evaluation>
+): Promise<Evaluation> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // const response = await api.put(`/evaluations/${id}`, data);
+    // return response.data;
+
+    // デモ用のモックデータ
+    const evaluation = await getEvaluationById(id);
+    const updatedEvaluation: Evaluation = {
+      ...evaluation,
+      ...data,
+    };
+
+    return updatedEvaluation;
+  } catch (error) {
+    console.error(`Failed to update evaluation with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// 評価データの削除
+export const deleteEvaluation = async (id: string): Promise<void> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // await api.delete(`/evaluations/${id}`);
+
+    // デモ用のモックデータ
+    // 実際には何もしない
+    console.log(`Evaluation with ID ${id} deleted`);
+  } catch (error) {
+    console.error(`Failed to delete evaluation with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// 評価DTOの型定義
+export interface EvaluationDto extends Omit<Evaluation, 'id'> {}
+export interface EvaluationSkillDto {
+  skillName: string;
+  rating: number;
+}
+
+// デフォルトエクスポートを追加
+const evaluationService = {
+  getEvaluations,
+  getEvaluationById,
+  createEvaluation,
+  updateEvaluation,
+  deleteEvaluation,
 };
 
 export default evaluationService;

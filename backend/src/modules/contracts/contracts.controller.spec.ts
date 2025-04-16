@@ -79,7 +79,7 @@ describe('ContractsController', () => {
         paymentTerms: '月額固定',
         status: '契約中',
       };
-      
+
       const result = await controller.create(createContractDto);
       expect(result).toEqual(mockContract);
       expect(service.create).toHaveBeenCalledWith(createContractDto);
@@ -92,7 +92,7 @@ describe('ContractsController', () => {
         price: 850000,
         status: '更新待ち',
       };
-      
+
       const result = await controller.update('1', updateContractDto);
       expect(result).toEqual(mockContract);
       expect(service.update).toHaveBeenCalledWith('1', updateContractDto);

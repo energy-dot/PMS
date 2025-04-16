@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateWorkflowTables1744500000002 implements MigrationInterface {
-    name = 'CreateWorkflowTables1744500000002'
+  name = 'CreateWorkflowTables1744500000002';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // 申請履歴（request_histories）テーブルの作成
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // 申請履歴（request_histories）テーブルの作成
+    await queryRunner.query(`
             CREATE TABLE "request_histories" (
                 "id" varchar PRIMARY KEY NOT NULL,
                 "project_id" varchar NOT NULL,
@@ -25,79 +25,79 @@ export class CreateWorkflowTables1744500000002 implements MigrationInterface {
             )
         `);
 
-        // インデックスの作成
-        await queryRunner.query(`
+    // インデックスの作成
+    await queryRunner.query(`
             CREATE INDEX "IDX_request_histories_project_id" ON "request_histories" ("project_id")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_request_histories_requester_id" ON "request_histories" ("requester_id")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_request_histories_request_status" ON "request_histories" ("request_status")
         `);
 
-        // プロジェクトテーブルに承認関連のカラムを追加
-        await queryRunner.query(`
+    // プロジェクトテーブルに承認関連のカラムを追加
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             ADD COLUMN "approval_status" varchar DEFAULT '下書き'
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             ADD COLUMN "approver_id" varchar
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             ADD COLUMN "approval_date" datetime
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             ADD COLUMN "rejection_reason" text
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        // プロジェクトテーブルから追加したカラムを削除
-        await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // プロジェクトテーブルから追加したカラムを削除
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             DROP COLUMN "rejection_reason"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             DROP COLUMN "approval_date"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             DROP COLUMN "approver_id"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "projects" 
             DROP COLUMN "approval_status"
         `);
 
-        // インデックスの削除
-        await queryRunner.query(`
+    // インデックスの削除
+    await queryRunner.query(`
             DROP INDEX "IDX_request_histories_request_status"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_request_histories_requester_id"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_request_histories_project_id"
         `);
 
-        // テーブルの削除
-        await queryRunner.query(`
+    // テーブルの削除
+    await queryRunner.query(`
             DROP TABLE "request_histories"
         `);
-    }
+  }
 }

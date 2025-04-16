@@ -6,11 +6,11 @@ interface FilterState {
   // 状態
   selectedDepartmentId: string | null;
   selectedSectionId: string | null;
-  
+
   // セレクター
   getSelectedDepartmentId: () => string | null;
   getSelectedSectionId: () => string | null;
-  
+
   // アクション
   setDepartment: (departmentId: string | null) => void;
   setSection: (sectionId: string | null) => void;
@@ -27,28 +27,30 @@ const useFilterStore = create<FilterState>()(
       // 初期状態
       selectedDepartmentId: null,
       selectedSectionId: null,
-      
+
       // セレクター
       getSelectedDepartmentId: () => get().selectedDepartmentId,
       getSelectedSectionId: () => get().selectedSectionId,
-      
+
       // アクション
-      setDepartment: (departmentId) => set({ 
-        selectedDepartmentId: departmentId,
-        // 事業部が変更されたら部の選択をクリア
-        selectedSectionId: null
-      }),
-      
-      setSection: (sectionId) => set({ selectedSectionId: sectionId }),
-      
-      reset: () => set({ 
-        selectedDepartmentId: null, 
-        selectedSectionId: null 
-      }),
+      setDepartment: departmentId =>
+        set({
+          selectedDepartmentId: departmentId,
+          // 事業部が変更されたら部の選択をクリア
+          selectedSectionId: null,
+        }),
+
+      setSection: sectionId => set({ selectedSectionId: sectionId }),
+
+      reset: () =>
+        set({
+          selectedDepartmentId: null,
+          selectedSectionId: null,
+        }),
     }),
     {
       name: 'pms-filter-storage', // ストレージのキー名
-      storage: createJSONStorage(createSafeStorage)
+      storage: createJSONStorage(createSafeStorage),
     }
   )
 );

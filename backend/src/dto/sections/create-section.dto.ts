@@ -1,4 +1,14 @@
-import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsNumber, IsUUID, Min, Max, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+  IsUUID,
+  Min,
+  Max,
+  MaxLength,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateSectionDto {

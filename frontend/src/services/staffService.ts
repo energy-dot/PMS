@@ -1,149 +1,172 @@
-import api from './api';
-import { API_BASE_URL } from '../config';
+// staffService.tsの修正 - デフォルトエクスポートを追加
 
-// 要員の型定義
-export interface Staff {
-  id: string;
-  fullName: string;
-  nameKana: string;
-  email: string;
-  phone: string;
-  birthDate: string;
-  gender: string;
-  partnerId: string;
-  partner?: {
-    id: string;
-    name: string;
-  };
-  skills: string;
-  skillLevel: number;
-  yearsOfExperience: number;
-  contractType: string;
-  rate: number;
-  availability: 'available' | 'unavailable' | 'partially_available';
-  notes: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import api, { callWithRetry } from './api';
+import { Staff } from '../shared-types';
 
-// 要員検索用のパラメータ
+// 検索パラメータの型定義を追加
 export interface SearchStaffParams {
-  fullName?: string;
-  nameKana?: string;
+  skills?: string[];
+  availability?: string;
+  experience?: number;
   partnerId?: string;
-  skills?: string;
-  skillLevelMin?: number;
-  skillLevelMax?: number;
-  yearsOfExperienceMin?: number;
-  yearsOfExperienceMax?: number;
-  contractType?: string;
-  rateMin?: number;
-  rateMax?: number;
-  availability?: 'available' | 'unavailable' | 'partially_available';
 }
 
-// 要員サービスクラス
-class StaffService {
-  // 全ての要員を取得
-  async getAllStaff(): Promise<Staff[]> {
-    try {
-      const response = await api.get(`/staff`);
-      return response.data;
-    } catch (error) {
-      console.error('要員の取得に失敗しました', error);
-      throw error;
+/**
+ * スタッフ情報を取得する
+ * @returns スタッフ情報の配列
+ */
+export const getStaffs = async (): Promise<Staff[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Staff[]>('/staffs'));
+
+    // デモ用のモックデータ
+    return [
+      {
+        id: 'staff-1',
+        name: '山田太郎',
+        partnerId: 'partner-1',
+        firstName: '太郎',
+        lastName: '山田',
+        email: 'yamada@example.com',
+        phoneNumber: '090-1234-5678',
+        skills: ['Java', 'Spring', 'AWS'],
+        experience: 5,
+        hourlyRate: 5000,
+        availability: 'available',
+        status: 'available',
+      },
+      {
+        id: 'staff-2',
+        name: '佐藤次郎',
+        partnerId: 'partner-1',
+        firstName: '次郎',
+        lastName: '佐藤',
+        email: 'sato@example.com',
+        phoneNumber: '090-2345-6789',
+        skills: ['JavaScript', 'React', 'Node.js'],
+        experience: 3,
+        hourlyRate: 4500,
+        availability: 'partially_available',
+        status: 'assigned',
+      },
+      {
+        id: 'staff-3',
+        name: '鈴木花子',
+        partnerId: 'partner-2',
+        firstName: '花子',
+        lastName: '鈴木',
+        email: 'suzuki@example.com',
+        phoneNumber: '090-3456-7890',
+        skills: ['Python', 'Django', 'GCP'],
+        experience: 4,
+        hourlyRate: 4800,
+        availability: 'available',
+        status: 'available',
+      },
+    ];
+  } catch (error) {
+    console.error('スタッフ情報の取得に失敗しました', error);
+    throw error;
+  }
+};
+
+/**
+ * 特定のスタッフ情報を取得する
+ * @param id スタッフID
+ * @returns スタッフ情報
+ */
+export const getStaffById = async (id: string): Promise<Staff> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Staff>(`/staffs/${id}`));
+
+    // デモ用のモックデータ
+    const staffs = await getStaffs();
+    const staff = staffs.find(s => s.id === id);
+
+    if (!staff) {
+      throw new Error(`スタッフID ${id} が見つかりません`);
     }
-  }
 
-  // 特定の要員を取得
-  async getStaffById(id: string): Promise<Staff> {
-    try {
-      const response = await api.get(`/staff/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} の要員の取得に失敗しました`, error);
-      throw error;
-    }
+    return staff;
+  } catch (error) {
+    console.error(`スタッフID ${id} の情報取得に失敗しました`, error);
+    throw error;
   }
+};
 
-  // 要員を検索
-  async searchStaff(params: SearchStaffParams): Promise<Staff[]> {
-    try {
-      // URLクエリパラメータを構築
-      const queryParams = new URLSearchParams();
-      
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, String(value));
-        }
-      });
-      
-      const response = await api.get(`/staff/search?${queryParams.toString()}`);
-      return response.data;
-    } catch (error) {
-      console.error('要員の検索に失敗しました', error);
-      throw error;
-    }
+/**
+ * スタッフを検索する
+ * @param params 検索パラメータ
+ * @returns 検索結果のスタッフ情報の配列
+ */
+export const searchStaffs = async (params: SearchStaffParams): Promise<Staff[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Staff[]>('/staffs/search', { params }));
+
+    // デモ用のモックデータ
+    const staffs = await getStaffs();
+
+    // 検索条件に基づいてフィルタリング
+    return staffs.filter(staff => {
+      // スキルでフィルタリング
+      if (params.skills && params.skills.length > 0) {
+        const hasSkills = params.skills.every(skill =>
+          staff.skills.some(s => s.toLowerCase().includes(skill.toLowerCase()))
+        );
+        if (!hasSkills) return false;
+      }
+
+      // 稼働状況でフィルタリング
+      if (params.availability && staff.availability !== params.availability) {
+        return false;
+      }
+
+      // 経験年数でフィルタリング
+      if (params.experience !== undefined && staff.experience < params.experience) {
+        return false;
+      }
+
+      // パートナーIDでフィルタリング
+      if (params.partnerId && staff.partnerId !== params.partnerId) {
+        return false;
+      }
+
+      return true;
+    });
+  } catch (error) {
+    console.error('スタッフの検索に失敗しました', error);
+    throw error;
   }
+};
 
-  // 要員を作成
-  async createStaff(data: Omit<Staff, 'id' | 'createdAt' | 'updatedAt'>): Promise<Staff> {
-    try {
-      const response = await api.post(`/staff`, data);
-      return response.data;
-    } catch (error) {
-      console.error('要員の作成に失敗しました', error);
-      throw error;
-    }
+/**
+ * スタッフを削除する
+ * @param id スタッフID
+ * @returns 削除結果
+ */
+export const deleteStaff = async (id: string): Promise<{ success: boolean }> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.delete<{ success: boolean }>(`/staffs/${id}`));
+
+    // デモ用のモックレスポンス
+    console.log(`スタッフID ${id} を削除しました`);
+    return { success: true };
+  } catch (error) {
+    console.error(`スタッフID ${id} の削除に失敗しました`, error);
+    throw error;
   }
+};
 
-  // 要員を更新
-  async updateStaff(id: string, data: Partial<Staff>): Promise<Staff> {
-    try {
-      const response = await api.patch(`/staff/${id}`, data);
-      return response.data;
-    } catch (error) {
-      console.error(`ID: ${id} の要員の更新に失敗しました`, error);
-      throw error;
-    }
-  }
+// デフォルトエクスポートを追加
+const staffService = {
+  getStaffs,
+  getStaffById,
+  searchStaffs,
+  deleteStaff,
+};
 
-  // 要員を削除
-  async deleteStaff(id: string): Promise<void> {
-    try {
-      await api.delete(`/staff/${id}`);
-    } catch (error) {
-      console.error(`ID: ${id} の要員の削除に失敗しました`, error);
-      throw error;
-    }
-  }
-
-  // アベイラビリティの表示名を取得
-  getAvailabilityText(availability: string): string {
-    switch (availability) {
-      case 'available': return '稼働可能';
-      case 'unavailable': return '稼働不可';
-      case 'partially_available': return '一部稼働可能';
-      default: return availability;
-    }
-  }
-
-  // スキルレベルの表示名を取得
-  getSkillLevelText(level: number): string {
-    switch (level) {
-      case 1: return '初級';
-      case 2: return '中級';
-      case 3: return '上級';
-      case 4: return 'エキスパート';
-      case 5: return 'マスター';
-      default: return `レベル ${level}`;
-    }
-  }
-
-  // 下位互換性のため
-  async getStaff(id: string): Promise<Staff> {
-    return this.getStaffById(id);
-  }
-}
-
-export default new StaffService();
+export default staffService;

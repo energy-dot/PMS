@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Project } from './project.entity';
 import { Partner } from './partner.entity';
 import { ContactPerson } from './contact-person.entity';
@@ -14,7 +23,7 @@ export class Application {
   projectId: string;
 
   @ManyToOne(() => Project, project => project.applications, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'project_id' })
   project: Project;
@@ -23,7 +32,7 @@ export class Application {
   partnerId: string;
 
   @ManyToOne(() => Partner, partner => partner.applications, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'partner_id' })
   partner: Partner;
@@ -33,7 +42,7 @@ export class Application {
 
   @ManyToOne(() => ContactPerson, contactPerson => contactPerson.applications, {
     onDelete: 'SET NULL',
-    nullable: true
+    nullable: true,
   })
   @JoinColumn({ name: 'contact_person_id' })
   contactPerson: ContactPerson;
@@ -67,7 +76,7 @@ export class Application {
 
   @Column({
     type: 'varchar',
-    default: '新規応募'
+    default: '新規応募',
   })
   status: string;
 
@@ -76,7 +85,7 @@ export class Application {
 
   @ManyToOne(() => User, user => user.screenedApplications, {
     onDelete: 'SET NULL',
-    nullable: true
+    nullable: true,
   })
   @JoinColumn({ name: 'document_screener_id' })
   documentScreener: User;

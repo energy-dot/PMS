@@ -21,7 +21,9 @@ const PartnerDetail: React.FC = () => {
   const [creditChecks, setCreditChecks] = useState<CreditCheck[]>([]);
   const [baseContracts, setBaseContracts] = useState<BaseContract[]>([]);
   const [contactPersons, setContactPersons] = useState<ContactPerson[]>([]);
-  const [activeTab, setActiveTab] = useState<'basic' | 'antisocial' | 'credit' | 'contracts' | 'contacts'>('basic');
+  const [activeTab, setActiveTab] = useState<
+    'basic' | 'antisocial' | 'credit' | 'contracts' | 'contacts'
+  >('basic');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -83,10 +85,7 @@ const PartnerDetail: React.FC = () => {
       return (
         <div className="text-center p-8">
           <p>パートナー会社情報が見つかりません。</p>
-          <Button
-            onClick={() => navigate('/partners')}
-            className="mt-4"
-          >
+          <Button onClick={() => navigate('/partners')} className="mt-4">
             一覧に戻る
           </Button>
         </div>
@@ -140,20 +139,31 @@ const PartnerDetail: React.FC = () => {
                   <th className="py-2 text-left">Webサイト</th>
                   <td className="py-2">
                     {partner.website ? (
-                      <a href={partner.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      <a
+                        href={partner.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
                         {partner.website}
                       </a>
-                    ) : '-'}
+                    ) : (
+                      '-'
+                    )}
                   </td>
                 </tr>
                 <tr className="border-b">
                   <th className="py-2 text-left">ステータス</th>
                   <td className="py-2">
-                    <span className={`status-badge ${
-                      partner.status === '取引中' ? 'status-active' :
-                      partner.status === '取引停止' ? 'status-rejected' :
-                      'status-pending'
-                    }`}>
+                    <span
+                      className={`status-badge ${
+                        partner.status === '取引中'
+                          ? 'status-active'
+                          : partner.status === '取引停止'
+                            ? 'status-rejected'
+                            : 'status-pending'
+                      }`}
+                    >
                       {partner.status}
                     </span>
                   </td>
@@ -175,7 +185,9 @@ const PartnerDetail: React.FC = () => {
                 </tr>
                 <tr className="border-b">
                   <th className="py-2 text-left">従業員数</th>
-                  <td className="py-2">{partner.employeeCount ? `${partner.employeeCount}名` : '-'}</td>
+                  <td className="py-2">
+                    {partner.employeeCount ? `${partner.employeeCount}名` : '-'}
+                  </td>
                 </tr>
                 <tr className="border-b">
                   <th className="py-2 text-left">年間売上</th>
@@ -184,19 +196,25 @@ const PartnerDetail: React.FC = () => {
                 <tr className="border-b">
                   <th className="py-2 text-left">反社チェック完了</th>
                   <td className="py-2">
-                    {partner.antisocialCheckCompleted ? 
-                      <span className="text-success-color">完了 ({formatDate(partner.antisocialCheckDate)})</span> : 
+                    {partner.antisocialCheckCompleted ? (
+                      <span className="text-success-color">
+                        完了 ({formatDate(partner.antisocialCheckDate)})
+                      </span>
+                    ) : (
                       <span className="text-warning-color">未完了</span>
-                    }
+                    )}
                   </td>
                 </tr>
                 <tr className="border-b">
                   <th className="py-2 text-left">信用調査完了</th>
                   <td className="py-2">
-                    {partner.creditCheckCompleted ? 
-                      <span className="text-success-color">完了 ({formatDate(partner.creditCheckDate)})</span> : 
+                    {partner.creditCheckCompleted ? (
+                      <span className="text-success-color">
+                        完了 ({formatDate(partner.creditCheckDate)})
+                      </span>
+                    ) : (
                       <span className="text-warning-color">未完了</span>
-                    }
+                    )}
                   </td>
                 </tr>
                 <tr className="border-b">
@@ -208,18 +226,10 @@ const PartnerDetail: React.FC = () => {
           </div>
         </div>
         <div className="mt-6 flex justify-end">
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/partners')}
-            className="mr-2"
-          >
+          <Button variant="secondary" onClick={() => navigate('/partners')} className="mr-2">
             一覧に戻る
           </Button>
-          <Button
-            onClick={() => navigate(`/partners/${id}/edit`)}
-          >
-            編集
-          </Button>
+          <Button onClick={() => navigate(`/partners/${id}/edit`)}>編集</Button>
         </div>
       </div>
     );
@@ -232,7 +242,7 @@ const PartnerDetail: React.FC = () => {
         field: 'checkDate',
         headerName: 'チェック実施日',
         width: 150,
-        valueFormatter: (params) => formatDate(params.value)
+        valueFormatter: params => formatDate(params.value),
       },
       { field: 'checkedBy', headerName: '実施者', width: 120 },
       { field: 'checkMethod', headerName: 'チェック方法', width: 150 },
@@ -243,7 +253,7 @@ const PartnerDetail: React.FC = () => {
         cellRenderer: (params: any) => {
           const result = params.value;
           let className = '';
-          
+
           switch (result) {
             case '問題なし':
               className = 'status-badge status-active';
@@ -257,41 +267,41 @@ const PartnerDetail: React.FC = () => {
             default:
               className = 'status-badge';
           }
-          
+
           return <span className={className}>{result}</span>;
-        }
+        },
       },
       {
         field: 'expiryDate',
         headerName: '有効期限',
         width: 150,
-        valueFormatter: (params) => formatDate(params.value)
+        valueFormatter: params => formatDate(params.value),
       },
       { field: 'documentFile', headerName: '関連書類', width: 120 },
       { field: 'remarks', headerName: '備考', flex: 1 },
-      { 
-        headerName: '操作', 
+      {
+        headerName: '操作',
         width: 150,
         cellRenderer: (params: any) => {
           const id = params.data?.id || '';
           return (
             <div>
-              <button 
-                className="action-button" 
+              <button
+                className="action-button"
                 onClick={() => navigate(`/antisocial-checks/${id}/edit`)}
               >
                 編集
               </button>
-              <button 
-                className="action-button delete" 
+              <button
+                className="action-button delete"
                 onClick={() => handleDeleteAntisocialCheck(id)}
               >
                 削除
               </button>
             </div>
           );
-        }
-      }
+        },
+      },
     ];
 
     const handleDeleteAntisocialCheck = async (checkId: string) => {
@@ -311,13 +321,11 @@ const PartnerDetail: React.FC = () => {
       <div className="card p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">反社チェック履歴</h3>
-          <Button
-            onClick={() => navigate(`/partners/${id}/antisocial-checks/create`)}
-          >
+          <Button onClick={() => navigate(`/partners/${id}/antisocial-checks/create`)}>
             新規チェック登録
           </Button>
         </div>
-        
+
         {antisocialChecks.length === 0 ? (
           <p className="text-center py-4">チェック履歴はありません。</p>
         ) : (
@@ -333,7 +341,7 @@ const PartnerDetail: React.FC = () => {
       </div>
     );
   };
-  
+
   // 信用調査タブの内容
   const renderCreditChecks = () => {
     const columnDefs: ColDef<CreditCheck>[] = [
@@ -341,7 +349,7 @@ const PartnerDetail: React.FC = () => {
         field: 'checkDate',
         headerName: 'チェック実施日',
         width: 150,
-        valueFormatter: (params) => formatDate(params.value)
+        valueFormatter: params => formatDate(params.value),
       },
       { field: 'checkedBy', headerName: '実施者', width: 120 },
       { field: 'checkMethod', headerName: 'チェック方法', width: 150 },
@@ -352,7 +360,7 @@ const PartnerDetail: React.FC = () => {
         cellRenderer: (params: any) => {
           const result = params.value;
           let className = '';
-          
+
           switch (result) {
             case '良好':
               className = 'status-badge status-active';
@@ -366,9 +374,9 @@ const PartnerDetail: React.FC = () => {
             default:
               className = 'status-badge';
           }
-          
+
           return <span className={className}>{result}</span>;
-        }
+        },
       },
       { field: 'creditScore', headerName: '信用スコア', width: 120 },
       { field: 'financialStability', headerName: '財務安定性', width: 150 },
@@ -377,33 +385,30 @@ const PartnerDetail: React.FC = () => {
         field: 'expiryDate',
         headerName: '有効期限',
         width: 150,
-        valueFormatter: (params) => formatDate(params.value)
+        valueFormatter: params => formatDate(params.value),
       },
       { field: 'documentFile', headerName: '関連書類', width: 120 },
       { field: 'remarks', headerName: '備考', flex: 1 },
-      { 
-        headerName: '操作', 
+      {
+        headerName: '操作',
         width: 150,
         cellRenderer: (params: any) => {
           const id = params.data?.id || '';
           return (
             <div>
-              <button 
-                className="action-button" 
+              <button
+                className="action-button"
                 onClick={() => navigate(`/credit-checks/${id}/edit`)}
               >
                 編集
               </button>
-              <button 
-                className="action-button delete" 
-                onClick={() => handleDeleteCreditCheck(id)}
-              >
+              <button className="action-button delete" onClick={() => handleDeleteCreditCheck(id)}>
                 削除
               </button>
             </div>
           );
-        }
-      }
+        },
+      },
     ];
 
     const handleDeleteCreditCheck = async (checkId: string) => {
@@ -423,13 +428,11 @@ const PartnerDetail: React.FC = () => {
       <div className="card p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">信用調査履歴</h3>
-          <Button
-            onClick={() => navigate(`/partners/${id}/credit-checks/create`)}
-          >
+          <Button onClick={() => navigate(`/partners/${id}/credit-checks/create`)}>
             新規調査登録
           </Button>
         </div>
-        
+
         {creditChecks.length === 0 ? (
           <p className="text-center py-4">調査履歴はありません。</p>
         ) : (
@@ -454,13 +457,13 @@ const PartnerDetail: React.FC = () => {
         field: 'startDate',
         headerName: '開始日',
         width: 120,
-        valueFormatter: (params) => formatDate(params.value)
+        valueFormatter: params => formatDate(params.value),
       },
       {
         field: 'endDate',
         headerName: '終了日',
         width: 120,
-        valueFormatter: (params) => formatDate(params.value)
+        valueFormatter: params => formatDate(params.value),
       },
       {
         field: 'status',
@@ -469,7 +472,7 @@ const PartnerDetail: React.FC = () => {
         cellRenderer: (params: any) => {
           const status = params.value;
           let className = '';
-          
+
           switch (status) {
             case '有効':
               className = 'status-badge status-active';
@@ -483,50 +486,50 @@ const PartnerDetail: React.FC = () => {
             default:
               className = 'status-badge';
           }
-          
+
           return <span className={className}>{status}</span>;
-        }
+        },
       },
       { field: 'contractType', headerName: '契約種別', width: 120 },
-      { field: 'isAutoRenew', headerName: '自動更新', width: 100, valueFormatter: (params) => params.value ? 'あり' : 'なし' },
+      {
+        field: 'isAutoRenew',
+        headerName: '自動更新',
+        width: 100,
+        valueFormatter: params => (params.value ? 'あり' : 'なし'),
+      },
       { field: 'terms', headerName: '契約条件', width: 150 },
       { field: 'remarks', headerName: '備考', width: 150 },
-      { 
-        headerName: '操作', 
+      {
+        headerName: '操作',
         width: 150,
         cellRenderer: (params: any) => {
           const id = params.data?.id || '';
           return (
             <div>
-              <button 
-                className="action-button" 
+              <button
+                className="action-button"
                 onClick={() => navigate(`/base-contracts/${id}/edit`)}
               >
                 編集
               </button>
-              <button 
-                className="action-button" 
-                onClick={() => navigate(`/base-contracts/${id}`)}
-              >
+              <button className="action-button" onClick={() => navigate(`/base-contracts/${id}`)}>
                 詳細
               </button>
             </div>
           );
-        }
-      }
+        },
+      },
     ];
 
     return (
       <div className="card p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">基本契約</h3>
-          <Button
-            onClick={() => navigate(`/partners/${id}/base-contracts/create`)}
-          >
+          <Button onClick={() => navigate(`/partners/${id}/base-contracts/create`)}>
             新規契約登録
           </Button>
         </div>
-        
+
         {baseContracts.length === 0 ? (
           <p className="text-center py-4">契約情報はありません。</p>
         ) : (
@@ -552,14 +555,14 @@ const PartnerDetail: React.FC = () => {
       { field: 'email', headerName: 'メールアドレス', width: 200 },
       { field: 'phone', headerName: '電話番号', width: 150 },
       { field: 'mobilePhone', headerName: '携帯電話', width: 150 },
-      { 
+      {
         field: 'type',
         headerName: '担当区分',
         width: 120,
         cellRenderer: (params: any) => {
           const type = params.value;
           let className = '';
-          
+
           switch (type) {
             case '主要担当':
               className = 'status-badge status-active';
@@ -573,34 +576,34 @@ const PartnerDetail: React.FC = () => {
             default:
               className = 'status-badge';
           }
-          
+
           return <span className={className}>{type}</span>;
-        }
+        },
       },
       { field: 'remarks', headerName: '備考', flex: 1 },
-      { 
-        headerName: '操作', 
+      {
+        headerName: '操作',
         width: 150,
         cellRenderer: (params: any) => {
           const id = params.data?.id || '';
           return (
             <div>
-              <button 
-                className="action-button" 
+              <button
+                className="action-button"
                 onClick={() => navigate(`/contact-persons/${id}/edit`)}
               >
                 編集
               </button>
-              <button 
-                className="action-button delete" 
+              <button
+                className="action-button delete"
                 onClick={() => handleDeleteContactPerson(id)}
               >
                 削除
               </button>
             </div>
           );
-        }
-      }
+        },
+      },
     ];
 
     const handleDeleteContactPerson = async (contactId: string) => {
@@ -620,13 +623,11 @@ const PartnerDetail: React.FC = () => {
       <div className="card p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">営業窓口担当者</h3>
-          <Button
-            onClick={() => navigate(`/partners/${id}/contact-persons/create`)}
-          >
+          <Button onClick={() => navigate(`/partners/${id}/contact-persons/create`)}>
             新規担当者登録
           </Button>
         </div>
-        
+
         {contactPersons.length === 0 ? (
           <p className="text-center py-4">担当者情報はありません。</p>
         ) : (
@@ -647,10 +648,14 @@ const PartnerDetail: React.FC = () => {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="page-title">
-          {isLoading ? 'パートナー会社詳細を読み込み中...' : partner ? partner.name : 'パートナー会社詳細'}
+          {isLoading
+            ? 'パートナー会社詳細を読み込み中...'
+            : partner
+              ? partner.name
+              : 'パートナー会社詳細'}
         </h1>
       </div>
-      
+
       {error && <Alert variant="error" message={error} onClose={() => setError(null)} />}
 
       {/* タブ */}

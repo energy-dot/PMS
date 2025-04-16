@@ -17,7 +17,7 @@ const ApplicationNew: React.FC = () => {
     partnerId: '',
     applicantName: '',
     applicationDate: new Date(),
-    status: '新規応募'
+    status: '新規応募',
   });
   const [projectsLoaded, setProjectsLoaded] = useState(false);
   const [partnersLoaded, setPartnersLoaded] = useState(false);
@@ -51,11 +51,13 @@ const ApplicationNew: React.FC = () => {
   }, []);
 
   // フォーム入力の処理
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === 'applicationDate' ? new Date(value) : value
+      [name]: name === 'applicationDate' ? new Date(value) : value,
     });
   };
 
@@ -96,7 +98,7 @@ const ApplicationNew: React.FC = () => {
       )}
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        {(!projectsLoaded || !partnersLoaded) ? (
+        {!projectsLoaded || !partnersLoaded ? (
           <div className="flex justify-center items-center h-64">データ読み込み中...</div>
         ) : (
           <form onSubmit={handleSubmit}>
@@ -114,7 +116,9 @@ const ApplicationNew: React.FC = () => {
                 >
                   <option value="">選択してください</option>
                   {projects.map(project => (
-                    <option key={project.id} value={project.id}>{project.name}</option>
+                    <option key={project.id} value={project.id}>
+                      {project.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -132,7 +136,9 @@ const ApplicationNew: React.FC = () => {
                 >
                   <option value="">選択してください</option>
                   {partners.map(partner => (
-                    <option key={partner.id} value={partner.id}>{partner.name}</option>
+                    <option key={partner.id} value={partner.id}>
+                      {partner.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -158,9 +164,11 @@ const ApplicationNew: React.FC = () => {
                 <input
                   type="date"
                   name="applicationDate"
-                  value={formData.applicationDate instanceof Date 
-                    ? formData.applicationDate.toISOString().split('T')[0] 
-                    : ''}
+                  value={
+                    formData.applicationDate instanceof Date
+                      ? formData.applicationDate.toISOString().split('T')[0]
+                      : ''
+                  }
                   onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   required
@@ -168,9 +176,7 @@ const ApplicationNew: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  年齢
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">年齢</label>
                 <input
                   type="number"
                   name="age"
@@ -181,9 +187,7 @@ const ApplicationNew: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  性別
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">性別</label>
                 <input
                   type="text"
                   name="gender"
@@ -194,9 +198,7 @@ const ApplicationNew: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  最寄り駅
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">最寄り駅</label>
                 <input
                   type="text"
                   name="nearestStation"
@@ -207,9 +209,7 @@ const ApplicationNew: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  希望単価
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">希望単価</label>
                 <input
                   type="text"
                   name="desiredRate"
@@ -220,9 +220,7 @@ const ApplicationNew: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  スキル概要
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">スキル概要</label>
                 <textarea
                   name="skillSummary"
                   value={formData.skillSummary || ''}
@@ -233,9 +231,7 @@ const ApplicationNew: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  備考
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">備考</label>
                 <textarea
                   name="remarks"
                   value={formData.remarks || ''}

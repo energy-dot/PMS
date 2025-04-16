@@ -104,48 +104,72 @@ export class ReportsController {
     @Res() res: Response,
   ) {
     let reportData;
-    
+
     // レポートタイプに応じたデータ取得
     switch (reportType) {
       case 'project_status':
-        reportData = await this.reportsService.getProjectStatusReport(startDate, endDate, department);
+        reportData = await this.reportsService.getProjectStatusReport(
+          startDate,
+          endDate,
+          department,
+        );
         break;
       case 'partner_projects':
-        reportData = await this.reportsService.getPartnerProjectsReport(startDate, endDate, department);
+        reportData = await this.reportsService.getPartnerProjectsReport(
+          startDate,
+          endDate,
+          department,
+        );
         break;
       case 'application_status':
-        reportData = await this.reportsService.getApplicationStatusReport(startDate, endDate, department);
+        reportData = await this.reportsService.getApplicationStatusReport(
+          startDate,
+          endDate,
+          department,
+        );
         break;
       case 'staff_evaluation':
-        reportData = await this.reportsService.getStaffEvaluationReport(startDate, endDate, department);
+        reportData = await this.reportsService.getStaffEvaluationReport(
+          startDate,
+          endDate,
+          department,
+        );
         break;
       case 'contract_summary':
-        reportData = await this.reportsService.getContractSummaryReport(startDate, endDate, department);
+        reportData = await this.reportsService.getContractSummaryReport(
+          startDate,
+          endDate,
+          department,
+        );
         break;
       case 'monthly_project_trend':
-        reportData = await this.reportsService.getMonthlyProjectTrendReport(startDate, endDate, department);
+        reportData = await this.reportsService.getMonthlyProjectTrendReport(
+          startDate,
+          endDate,
+          department,
+        );
         break;
       default:
         throw new Error('不明なレポートタイプです');
     }
-    
+
     // Excelファイルの生成
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Report');
-    
+
     // レポートタイプに応じたExcelの設定
     const reportTitle = this.getReportTitle(reportType);
     worksheet.mergeCells('A1:E1');
     worksheet.getCell('A1').value = reportTitle;
     worksheet.getCell('A1').font = { size: 16, bold: true };
     worksheet.getCell('A1').alignment = { horizontal: 'center' };
-    
+
     // フィルター条件の追加
     worksheet.getCell('A2').value = '期間:';
     worksheet.getCell('B2').value = `${startDate || '(制限なし)'} 〜 ${endDate || '(制限なし)'}`;
     worksheet.getCell('A3').value = '部署:';
     worksheet.getCell('B3').value = department === 'all' ? '全部署' : department;
-    
+
     // テーブルヘッダーの設定
     const headers = this.getReportHeaders(reportType);
     worksheet.addRow([]);
@@ -155,16 +179,16 @@ export class ReportsController {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FFD3D3D3' }
+        fgColor: { argb: 'FFD3D3D3' },
       };
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
         bottom: { style: 'thin' },
-        right: { style: 'thin' }
+        right: { style: 'thin' },
       };
     });
-    
+
     // データの追加
     if (reportData.tableData && reportData.tableData.length > 0) {
       reportData.tableData.forEach(item => {
@@ -175,28 +199,28 @@ export class ReportsController {
             top: { style: 'thin' },
             left: { style: 'thin' },
             bottom: { style: 'thin' },
-            right: { style: 'thin' }
+            right: { style: 'thin' },
           };
         });
       });
     }
-    
+
     // 列幅の自動調整
     worksheet.columns.forEach((column: any) => {
       column.width = 20;
     });
-    
+
     // サマリーセクションの追加（存在する場合）
     if (reportData.summary) {
       worksheet.addRow([]);
       worksheet.addRow(['サマリー']);
       worksheet.getCell(`A${worksheet.rowCount}`).font = { bold: true };
-      
+
       Object.entries(reportData.summary).forEach(([key, value]) => {
         worksheet.addRow([key, value]);
       });
     }
-    
+
     // ファイルのレスポンス設定
     res.setHeader(
       'Content-Type',
@@ -206,12 +230,12 @@ export class ReportsController {
       'Content-Disposition',
       `attachment; filename=${reportType}_report_${new Date().toISOString().split('T')[0]}.xlsx`,
     );
-    
+
     // ファイルの書き出し
     await workbook.xlsx.write(res);
     res.end();
   }
-  
+
   // レポートタイトルの取得
   private getReportTitle(reportType: string): string {
     switch (reportType) {
@@ -231,7 +255,7 @@ export class ReportsController {
         return 'レポート';
     }
   }
-  
+
   // レポートヘッダーの取得
   private getReportHeaders(reportType: string): string[] {
     switch (reportType) {
@@ -251,7 +275,7 @@ export class ReportsController {
         return [];
     }
   }
-  
+
   // 行データの取得
   private getRowData(reportType: string, item: any): any[] {
     switch (reportType) {

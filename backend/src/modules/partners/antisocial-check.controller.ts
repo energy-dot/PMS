@@ -1,6 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { AntisocialCheckService } from './antisocial-check.service';
-import { AntisocialCheckDto, UpdateAntisocialCheckDto } from '../../dto/partners/antisocial-check.dto';
+import {
+  AntisocialCheckDto,
+  UpdateAntisocialCheckDto,
+} from '../../dto/partners/antisocial-check.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @Controller('antisocial-checks')

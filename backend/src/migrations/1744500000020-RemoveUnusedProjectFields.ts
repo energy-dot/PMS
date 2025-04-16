@@ -17,8 +17,8 @@ export class RemoveUnusedProjectFields1744500000020 implements MigrationInterfac
         name: 'approval_status',
         type: 'varchar',
         isNullable: true,
-        default: "'承認待ち'"
-      })
+        default: "'承認待ち'",
+      }),
     );
 
     await queryRunner.addColumn(
@@ -26,8 +26,8 @@ export class RemoveUnusedProjectFields1744500000020 implements MigrationInterfac
       new TableColumn({
         name: 'approver_id',
         type: 'varchar',
-        isNullable: true
-      })
+        isNullable: true,
+      }),
     );
 
     await queryRunner.addColumn(
@@ -35,8 +35,8 @@ export class RemoveUnusedProjectFields1744500000020 implements MigrationInterfac
       new TableColumn({
         name: 'approval_date',
         type: 'datetime',
-        isNullable: true
-      })
+        isNullable: true,
+      }),
     );
 
     await queryRunner.addColumn(
@@ -44,8 +44,8 @@ export class RemoveUnusedProjectFields1744500000020 implements MigrationInterfac
       new TableColumn({
         name: 'required_experience',
         type: 'varchar',
-        isNullable: true
-      })
+        isNullable: true,
+      }),
     );
   }
 }

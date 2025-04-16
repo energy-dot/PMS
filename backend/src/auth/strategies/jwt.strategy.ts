@@ -22,11 +22,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: JwtPayload): Promise<User> {
     const { sub } = payload;
     const user = await this.usersRepository.findOne({ where: { id: sub } });
-    
+
     if (!user) {
       throw new Error('ユーザーが見つかりません');
     }
-    
+
     return user;
   }
 }

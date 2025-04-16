@@ -30,7 +30,7 @@ export class ContractsService {
     if (!contract) {
       return null;
     }
-    
+
     Object.assign(contract, updateContractDto);
     return this.contractsRepository.save(contract);
   }
@@ -44,9 +44,9 @@ export class ContractsService {
       relations: ['staff', 'project'],
       where: {
         project: {
-          id: projectId
-        }
-      }
+          id: projectId,
+        },
+      },
     });
   }
 
@@ -55,9 +55,9 @@ export class ContractsService {
       relations: ['staff', 'project'],
       where: {
         staff: {
-          id: staffId
-        }
-      }
+          id: staffId,
+        },
+      },
     });
   }
 

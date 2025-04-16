@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Project } from './project.entity';
 import { User } from './user.entity';
 
@@ -11,7 +20,7 @@ export class RequestHistory {
   projectId: string;
 
   @ManyToOne(() => Project, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'project_id' })
   project: Project;
@@ -20,7 +29,7 @@ export class RequestHistory {
   requesterId: string;
 
   @ManyToOne(() => User, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'requester_id' })
   requester: User;
@@ -39,7 +48,7 @@ export class RequestHistory {
 
   @ManyToOne(() => User, {
     onDelete: 'SET NULL',
-    nullable: true
+    nullable: true,
   })
   @JoinColumn({ name: 'approver_id' })
   approver: User;

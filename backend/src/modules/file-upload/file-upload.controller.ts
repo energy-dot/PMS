@@ -1,4 +1,16 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, UploadedFiles, Body, Get, Param, Res, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  UploadedFiles,
+  Body,
+  Get,
+  Param,
+  Res,
+  Delete,
+} from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { FileUploadService } from './file-upload.service';
@@ -15,11 +27,7 @@ export class FileUploadController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { entityType: string; entityId: string },
   ) {
-    return this.fileUploadService.saveFileMetadata(
-      file,
-      body.entityType,
-      body.entityId,
-    );
+    return this.fileUploadService.saveFileMetadata(file, body.entityType, body.entityId);
   }
 
   @Post('multiple')
@@ -30,20 +38,13 @@ export class FileUploadController {
   ) {
     return Promise.all(
       files.map(file =>
-        this.fileUploadService.saveFileMetadata(
-          file,
-          body.entityType,
-          body.entityId,
-        ),
+        this.fileUploadService.saveFileMetadata(file, body.entityType, body.entityId),
       ),
     );
   }
 
   @Get('entity/:entityType/:entityId')
-  getFilesByEntity(
-    @Param('entityType') entityType: string,
-    @Param('entityId') entityId: string,
-  ) {
+  getFilesByEntity(@Param('entityType') entityType: string, @Param('entityId') entityId: string) {
     return this.fileUploadService.getFilesByEntity(entityType, entityId);
   }
 

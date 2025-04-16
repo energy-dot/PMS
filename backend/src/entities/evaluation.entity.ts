@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { User } from './user.entity';
 import { Project } from './project.entity';
 import { EvaluationSkill } from './evaluation-skill.entity';
@@ -13,7 +22,7 @@ export class Evaluation {
   staffId: string;
 
   @ManyToOne(() => Staff, staff => staff.evaluations, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'staff_id' })
   evaluatedUser: Staff;
@@ -22,7 +31,7 @@ export class Evaluation {
   evaluatorId: string;
 
   @ManyToOne(() => User, user => user.givenEvaluations, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'evaluator_id' })
   evaluator: User;
@@ -32,7 +41,7 @@ export class Evaluation {
 
   @ManyToOne(() => Project, project => project.evaluations, {
     onDelete: 'SET NULL',
-    nullable: true
+    nullable: true,
   })
   @JoinColumn({ name: 'project_id' })
   project: Project;
@@ -68,13 +77,13 @@ export class Evaluation {
   comments: string;
 
   @OneToMany(() => EvaluationSkill, evaluationSkill => evaluationSkill.evaluation, {
-    cascade: true
+    cascade: true,
   })
   skills: EvaluationSkill[];
-  
+
   // evaluationSkillsプロパティの追加（reportsサービスで参照されているため）
   @OneToMany(() => EvaluationSkill, evaluationSkill => evaluationSkill.evaluation, {
-    cascade: true
+    cascade: true,
   })
   evaluationSkills: EvaluationSkill[];
 

@@ -13,10 +13,10 @@ import { Repository } from 'typeorm';
 
 /**
  * ユーザーストーリーテスト（改善版）
- * 
+ *
  * このテストファイルでは、実際のユースケースに基づいたシナリオをテストし、
  * システム全体の機能を検証します。
- * 
+ *
  * 改善点:
  * - テスト間の独立性を確保
  * - エラーケースのテストを追加
@@ -143,7 +143,7 @@ describe('User Story Tests', () => {
 
       app = moduleFixture.createNestApplication();
       jwtService = moduleFixture.get<JwtService>(JwtService);
-      
+
       // JWT認証トークンの生成
       accessToken = jwtService.sign({
         sub: testUser.id,
@@ -227,7 +227,7 @@ describe('User Story Tests', () => {
       // 更新処理
       Object.assign(partner, updatePartnerDto);
       const result = await partnerRepo.save(partner);
-      
+
       expect(result).toEqual({ ...testPartner, ...updatePartnerDto });
       expect(partnerRepo.save).toHaveBeenCalled();
     });
@@ -242,7 +242,7 @@ describe('User Story Tests', () => {
     it('無効なデータでパートナー企業を登録しようとするとエラーになること', async () => {
       // エラーケースのテスト
       partnerRepo.save.mockRejectedValueOnce(new Error('バリデーションエラー'));
-      
+
       const invalidPartnerDto = {
         // nameが欠けている
         address: '東京都渋谷区',
@@ -250,9 +250,9 @@ describe('User Story Tests', () => {
         email: 'invalid-email', // 無効なメールアドレス
       };
 
-      await expect(
-        partnerRepo.save(partnerRepo.create(invalidPartnerDto))
-      ).rejects.toThrow('バリデーションエラー');
+      await expect(partnerRepo.save(partnerRepo.create(invalidPartnerDto))).rejects.toThrow(
+        'バリデーションエラー',
+      );
     });
   });
 
@@ -335,7 +335,7 @@ describe('User Story Tests', () => {
     it('無効な日付でプロジェクトを作成しようとするとエラーになること', async () => {
       // エラーケースのテスト
       projectRepo.save.mockRejectedValueOnce(new Error('バリデーションエラー'));
-      
+
       const invalidProjectDto = {
         name: 'テストプロジェクト',
         description: 'テスト用プロジェクトの説明',
@@ -345,9 +345,9 @@ describe('User Story Tests', () => {
         budget: 10000000,
       };
 
-      await expect(
-        projectRepo.save(projectRepo.create(invalidProjectDto))
-      ).rejects.toThrow('バリデーションエラー');
+      await expect(projectRepo.save(projectRepo.create(invalidProjectDto))).rejects.toThrow(
+        'バリデーションエラー',
+      );
     });
   });
 
@@ -369,7 +369,7 @@ describe('User Story Tests', () => {
       // 更新処理
       Object.assign(contract, updateContractDto);
       const result = await contractRepo.save(contract);
-      
+
       expect(result).toEqual({ ...testContract, ...updateContractDto });
       expect(contractRepo.save).toHaveBeenCalled();
     });
@@ -383,11 +383,11 @@ describe('User Story Tests', () => {
 
       // 更新前に契約を取得
       const contract = await contractRepo.findOne({ where: { id: '1' } });
-      
+
       // 更新処理
       Object.assign(contract, updateContractDto);
       const result = await contractRepo.save(contract);
-      
+
       expect(result.status).toBe('終了');
       expect(contractRepo.save).toHaveBeenCalled();
     });
@@ -395,7 +395,7 @@ describe('User Story Tests', () => {
     it('存在しない契約を更新しようとするとエラーになること', async () => {
       // エラーケースのテスト
       contractRepo.findOne.mockResolvedValueOnce(null);
-      
+
       await expect(async () => {
         const contract = await contractRepo.findOne({ where: { id: '999' } });
         if (!contract) {
@@ -418,13 +418,13 @@ describe('User Story Tests', () => {
       // スタッフサービスのモックを使用
       const staffList = await staffRepo.find();
       expect(staffList).toEqual([testStaff]);
-      
+
       // パートナーIDごとにグループ化
       const staffCountByPartner = staffList.reduce((acc: any, staff: any) => {
         acc[staff.partnerId] = (acc[staff.partnerId] || 0) + 1;
         return acc;
       }, {});
-      
+
       expect(staffCountByPartner['1']).toBe(1);
     });
 
@@ -436,21 +436,22 @@ describe('User Story Tests', () => {
       // プロジェクトとその契約を取得
       const project = await projectRepo.findOne({ where: { id: '1' } });
       expect(project).toEqual(testProject);
-      
+
       const contracts = await contractRepo.find();
       const projectContracts = contracts.filter((contract: any) => contract.projectId === '1');
-      
+
       // 契約金額の合計を計算
       const totalContractAmount = projectContracts.reduce((sum: any, contract: any) => {
         // 月額の場合は契約期間に応じて計算
         const startDate = new Date(contract.startDate);
         const endDate = new Date(contract.endDate);
-        const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
-                      (endDate.getMonth() - startDate.getMonth());
-        
-        return sum + (contract.rate * months);
+        const months =
+          (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+          (endDate.getMonth() - startDate.getMonth());
+
+        return sum + contract.rate * months;
       }, 0);
-      
+
       // 予算と実績の比較
       const budgetRemaining = project.budget - totalContractAmount;
       expect(budgetRemaining).toBeDefined();
@@ -460,34 +461,34 @@ describe('User Story Tests', () => {
       // エラーケースのテスト
       staffRepo.find.mockResolvedValueOnce([]);
       contractRepo.find.mockResolvedValueOnce([]);
-      
+
       // スタッフが存在しない場合
       const emptyStaffList = await staffRepo.find();
       expect(emptyStaffList).toEqual([]);
-      
+
       const staffCountByPartner = emptyStaffList.reduce((acc: any, staff: any) => {
         acc[staff.partnerId] = (acc[staff.partnerId] || 0) + 1;
         return acc;
       }, {});
-      
+
       expect(Object.keys(staffCountByPartner).length).toBe(0);
-      
+
       // 契約が存在しない場合
       const emptyContracts = await contractRepo.find();
       expect(emptyContracts).toEqual([]);
-      
+
       const project = await projectRepo.findOne({ where: { id: '1' } });
       const projectContracts = emptyContracts.filter((contract: any) => contract.projectId === '1');
-      
+
       expect(projectContracts.length).toBe(0);
-      
+
       // 契約金額の合計を計算（0になるはず）
       const totalContractAmount = projectContracts.reduce((sum: any, contract: any) => {
         return sum + contract.rate;
       }, 0);
-      
+
       expect(totalContractAmount).toBe(0);
-      
+
       // 予算と実績の比較（予算全額が残っているはず）
       const budgetRemaining = project.budget - totalContractAmount;
       expect(budgetRemaining).toBe(project.budget);

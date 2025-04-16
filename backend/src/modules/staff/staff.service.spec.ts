@@ -78,7 +78,7 @@ describe('StaffService', () => {
         skills: ['Java', 'Spring', 'SQL'],
         partner: { id: '1', name: 'テスト株式会社' } as any,
       };
-      
+
       const result = await service.create(createStaffDto);
       expect(result).toEqual(mockStaff);
       expect(repo.create).toHaveBeenCalledWith(createStaffDto);
@@ -92,7 +92,7 @@ describe('StaffService', () => {
         status: '稼働中',
         skills: ['Java', 'Spring', 'SQL', 'AWS'],
       };
-      
+
       const result = await service.update('1', updateStaffDto);
       expect(result).toEqual(mockStaff);
       expect(repo.findOne).toHaveBeenCalledWith({
@@ -104,11 +104,11 @@ describe('StaffService', () => {
 
     it('should return null if staff member not found', async () => {
       jest.spyOn(repo, 'findOne').mockResolvedValueOnce(null);
-      
+
       const updateStaffDto: UpdateStaffDto = {
         status: '待機中',
       };
-      
+
       const result = await service.update('999', updateStaffDto);
       expect(result).toBeNull();
     });
@@ -123,14 +123,14 @@ describe('StaffService', () => {
 
     it('should return false when no staff member was deleted', async () => {
       jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0, raw: {} });
-      
+
       const result = await service.remove('999');
       expect(result).toBe(false);
     });
 
     it('should handle null affected value', async () => {
       jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null, raw: {} });
-      
+
       const result = await service.remove('1');
       expect(result).toBe(false);
     });

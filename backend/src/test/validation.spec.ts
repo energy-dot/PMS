@@ -9,7 +9,7 @@ import { plainToClass } from 'class-transformer';
 
 /**
  * バリデーションテスト
- * 
+ *
  * このテストファイルでは、DTOのバリデーションルールが正しく機能することを検証します。
  */
 describe('Validation Tests', () => {
@@ -36,7 +36,7 @@ describe('Validation Tests', () => {
         address: '東京都渋谷区',
         phone: '03-1234-5678',
         email: 'test@example.com',
-        status: '取引中'
+        status: '取引中',
       });
 
       const errors = await validate(dto);
@@ -47,7 +47,7 @@ describe('Validation Tests', () => {
       const dto = plainToClass(CreatePartnerDto, {
         name: 'テスト株式会社',
         // addressが欠けている
-        phone: '03-1234-5678'
+        phone: '03-1234-5678',
       });
 
       const errors = await validate(dto);
@@ -61,7 +61,7 @@ describe('Validation Tests', () => {
         name: 'テスト株式会社',
         address: '東京都渋谷区',
         phone: '03-1234-5678',
-        email: 'invalid-email'
+        email: 'invalid-email',
       });
 
       const errors = await validate(dto);
@@ -75,7 +75,7 @@ describe('Validation Tests', () => {
         name: 'テスト株式会社',
         address: '東京都渋谷区',
         phone: '03-1234-5678',
-        status: '無効なステータス'
+        status: '無効なステータス',
       });
 
       const errors = await validate(dto);
@@ -97,7 +97,7 @@ describe('Validation Tests', () => {
         startDate: '2025-01-01',
         endDate: '2025-12-31',
         status: '募集中',
-        budget: "10000000"
+        budget: '10000000',
       });
 
       const errors = await validate(dto);
@@ -110,7 +110,7 @@ describe('Validation Tests', () => {
         department: 'システム開発部',
         description: 'テスト用プロジェクトの説明',
         startDate: '2025-01-01',
-        endDate: '2025-12-31'
+        endDate: '2025-12-31',
       });
 
       const errors = await validate(dto);
@@ -127,7 +127,7 @@ describe('Validation Tests', () => {
         startDate: '2025-12-31',
         endDate: '2025-01-01', // 開始日より前
         status: '進行中',
-        budget: "10000000"
+        budget: '10000000',
       });
 
       const errors = await validate(dto);
@@ -147,7 +147,7 @@ describe('Validation Tests', () => {
         email: 'taro.yamada@example.com',
         phone: '090-1234-5678',
         skills: ['Java', 'Spring', 'SQL'],
-        partner: { id: '1' }
+        partner: { id: '1' },
       });
 
       const errors = await validate(dto);
@@ -158,7 +158,7 @@ describe('Validation Tests', () => {
       const dto = plainToClass(CreateStaffDto, {
         // nameが欠けている
         email: 'taro.yamada@example.com',
-        phone: '090-1234-5678'
+        phone: '090-1234-5678',
       });
 
       const errors = await validate(dto);
@@ -172,7 +172,7 @@ describe('Validation Tests', () => {
         name: '山田太郎',
         email: 'invalid-email',
         phone: '090-1234-5678',
-        partner: { id: '1' }
+        partner: { id: '1' },
       });
 
       const errors = await validate(dto);
@@ -194,7 +194,7 @@ describe('Validation Tests', () => {
         paymentTerms: '月額固定',
         status: '契約中',
         staff: { id: '1' },
-        project: { id: '1' }
+        project: { id: '1' },
       });
 
       const errors = await validate(dto);
@@ -207,7 +207,7 @@ describe('Validation Tests', () => {
         endDate: '2025-12-31',
         price: 800000,
         paymentTerms: '月額固定',
-        status: '契約中'
+        status: '契約中',
         // staffとprojectが欠けている
       });
 
@@ -222,7 +222,7 @@ describe('Validation Tests', () => {
         endDate: '2025-12-31',
         price: 800000,
         paymentTerms: '月額固定',
-        status: '契約中'
+        status: '契約中',
         // staffとprojectが欠けている
       });
 
@@ -240,7 +240,7 @@ describe('Validation Tests', () => {
         paymentTerms: '月額固定',
         status: '契約中',
         staff: { id: '1' },
-        project: { id: '1' }
+        project: { id: '1' },
       });
 
       const errors = await validate(dto);

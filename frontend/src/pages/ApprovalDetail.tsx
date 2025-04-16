@@ -66,7 +66,7 @@ const ApprovalDetail: React.FC = () => {
     try {
       // 現在のユーザーIDを取得（実際の実装ではログインユーザーのIDを使用）
       const currentUser = await userService.getCurrentUser();
-      
+
       await workflowService.approveProject(id, currentUser.id);
       alert('申請を承認しました');
       navigate('/approvals');
@@ -91,7 +91,7 @@ const ApprovalDetail: React.FC = () => {
     try {
       // 現在のユーザーIDを取得（実際の実装ではログインユーザーのIDを使用）
       const currentUser = await userService.getCurrentUser();
-      
+
       await workflowService.rejectProject(id, currentUser.id, rejectReason);
       alert('申請を差し戻しました');
       navigate('/approvals');
@@ -122,7 +122,9 @@ const ApprovalDetail: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-6">
         <Alert type="error">{error}</Alert>
-        <Button onClick={handleBack} className="mt-4">一覧に戻る</Button>
+        <Button onClick={handleBack} className="mt-4">
+          一覧に戻る
+        </Button>
       </div>
     );
   }
@@ -131,7 +133,9 @@ const ApprovalDetail: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-6">
         <Alert type="error">申請履歴データが見つかりません</Alert>
-        <Button onClick={handleBack} className="mt-4">一覧に戻る</Button>
+        <Button onClick={handleBack} className="mt-4">
+          一覧に戻る
+        </Button>
       </div>
     );
   }
@@ -161,12 +165,17 @@ const ApprovalDetail: React.FC = () => {
           <div>
             <h3 className="text-sm font-medium text-gray-500">申請ステータス</h3>
             <p className="mt-1">
-              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                requestHistory.requestStatus === '承認待ち' ? 'bg-yellow-100 text-yellow-800' :
-                requestHistory.requestStatus === '承認済み' ? 'bg-green-100 text-green-800' :
-                requestHistory.requestStatus === '差戻し' ? 'bg-red-100 text-red-800' :
-                'bg-gray-100 text-gray-800'
-              }`}>
+              <span
+                className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                  requestHistory.requestStatus === '承認待ち'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : requestHistory.requestStatus === '承認済み'
+                      ? 'bg-green-100 text-green-800'
+                      : requestHistory.requestStatus === '差戻し'
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-gray-100 text-gray-800'
+                }`}
+              >
                 {requestHistory.requestStatus}
               </span>
             </p>
@@ -236,7 +245,7 @@ const ApprovalDetail: React.FC = () => {
             <div className="mb-4">
               <textarea
                 value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
+                onChange={e => setRejectReason(e.target.value)}
                 rows={4}
                 className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="差戻し理由を入力してください"

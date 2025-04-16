@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  NotFoundException,
+} from '@nestjs/common';
 import { PartnersService } from './partners.service';
 import { CreatePartnerDto } from '../../dto/partners/create-partner.dto';
 import { UpdatePartnerDto } from '../../dto/partners/update-partner.dto';

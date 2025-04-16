@@ -27,7 +27,7 @@ const SelectEditor = forwardRef((props: SelectEditorProps, ref) => {
   // 初期値の設定
   useEffect(() => {
     setValue(props.value ? props.value.toString() : '');
-    
+
     // フォーカスを当てる
     if (selectRef.current) {
       selectRef.current.focus();
@@ -41,7 +41,7 @@ const SelectEditor = forwardRef((props: SelectEditorProps, ref) => {
       getValue() {
         return value;
       },
-      
+
       // フォーカス時の挙動
       afterGuiAttached() {
         if (selectRef.current) {
@@ -58,11 +58,11 @@ const SelectEditor = forwardRef((props: SelectEditorProps, ref) => {
           }, 50);
         }
       },
-      
+
       // 入力がないときの扱い
       isPopup() {
         return false;
-      }
+      },
     };
   });
 
@@ -70,7 +70,7 @@ const SelectEditor = forwardRef((props: SelectEditorProps, ref) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setValue(event.target.value);
     setIsOpen(false);
-    
+
     // 値が変更された場合、セルの編集を完了するために少し遅延させる
     setTimeout(() => {
       try {
@@ -95,7 +95,7 @@ const SelectEditor = forwardRef((props: SelectEditorProps, ref) => {
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -122,16 +122,22 @@ const SelectEditor = forwardRef((props: SelectEditorProps, ref) => {
         style={selectStyle}
       >
         {allowEmpty && (
-          <option value="" disabled={!allowEmpty}>{emptyText}</option>
+          <option value="" disabled={!allowEmpty}>
+            {emptyText}
+          </option>
         )}
-        {props.values.map((option) => (
+        {props.values.map(option => (
           <option key={option} value={option}>
             {props.valueLabels ? props.valueLabels[option] : option}
           </option>
         ))}
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
           <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
         </svg>
       </div>

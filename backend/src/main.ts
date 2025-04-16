@@ -8,12 +8,12 @@ import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { 
-    logger: ['error', 'warn', 'log']
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log'],
   });
   const logger = new Logger('Bootstrap');
   const configService = app.get(ConfigService);
-  
+
   // バリデーションパイプの設定
   app.useGlobalPipes(
     new ValidationPipe({
@@ -26,10 +26,10 @@ async function bootstrap() {
       },
     }),
   );
-  
+
   // class-validatorでDIを使用できるようにする
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
-  
+
   // CORSの設定 - 開発環境では許容的に設定
   app.enableCors({
     origin: true, // すべてのオリジンを許可（開発環境用）
@@ -39,10 +39,10 @@ async function bootstrap() {
     credentials: true,
     maxAge: 3600,
   });
-  
+
   // グローバルプレフィックスを削除（フロントエンドとの整合性のため）
   // app.setGlobalPrefix('api');
-  
+
   // 初期管理者ユーザーを作成
   try {
     const dataSource = app.get(getDataSourceToken());
@@ -50,18 +50,18 @@ async function bootstrap() {
   } catch (error) {
     logger.error(`初期ユーザー作成中にエラーが発生しました: ${error.message}`);
   }
-  
+
   // ヘルスチェックエンドポイント
   app.getHttpAdapter().get('/health', (req, res) => {
     res.status(200).send('OK');
   });
-  
+
   // 起動時のログ出力
   const port = process.env.PORT || 3001;
   try {
     await app.listen(port);
     logger.log(`アプリケーションがポート${port}で起動しました`);
-    
+
     // フロントエンドの接続先URLを表示
     const protocol = 'http';
     const hostname = 'localhost';
@@ -88,13 +88,13 @@ async function seedInitialUsers(dataSource: DataSource, logger: Logger) {
     // すでに管理者ユーザーが存在するか確認
     const userRepository = dataSource.getRepository('users');
     const adminExists = await userRepository.findOne({ where: { username: 'admin' } });
-    
+
     if (!adminExists) {
       logger.log('初期管理者ユーザーを作成します...');
-      
+
       // パスワードをハッシュ化 (ここではシンプルに'password'を使用)
       const hashedPassword = await bcrypt.hash('password', 10);
-      
+
       // 管理者ユーザーを作成
       await userRepository.save([
         {
@@ -102,31 +102,31 @@ async function seedInitialUsers(dataSource: DataSource, logger: Logger) {
           password: hashedPassword,
           fullName: '管理者',
           role: 'admin',
-          isActive: true
+          isActive: true,
         },
         {
           username: 'partner_manager',
           password: hashedPassword,
           fullName: 'パートナー管理者',
           role: 'partner_manager',
-          isActive: true
+          isActive: true,
         },
         {
           username: 'developer',
           password: hashedPassword,
           fullName: '開発者',
           role: 'developer',
-          isActive: true
+          isActive: true,
         },
         {
           username: 'viewer',
           password: hashedPassword,
           fullName: '閲覧者',
           role: 'viewer',
-          isActive: true
-        }
+          isActive: true,
+        },
       ]);
-      
+
       logger.log('初期ユーザーの作成が完了しました');
     } else {
       logger.log('初期ユーザーはすでに存在します');

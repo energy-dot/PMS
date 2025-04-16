@@ -22,20 +22,33 @@ const ApplicationList: React.FC = () => {
   const navigate = useNavigate();
 
   // ステータスの選択肢と表示用のスタイル
-  const statusOptions = ['新規応募', '書類選考中', '書類NG', '書類OK', '面談調整中', '面談設定済', '面談NG', '面談OK', '内定', '採用', '見送り', '辞退'];
+  const statusOptions = [
+    '新規応募',
+    '書類選考中',
+    '書類NG',
+    '書類OK',
+    '面談調整中',
+    '面談設定済',
+    '面談NG',
+    '面談OK',
+    '内定',
+    '採用',
+    '見送り',
+    '辞退',
+  ];
   const statusClassMap: Record<string, string> = {
-    '新規応募': 'bg-blue-100 text-blue-800',
-    '書類選考中': 'bg-yellow-100 text-yellow-800',
-    '書類NG': 'bg-red-100 text-red-800',
-    '書類OK': 'bg-green-100 text-green-800',
-    '面談調整中': 'bg-purple-100 text-purple-800',
-    '面談設定済': 'bg-indigo-100 text-indigo-800',
-    '面談NG': 'bg-red-100 text-red-800',
-    '面談OK': 'bg-green-100 text-green-800',
-    '内定': 'bg-green-200 text-green-800',
-    '採用': 'bg-green-300 text-green-800',
-    '見送り': 'bg-gray-100 text-gray-800',
-    '辞退': 'bg-orange-100 text-orange-800',
+    新規応募: 'bg-blue-100 text-blue-800',
+    書類選考中: 'bg-yellow-100 text-yellow-800',
+    書類NG: 'bg-red-100 text-red-800',
+    書類OK: 'bg-green-100 text-green-800',
+    面談調整中: 'bg-purple-100 text-purple-800',
+    面談設定済: 'bg-indigo-100 text-indigo-800',
+    面談NG: 'bg-red-100 text-red-800',
+    面談OK: 'bg-green-100 text-green-800',
+    内定: 'bg-green-200 text-green-800',
+    採用: 'bg-green-300 text-green-800',
+    見送り: 'bg-gray-100 text-gray-800',
+    辞退: 'bg-orange-100 text-orange-800',
   };
 
   // 案件とパートナー会社のマスタデータを取得
@@ -44,14 +57,14 @@ const ApplicationList: React.FC = () => {
       try {
         const projects = await projectService.getProjects();
         const partners = await partnerService.getPartners();
-        
+
         // 案件IDから名前への変換マップを作成
         const projMap: Record<string, string> = {};
         projects.forEach(proj => {
           projMap[proj.id] = proj.name;
         });
         setProjectsMap(projMap);
-        
+
         // パートナー会社IDから名前への変換マップを作成
         const partMap: Record<string, string> = {};
         partners.forEach(part => {
@@ -62,7 +75,7 @@ const ApplicationList: React.FC = () => {
         console.error('Failed to fetch projects and partners:', err);
       }
     };
-    
+
     fetchProjectsAndPartners();
   }, []);
 
@@ -101,9 +114,11 @@ const ApplicationList: React.FC = () => {
     }
 
     // クライアントサイドフィルタリング（本来はAPIでの検索が望ましい）
-    const filteredApplications = applications.filter(application => 
-      application.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (application.skillSummary && application.skillSummary.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredApplications = applications.filter(
+      application =>
+        application.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (application.skillSummary &&
+          application.skillSummary.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setApplications(filteredApplications);
   };
@@ -142,7 +157,7 @@ const ApplicationList: React.FC = () => {
     if (!projectId) return '';
     return projectsMap[projectId] || '';
   };
-  
+
   // パートナー会社名を取得
   const getPartnerName = (partnerId: string | null): string => {
     if (!partnerId) return '';
@@ -158,87 +173,87 @@ const ApplicationList: React.FC = () => {
 
   // 応募者データ用列定義
   const columnDefs: ColDef<Application>[] = [
-    { 
-      field: 'applicantName', 
-      headerName: '応募者名', 
+    {
+      field: 'applicantName',
+      headerName: '応募者名',
       flex: 1,
       minWidth: 150,
       cellStyle: { textOverflow: 'ellipsis' },
     },
-    { 
-      field: 'projectId', 
-      headerName: '案件名', 
+    {
+      field: 'projectId',
+      headerName: '案件名',
       width: 200,
-      valueFormatter: (params) => getProjectName(params.value),
+      valueFormatter: params => getProjectName(params.value),
     },
-    { 
-      field: 'partnerId', 
-      headerName: 'パートナー会社', 
+    {
+      field: 'partnerId',
+      headerName: 'パートナー会社',
       width: 200,
-      valueFormatter: (params) => getPartnerName(params.value),
+      valueFormatter: params => getPartnerName(params.value),
     },
-    { 
-      field: 'applicationDate', 
-      headerName: '応募日', 
+    {
+      field: 'applicationDate',
+      headerName: '応募日',
       width: 120,
-      valueFormatter: (params) => formatDate(params.value),
+      valueFormatter: params => formatDate(params.value),
     },
-    { 
-      field: 'status', 
-      headerName: 'ステータス', 
-      width: 140, 
+    {
+      field: 'status',
+      headerName: 'ステータス',
+      width: 140,
       cellRenderer: (params: import('ag-grid-community').ICellRendererParams<Application>) => {
         const status = params.value;
         if (!status) return null;
-        
+
         const className = `px-2 py-1 rounded-full text-xs font-medium ${statusClassMap[status] || 'bg-gray-100 text-gray-800'}`;
-        
+
         return <span className={className}>{status}</span>;
-      }
+      },
     },
-    { 
-      field: 'desiredRate', 
-      headerName: '希望単価', 
+    {
+      field: 'desiredRate',
+      headerName: '希望単価',
       width: 120,
-      valueFormatter: (params) => params.value || '-'
+      valueFormatter: params => params.value || '-',
     },
-    { 
-      field: 'skillSummary', 
-      headerName: 'スキル概要', 
+    {
+      field: 'skillSummary',
+      headerName: 'スキル概要',
       width: 200,
-      cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis' }
+      cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis' },
     },
-    { 
-      headerName: '操作', 
+    {
+      headerName: '操作',
       width: 150,
       cellRenderer: (params: import('ag-grid-community').ICellRendererParams<Application>) => {
         const id = params.data?.id || '';
-        
+
         return (
           <div className="flex space-x-1">
-            <button 
-              className="action-button px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 focus:outline-none" 
+            <button
+              className="action-button px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 focus:outline-none"
               onClick={() => handleViewApplication(id)}
             >
               詳細
             </button>
-            <button 
-              className="action-button px-2 py-1 bg-red-100 text-red-800 text-xs rounded hover:bg-red-200 focus:outline-none" 
+            <button
+              className="action-button px-2 py-1 bg-red-100 text-red-800 text-xs rounded hover:bg-red-200 focus:outline-none"
               onClick={() => handleDeleteApplication(id)}
             >
               削除
             </button>
           </div>
         );
-      }
-    }
+      },
+    },
   ];
 
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">応募者一覧</h1>
-        <Button 
+        <Button
           onClick={handleCreateApplication}
           className="bg-blue-600 hover:bg-blue-700 text-white"
         >
@@ -255,29 +270,27 @@ const ApplicationList: React.FC = () => {
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <div className="flex flex-wrap gap-4 mb-4">
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              案件で絞り込み
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">案件で絞り込み</label>
             <select
               className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               value={selectedProjectId || ''}
-              onChange={(e) => setSelectedProjectId(e.target.value || null)}
+              onChange={e => setSelectedProjectId(e.target.value || null)}
             >
               <option value="">すべての案件</option>
               {Object.entries(projectsMap).map(([id, name]) => (
-                <option key={id} value={id}>{name}</option>
+                <option key={id} value={id}>
+                  {name}
+                </option>
               ))}
             </select>
           </div>
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              キーワード検索
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">キーワード検索</label>
             <div className="flex">
               <Input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 placeholder="応募者名、スキルなどで検索"
                 className="flex-1"
               />
@@ -300,7 +313,7 @@ const ApplicationList: React.FC = () => {
           paginationPageSize={10}
           domLayout="autoHeight"
           isLoading={isLoading}
-          onRowDoubleClicked={(params) => {
+          onRowDoubleClicked={params => {
             if (params.data) {
               handleViewApplication(params.data.id);
             }

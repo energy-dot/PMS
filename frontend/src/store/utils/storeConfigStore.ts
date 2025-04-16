@@ -7,11 +7,11 @@ interface StoreConfig {
   // 状態
   persistenceEnabled: boolean;
   debugMode: boolean;
-  
+
   // セレクター
   getIsPersistenceEnabled: () => boolean;
   getIsDebugMode: () => boolean;
-  
+
   // アクション
   togglePersistence: () => void;
   setPersistenceEnabled: (enabled: boolean) => void;
@@ -29,27 +29,31 @@ const useStoreConfigStore = create<StoreConfig>()(
       // 初期状態
       persistenceEnabled: true,
       debugMode: false,
-      
+
       // セレクター - メモ化されたデータアクセス
       getIsPersistenceEnabled: () => get().persistenceEnabled,
       getIsDebugMode: () => get().debugMode,
-      
+
       // アクション
-      togglePersistence: () => set(state => ({ 
-        persistenceEnabled: !state.persistenceEnabled 
-      })),
-      
-      setPersistenceEnabled: (enabled) => set({ 
-        persistenceEnabled: enabled 
-      }),
-      
-      toggleDebugMode: () => set(state => ({ 
-        debugMode: !state.debugMode 
-      })),
-      
-      setDebugMode: (enabled) => set({ 
-        debugMode: enabled 
-      }),
+      togglePersistence: () =>
+        set(state => ({
+          persistenceEnabled: !state.persistenceEnabled,
+        })),
+
+      setPersistenceEnabled: enabled =>
+        set({
+          persistenceEnabled: enabled,
+        }),
+
+      toggleDebugMode: () =>
+        set(state => ({
+          debugMode: !state.debugMode,
+        })),
+
+      setDebugMode: enabled =>
+        set({
+          debugMode: enabled,
+        }),
     }),
     {
       name: 'pms-store-config',

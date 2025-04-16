@@ -15,7 +15,12 @@ import { ContactPersonController } from './contact-person.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Partner, AntisocialCheck, BaseContract, ContactPerson])],
-  controllers: [PartnersController, AntisocialCheckController, BaseContractController, ContactPersonController],
+  controllers: [
+    PartnersController,
+    AntisocialCheckController,
+    BaseContractController,
+    ContactPersonController,
+  ],
   providers: [PartnersService, AntisocialCheckService, BaseContractService, ContactPersonService],
   exports: [PartnersService, AntisocialCheckService, BaseContractService, ContactPersonService],
 })

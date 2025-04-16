@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { NotificationsService } from './notifications.service';
 import { Notification } from '../../entities/notification.entity';
@@ -33,7 +43,8 @@ export class NotificationsController {
 
   @Get('user/:userId/unread/count')
   countUnreadNotificationsByUserId(@Param('userId') userId: string): Promise<{ count: number }> {
-    return this.notificationsService.countUnreadNotificationsByUserId(userId)
+    return this.notificationsService
+      .countUnreadNotificationsByUserId(userId)
       .then(count => ({ count }));
   }
 
@@ -57,8 +68,7 @@ export class NotificationsController {
 
   @Patch('user/:userId/read-all')
   markAllAsRead(@Param('userId') userId: string): Promise<{ success: boolean }> {
-    return this.notificationsService.markAllAsRead(userId)
-      .then(() => ({ success: true }));
+    return this.notificationsService.markAllAsRead(userId).then(() => ({ success: true }));
   }
 
   @Delete(':id')

@@ -39,13 +39,13 @@ export class FilterUtilsService {
    */
   buildWhereClause(filters: Record<string, any>): Record<string, any> {
     const whereClause: Record<string, any> = {};
-    
+
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
         whereClause[key] = value;
       }
     });
-    
+
     return whereClause;
   }
 
@@ -56,7 +56,7 @@ export class FilterUtilsService {
    */
   combineFilters(...filters: Record<string, any>[]): Record<string, any> {
     const combinedFilters: Record<string, any> = {};
-    
+
     filters.forEach(filter => {
       Object.entries(filter).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
@@ -64,7 +64,7 @@ export class FilterUtilsService {
         }
       });
     });
-    
+
     return combinedFilters;
   }
 }

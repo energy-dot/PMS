@@ -34,7 +34,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ entityType, entityId, onUpl
       const formData = new FormData();
       formData.append('entityType', entityType);
       formData.append('entityId', entityId);
-      
+
       if (files.length === 1) {
         formData.append('file', files[0]);
         await fileUploadService.uploadFile(formData);
@@ -47,7 +47,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ entityType, entityId, onUpl
 
       setSuccess('ファイルのアップロードが完了しました');
       setFiles([]);
-      
+
       if (onUploadComplete) {
         onUploadComplete();
       }
@@ -62,19 +62,19 @@ const FileUploader: React.FC<FileUploaderProps> = ({ entityType, entityId, onUpl
   return (
     <div className="border rounded-lg p-4">
       <h4 className="font-semibold mb-2">ファイルアップロード</h4>
-      
+
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
           {error}
         </div>
       )}
-      
+
       {success && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
           {success}
         </div>
       )}
-      
+
       <div className="mb-4">
         <input
           type="file"
@@ -91,7 +91,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ entityType, entityId, onUpl
           許可されているファイル形式: PDF, Word, Excel, JPEG, PNG, テキスト
         </p>
       </div>
-      
+
       <div>
         <button
           onClick={handleUpload}
@@ -103,7 +103,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ entityType, entityId, onUpl
           {uploading ? 'アップロード中...' : 'アップロード'}
         </button>
       </div>
-      
+
       {files.length > 0 && (
         <div className="mt-4">
           <h5 className="font-semibold text-sm mb-1">選択されたファイル:</h5>

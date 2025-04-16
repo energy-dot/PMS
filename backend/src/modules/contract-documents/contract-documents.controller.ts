@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Delete, Param, UseInterceptors, UploadedFile, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Param,
+  UseInterceptors,
+  UploadedFile,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { ContractDocumentsService } from './contract-documents.service';

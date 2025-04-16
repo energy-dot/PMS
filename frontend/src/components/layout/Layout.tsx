@@ -1,136 +1,133 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, Navigate, useLocation } from 'react-router-dom';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import { useAuthStore } from '../../store/authStore';
-import Alert from '../common/Alert';
-import Button from '../common/Button';
+// components/layout/Layout.tsxの修正
 
-/**
- * アプリケーションの基本レイアウト
- * サイドバー、ヘッダー、メインコンテンツエリアを含む
- */
-const Layout: React.FC = () => {
-  const { isAuthenticated, user } = useAuthStore();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [pageTitle, setPageTitle] = useState('ダッシュボード');
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import NotificationBell from '../notifications/NotificationBell';
+import { useAuthStore } from '../../store/user/authStore';
+
+// Layoutのプロパティ型を定義
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+// Layoutコンポーネント
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const [sessionTimeout, setSessionTimeout] = useState<number | null>(null);
-  const [showSessionAlert, setShowSessionAlert] = useState(false);
+  const { user, isAuthenticated, logout } = useAuthStore();
 
-  // 認証されていない場合はログインページにリダイレクト
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // URLパスに基づいてページタイトルを設定
-  useEffect(() => {
-    const path = location.pathname;
-    
-    if (path === '/') {
-      setPageTitle('ダッシュボード');
-    } else if (path.startsWith('/partners')) {
-      setPageTitle('パートナー会社管理');
-    } else if (path.startsWith('/projects')) {
-      setPageTitle('案件管理');
-    } else if (path.startsWith('/staff')) {
-      setPageTitle('要員管理');
-    } else if (path.startsWith('/contracts')) {
-      setPageTitle('契約管理');
-    } else if (path.startsWith('/evaluations')) {
-      setPageTitle('要員評価');
-    } else if (path.startsWith('/notifications')) {
-      setPageTitle('通知');
-    } else if (path.startsWith('/reports')) {
-      setPageTitle('レポート');
-    } else if (path.startsWith('/master')) {
-      setPageTitle('マスターデータ管理');
-    } else if (path.startsWith('/users')) {
-      setPageTitle('ユーザー管理');
-    }
-  }, [location]);
-
-  // セッションタイムアウト警告のシミュレーション (本番では実際のセッション管理と連携)
-  useEffect(() => {
-    // 30分後にセッション警告を表示
-    const warningTimeout = setTimeout(() => {
-      setShowSessionAlert(true);
-      // 5分後にセッションタイムアウト
-      setSessionTimeout(300);
-    }, 30 * 60 * 1000);
-
-    return () => clearTimeout(warningTimeout);
-  }, []);
-
-  // セッションタイムアウトカウントダウン
-  useEffect(() => {
-    if (sessionTimeout === null) return;
-
-    const interval = setInterval(() => {
-      setSessionTimeout(prev => {
-        if (prev === null || prev <= 0) {
-          clearInterval(interval);
-          // セッションタイムアウト時の処理
-          // 本番環境では実際のログアウト処理を呼び出す
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [sessionTimeout]);
-
-  // セッション延長ハンドラー
-  const handleExtendSession = () => {
-    setShowSessionAlert(false);
-    setSessionTimeout(null);
-    // 本番環境では実際のセッション延長APIを呼び出す
+  // 現在のパスがアクティブかどうかを判定
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
+  // サイドバーメニュー項目
+  const menuItems = [
+    {
+      path: '/dashboard',
+      label: 'ダッシュボード',
+      icon: 'dashboard',
+      roles: ['developer', 'partner_manager', 'admin', 'viewer'],
+    },
+    {
+      path: '/partners',
+      label: 'パートナー管理',
+      icon: 'business',
+      roles: ['partner_manager', 'admin'],
+    },
+    {
+      path: '/staffs',
+      label: 'スタッフ管理',
+      icon: 'people',
+      roles: ['partner_manager', 'admin'],
+    },
+    {
+      path: '/projects',
+      label: 'プロジェクト管理',
+      icon: 'assignment',
+      roles: ['developer', 'partner_manager', 'admin', 'viewer'],
+    },
+    {
+      path: '/applications',
+      label: '申請管理',
+      icon: 'description',
+      roles: ['developer', 'partner_manager', 'admin'],
+    },
+    {
+      path: '/contracts',
+      label: '契約管理',
+      icon: 'receipt',
+      roles: ['partner_manager', 'admin'],
+    },
+    {
+      path: '/evaluations',
+      label: '評価管理',
+      icon: 'star',
+      roles: ['developer', 'partner_manager', 'admin'],
+    },
+    {
+      path: '/reports',
+      label: 'レポート',
+      icon: 'assessment',
+      roles: ['partner_manager', 'admin', 'viewer'],
+    },
+    {
+      path: '/users',
+      label: 'ユーザー管理',
+      icon: 'admin_panel_settings',
+      roles: ['admin'],
+    },
+  ];
+
+  // ユーザーの権限に基づいてメニュー項目をフィルタリング
+  const filteredMenuItems = menuItems.filter(item => {
+    if (!user || !user.role) return false;
+    return item.roles.includes(user.role);
+  });
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <Sidebar 
-        collapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
-      />
-      
-      <div className="flex-1 flex flex-col">
-        <Header pageTitle={pageTitle} />
-        
-        <main className="flex-1 p-6 overflow-auto pt-16">
-          <div className="max-w-7xl mx-auto">
-            {/* 固定のページヘッダー */}
-            <div className="mb-6">
-              <h1 className="text-2xl font-semibold text-gray-900">{pageTitle}</h1>
+    <div className="layout">
+      {isAuthenticated ? (
+        <>
+          <header className="header">
+            <div className="header-left">
+              <div className="logo">
+                <Link to="/dashboard">PMS</Link>
+              </div>
             </div>
-            
-            {/* メインコンテンツ */}
-            <Outlet />
-          </div>
-          
-          {/* セッションタイムアウト警告 */}
-          {showSessionAlert && (
-            <div className="fixed bottom-4 right-4 z-50">
-              <div className="bg-white rounded-lg shadow-lg p-4 border border-yellow-200">
-                <Alert
-                  variant="warning"
-                  message={`セッションが${Math.floor(sessionTimeout! / 60)}分${sessionTimeout! % 60}秒後にタイムアウトします。セッションを延長しますか？`}
-                  onClose={() => setShowSessionAlert(false)}
-                />
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    variant="primary"
-                    onClick={handleExtendSession}
-                  >
-                    セッションを延長
-                  </Button>
+            <div className="header-right">
+              {user && <NotificationBell userId={user.id || ''} />}
+              <div className="user-menu">
+                <div className="user-info">
+                  <span className="user-name">{user?.fullName}</span>
+                  <span className="user-role">{user?.role}</span>
+                </div>
+                <div className="user-actions">
+                  <button onClick={logout}>ログアウト</button>
                 </div>
               </div>
             </div>
-          )}
-        </main>
-      </div>
+          </header>
+          <div className="main-container">
+            <aside className="sidebar">
+              <nav className="sidebar-nav">
+                <ul>
+                  {filteredMenuItems.map((item, index) => (
+                    <li key={index} className={isActive(item.path) ? 'active' : ''}>
+                      <Link to={item.path}>
+                        <i className="material-icons">{item.icon}</i>
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </aside>
+            <main className="content">{children}</main>
+          </div>
+        </>
+      ) : (
+        <main className="content-full">{children}</main>
+      )}
     </div>
   );
 };

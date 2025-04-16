@@ -46,7 +46,7 @@ export class DepartmentsService {
   }
 
   async findOne(id: string): Promise<Department | null> {
-    return this.departmentsRepository.findOne({ 
+    return this.departmentsRepository.findOne({
       where: { id },
       relations: ['sections'],
     });
@@ -67,7 +67,7 @@ export class DepartmentsService {
     if (!department) {
       return null;
     }
-    
+
     Object.assign(department, updateDepartmentDto);
     return this.departmentsRepository.save(department);
   }
@@ -78,7 +78,7 @@ export class DepartmentsService {
     if (!department) {
       return false;
     }
-    
+
     department.isActive = false;
     await this.departmentsRepository.save(department);
     return true;

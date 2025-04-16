@@ -1,11 +1,11 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateNotificationTables1744500000003 implements MigrationInterface {
-    name = 'CreateNotificationTables1744500000003'
+  name = 'CreateNotificationTables1744500000003';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // 通知（notifications）テーブルの作成
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // 通知（notifications）テーブルの作成
+    await queryRunner.query(`
             CREATE TABLE "notifications" (
                 "id" varchar PRIMARY KEY NOT NULL,
                 "user_id" varchar NOT NULL,
@@ -21,37 +21,37 @@ export class CreateNotificationTables1744500000003 implements MigrationInterface
             )
         `);
 
-        // インデックスの作成
-        await queryRunner.query(`
+    // インデックスの作成
+    await queryRunner.query(`
             CREATE INDEX "IDX_notifications_user_id" ON "notifications" ("user_id")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_notifications_is_read" ON "notifications" ("is_read")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_notifications_notification_type" ON "notifications" ("notification_type")
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        // インデックスの削除
-        await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // インデックスの削除
+    await queryRunner.query(`
             DROP INDEX "IDX_notifications_notification_type"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_notifications_is_read"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_notifications_user_id"
         `);
 
-        // テーブルの削除
-        await queryRunner.query(`
+    // テーブルの削除
+    await queryRunner.query(`
             DROP TABLE "notifications"
         `);
-    }
+  }
 }

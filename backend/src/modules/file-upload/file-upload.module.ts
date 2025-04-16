@@ -30,7 +30,7 @@ import { FileUploadService } from './file-upload.service';
           'image/png',
           'text/plain',
         ];
-        
+
         if (allowedMimeTypes.includes(file.mimetype)) {
           callback(null, true);
         } else {

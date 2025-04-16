@@ -41,7 +41,7 @@ const generateDummyEvaluations = (): Evaluation[] => {
       communicationScore: 4,
       teamworkScore: 5,
       attendanceScore: 4,
-      comments: '全体的に良好なパフォーマンスを示しています。特にチームワークが優れています。'
+      comments: '全体的に良好なパフォーマンスを示しています。特にチームワークが優れています。',
     },
     {
       id: '2',
@@ -56,7 +56,7 @@ const generateDummyEvaluations = (): Evaluation[] => {
       communicationScore: 3,
       teamworkScore: 3,
       attendanceScore: 4,
-      comments: '技術スキルは非常に高いですが、コミュニケーション面での改善が必要です。'
+      comments: '技術スキルは非常に高いですが、コミュニケーション面での改善が必要です。',
     },
     {
       id: '3',
@@ -71,7 +71,7 @@ const generateDummyEvaluations = (): Evaluation[] => {
       communicationScore: 5,
       teamworkScore: 5,
       attendanceScore: 4,
-      comments: '非常に優秀な人材です。特にコミュニケーション能力とチームワークが素晴らしい。'
+      comments: '非常に優秀な人材です。特にコミュニケーション能力とチームワークが素晴らしい。',
     },
   ];
 };
@@ -82,48 +82,48 @@ const EvaluationList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  
+
   // 列定義
   const columnDefs: ColDef[] = [
-    { 
-      headerName: '評価ID', 
-      field: 'id', 
-      sortable: true, 
+    {
+      headerName: '評価ID',
+      field: 'id',
+      sortable: true,
       filter: true,
-      width: 120
+      width: 120,
     },
-    { 
-      headerName: '要員名', 
-      field: 'staffName', 
-      sortable: true, 
+    {
+      headerName: '要員名',
+      field: 'staffName',
+      sortable: true,
       filter: true,
-      width: 150
+      width: 150,
     },
-    { 
-      headerName: 'プロジェクト名', 
-      field: 'projectName', 
-      sortable: true, 
+    {
+      headerName: 'プロジェクト名',
+      field: 'projectName',
+      sortable: true,
       filter: true,
-      flex: 1
+      flex: 1,
     },
-    { 
-      headerName: '評価日', 
-      field: 'evaluationDate', 
-      sortable: true, 
+    {
+      headerName: '評価日',
+      field: 'evaluationDate',
+      sortable: true,
       filter: true,
-      width: 130
+      width: 130,
     },
-    { 
-      headerName: '評価者', 
-      field: 'evaluatorName', 
-      sortable: true, 
+    {
+      headerName: '評価者',
+      field: 'evaluatorName',
+      sortable: true,
       filter: true,
-      width: 150
+      width: 150,
     },
-    { 
-      headerName: '総合評価', 
-      field: 'overallScore', 
-      sortable: true, 
+    {
+      headerName: '総合評価',
+      field: 'overallScore',
+      sortable: true,
       filter: true,
       width: 120,
       cellRenderer: (params: any) => {
@@ -133,9 +133,9 @@ const EvaluationList: React.FC = () => {
         else if (score >= 3.5) color = 'blue';
         else if (score >= 2.5) color = 'orange';
         else color = 'red';
-        
+
         return `<span style="color:${color};font-weight:bold;">${score}</span>`;
-      }
+      },
     },
     {
       headerName: '操作',
@@ -153,14 +153,14 @@ const EvaluationList: React.FC = () => {
       onCellClicked: (params: any) => {
         const action = params.event.target.getAttribute('data-action');
         const evaluationId = params.data.id;
-        
+
         if (action === 'view') {
           navigate(`/evaluations/${evaluationId}`);
         } else if (action === 'edit') {
           navigate(`/evaluations/${evaluationId}/edit`);
         }
-      }
-    }
+      },
+    },
   ];
 
   // データの取得
@@ -170,12 +170,13 @@ const EvaluationList: React.FC = () => {
         setLoading(true);
         // 通常はAPIからデータを取得するが、ここではダミーデータを使用
         const data = generateDummyEvaluations();
-        
+
         // 開発担当者の場合は、自分が評価者の評価のみ表示
-        const filteredData = user?.role === 'developer' 
-          ? data.filter(evaluation => evaluation.evaluatorName === user.fullName)
-          : data;
-          
+        const filteredData =
+          user?.role === 'developer'
+            ? data.filter(evaluation => evaluation.evaluatorName === user.fullName)
+            : data;
+
         setEvaluations(filteredData);
         setLoading(false);
       } catch (err: any) {
@@ -183,7 +184,7 @@ const EvaluationList: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [user]);
 
@@ -200,24 +201,19 @@ const EvaluationList: React.FC = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">要員評価一覧</h1>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={handleCreateEvaluation}
           data-testid="create-evaluation-button"
         >
           新規評価作成
         </Button>
       </div>
-      
+
       {error && (
-        <Alert 
-          variant="error" 
-          message={error} 
-          onClose={() => setError(null)} 
-          className="mb-4"
-        />
+        <Alert variant="error" message={error} onClose={() => setError(null)} className="mb-4" />
       )}
-      
+
       <div className="ag-theme-alpine w-full h-[600px]">
         <AgGridReact
           rowData={evaluations}

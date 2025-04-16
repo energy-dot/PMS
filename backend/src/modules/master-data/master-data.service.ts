@@ -15,13 +15,13 @@ export class MasterDataService {
 
   async findAll(type?: string): Promise<MasterData[]> {
     const query = this.masterDataRepository.createQueryBuilder('masterData');
-    
+
     if (type) {
       query.where('masterData.type = :type', { type });
     }
-    
+
     query.orderBy('masterData.displayOrder', 'ASC');
-    
+
     return query.getMany();
   }
 
@@ -41,43 +41,44 @@ export class MasterDataService {
     masterData.type = createMasterDataDto.type || '';
     masterData.category = createMasterDataDto.category || '';
     masterData.displayOrder = createMasterDataDto.displayOrder || 0;
-    masterData.isActive = createMasterDataDto.isActive !== undefined ? createMasterDataDto.isActive : true;
+    masterData.isActive =
+      createMasterDataDto.isActive !== undefined ? createMasterDataDto.isActive : true;
     masterData.metadata = createMasterDataDto.metadata || {};
-    
+
     return this.masterDataRepository.save(masterData);
   }
 
   async update(id: string, updateMasterDataDto: UpdateMasterDataDto): Promise<MasterData> {
     const masterData = await this.findOne(id);
-    
+
     if (!masterData) {
       throw new Error('マスターデータが見つかりません');
     }
-    
+
     if (updateMasterDataDto.name !== undefined) {
       masterData.name = updateMasterDataDto.name;
     }
-    
+
     if (updateMasterDataDto.description !== undefined) {
       masterData.description = updateMasterDataDto.description;
     }
-    
+
     if (updateMasterDataDto.category !== undefined) {
       masterData.category = updateMasterDataDto.category;
     }
-    
+
     if (updateMasterDataDto.displayOrder !== undefined) {
       masterData.displayOrder = updateMasterDataDto.displayOrder;
     }
-    
+
     if (updateMasterDataDto.isActive !== undefined) {
       masterData.isActive = updateMasterDataDto.isActive;
     }
-    
+
     if (updateMasterDataDto.metadata !== undefined) {
       masterData.metadata = updateMasterDataDto.metadata;
     }
-    
+
     return this.masterDataRepository.save(masterData);
   }
 
@@ -88,14 +89,14 @@ export class MasterDataService {
   async findByType(type: string): Promise<MasterData[]> {
     return this.masterDataRepository.find({
       where: { type, isActive: true },
-      order: { displayOrder: 'ASC' }
+      order: { displayOrder: 'ASC' },
     });
   }
 
   async findByTypeAndCategory(type: string, category: string): Promise<MasterData[]> {
     return this.masterDataRepository.find({
       where: { type, category, isActive: true },
-      order: { displayOrder: 'ASC' }
+      order: { displayOrder: 'ASC' },
     });
   }
 
@@ -105,7 +106,7 @@ export class MasterDataService {
       .createQueryBuilder('master_data')
       .select('DISTINCT master_data.type')
       .getRawMany();
-    
+
     return result.map(item => item.type);
   }
 

@@ -1,22 +1,22 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddStaffSkillLevels1744500000000 implements MigrationInterface {
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // 1. スキルレベルを格納するためのJSONカラムを追加
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // 1. スキルレベルを格納するためのJSONカラムを追加
+    await queryRunner.query(`
             ALTER TABLE staff ADD COLUMN skillLevels TEXT DEFAULT '{}';
         `);
 
-        // 2. 事業部と部への参照を追加
-        await queryRunner.query(`
+    // 2. 事業部と部への参照を追加
+    await queryRunner.query(`
             ALTER TABLE staff ADD COLUMN departmentId TEXT;
         `);
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE staff ADD COLUMN sectionId TEXT;
         `);
 
-        // 3. スキルカテゴリテーブルの作成
-        await queryRunner.query(`
+    // 3. スキルカテゴリテーブルの作成
+    await queryRunner.query(`
             CREATE TABLE skill_category (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -26,8 +26,8 @@ export class AddStaffSkillLevels1744500000000 implements MigrationInterface {
             )
         `);
 
-        // 4. スキルマスタテーブルの作成
-        await queryRunner.query(`
+    // 4. スキルマスタテーブルの作成
+    await queryRunner.query(`
             CREATE TABLE skill (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -39,9 +39,9 @@ export class AddStaffSkillLevels1744500000000 implements MigrationInterface {
             )
         `);
 
-        // 5. 基本的なスキルカテゴリとスキルのシードデータ挿入
-        // カテゴリ
-        await queryRunner.query(`
+    // 5. 基本的なスキルカテゴリとスキルのシードデータ挿入
+    // カテゴリ
+    await queryRunner.query(`
             INSERT INTO skill_category (id, name, description) VALUES 
             ('cat-prog', 'プログラミング言語', 'プログラミング言語に関するスキル'),
             ('cat-fw', 'フレームワーク', 'フレームワークに関するスキル'),
@@ -50,8 +50,8 @@ export class AddStaffSkillLevels1744500000000 implements MigrationInterface {
             ('cat-tool', '開発ツール', '開発ツールに関するスキル')
         `);
 
-        // スキル
-        await queryRunner.query(`
+    // スキル
+    await queryRunner.query(`
             INSERT INTO skill (id, name, categoryId) VALUES 
             ('skill-js', 'JavaScript', 'cat-prog'),
             ('skill-ts', 'TypeScript', 'cat-prog'),
@@ -83,15 +83,15 @@ export class AddStaffSkillLevels1744500000000 implements MigrationInterface {
             ('skill-jira', 'Jira', 'cat-tool')
         `);
 
-        // 6. 既存のステータスオプションを拡張（既存データとの互換性を保つ）
-        // ここでは直接変更せず、デフォルト値を変更するだけにとどめます
-    }
+    // 6. 既存のステータスオプションを拡張（既存データとの互換性を保つ）
+    // ここでは直接変更せず、デフォルト値を変更するだけにとどめます
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE IF EXISTS skill`);
-        await queryRunner.query(`DROP TABLE IF EXISTS skill_category`);
-        await queryRunner.query(`ALTER TABLE staff DROP COLUMN skillLevels`);
-        await queryRunner.query(`ALTER TABLE staff DROP COLUMN departmentId`);
-        await queryRunner.query(`ALTER TABLE staff DROP COLUMN sectionId`);
-    }
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS skill`);
+    await queryRunner.query(`DROP TABLE IF EXISTS skill_category`);
+    await queryRunner.query(`ALTER TABLE staff DROP COLUMN skillLevels`);
+    await queryRunner.query(`ALTER TABLE staff DROP COLUMN departmentId`);
+    await queryRunner.query(`ALTER TABLE staff DROP COLUMN sectionId`);
+  }
 }

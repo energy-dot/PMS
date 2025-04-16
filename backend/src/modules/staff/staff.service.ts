@@ -24,11 +24,11 @@ export class StaffService {
       where: { id },
       relations: ['partner', 'contracts'],
     });
-    
+
     if (!staff) {
       throw new Error(`要員ID ${id} は見つかりませんでした`);
     }
-    
+
     return staff;
   }
 
@@ -50,22 +50,22 @@ export class StaffService {
 
   async search(searchStaffDto: SearchStaffDto): Promise<Staff[]> {
     const where: any = {};
-    
+
     // 名前検索
     if (searchStaffDto.fullName) {
       where.fullName = Like(`%${searchStaffDto.fullName}%`);
     }
-    
+
     // スキル検索
     if (searchStaffDto.skills) {
       where.skills = Like(`%${searchStaffDto.skills}%`);
     }
-    
+
     // パートナー会社ID検索
     if (searchStaffDto.partnerId) {
       where.partner = { id: searchStaffDto.partnerId };
     }
-    
+
     // 単価範囲検索
     if (searchStaffDto.rateMin !== undefined) {
       // TypeORMのBetweenを使用するように修正
@@ -80,12 +80,12 @@ export class StaffService {
       // 最大値のみ指定されている場合
       where.monthlyRate = Between(0, searchStaffDto.rateMax);
     }
-    
+
     // 稼働状況検索
     if (searchStaffDto.availability) {
       where.status = searchStaffDto.availability;
     }
-    
+
     return this.staffRepository.find({
       where,
       relations: ['partner', 'contracts'],

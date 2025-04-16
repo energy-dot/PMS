@@ -92,26 +92,26 @@ export class FileUploadService {
     file: Express.Multer.File,
     folder: string,
     entityId: string,
-    description?: string
+    description?: string,
   ): Promise<FileMetadata> {
     // フォルダパスの作成
     const folderPath = join(this.uploadDir, folder, entityId);
-    
+
     // フォルダが存在しない場合は作成
     try {
       await fs.access(folderPath);
     } catch {
       await fs.mkdir(folderPath, { recursive: true });
     }
-    
+
     // ファイル名の生成（オリジナル名を保持しつつ、一意になるようにする）
     const ext = file.originalname.split('.').pop();
     const uniqueFileName = `${uuidv4()}.${ext}`;
     const filePath = join(folderPath, uniqueFileName);
-    
+
     // ファイルの保存
     await fs.writeFile(filePath, file.buffer);
-    
+
     // メタデータの保存
     const metadata = new FileMetadata();
     metadata.id = uuidv4();
@@ -123,10 +123,10 @@ export class FileUploadService {
     metadata.entityType = folder;
     metadata.entityId = entityId;
     metadata.uploadDate = new Date();
-    
+
     // メタデータをインメモリストレージに保存
     this.files.set(metadata.id, metadata);
-    
+
     return metadata;
   }
 }

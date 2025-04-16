@@ -21,26 +21,22 @@ const ApprovalList: React.FC = () => {
       try {
         const data = await workflowService.getPendingApprovals();
         setPendingApprovals(data);
-        
+
         // 関連するプロジェクトとユーザーの情報を取得
         const projectIds = [...new Set(data.map(item => item.projectId))];
         const userIds = [...new Set(data.map(item => item.requesterId))];
-        
+
         try {
-          const projects = await Promise.all(
-            projectIds.map(id => projectService.getProject(id))
-          );
-          
+          const projects = await Promise.all(projectIds.map(id => projectService.getProject(id)));
+
           const projMap: Record<string, any> = {};
           projects.forEach(proj => {
             projMap[proj.id] = proj;
           });
           setProjectsMap(projMap);
-          
-          const users = await Promise.all(
-            userIds.map(id => userService.getUser(id))
-          );
-          
+
+          const users = await Promise.all(userIds.map(id => userService.getUser(id)));
+
           const userMap: Record<string, any> = {};
           users.forEach(user => {
             userMap[user.id] = user;
@@ -55,7 +51,7 @@ const ApprovalList: React.FC = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchPendingApprovals();
   }, []);
 
@@ -74,7 +70,7 @@ const ApprovalList: React.FC = () => {
     try {
       // 現在のユーザーIDを取得（実際の実装ではログインユーザーのIDを使用）
       const currentUser = await userService.getCurrentUser();
-      
+
       await workflowService.approveProject(id, currentUser.id);
       // 承認後、リストを更新
       const updatedApprovals = pendingApprovals.filter(approval => approval.id !== id);
@@ -103,7 +99,7 @@ const ApprovalList: React.FC = () => {
     try {
       // 現在のユーザーIDを取得（実際の実装ではログインユーザーのIDを使用）
       const currentUser = await userService.getCurrentUser();
-      
+
       await workflowService.rejectProject(id, currentUser.id, reason);
       // 差戻し後、リストを更新
       const updatedApprovals = pendingApprovals.filter(approval => approval.id !== id);
@@ -155,7 +151,7 @@ const ApprovalList: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {pendingApprovals.map((approval) => (
+          {pendingApprovals.map(approval => (
             <div key={approval.id} className="bg-white rounded-lg shadow-md p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>

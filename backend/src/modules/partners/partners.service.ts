@@ -25,7 +25,7 @@ export class PartnersService {
     if (!partner) {
       return null;
     }
-    
+
     Object.assign(partner, updatePartnerDto);
     return this.partnersRepository.save(partner);
   }

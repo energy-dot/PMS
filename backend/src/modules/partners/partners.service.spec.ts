@@ -48,7 +48,7 @@ describe('PartnersService', () => {
   beforeEach(async () => {
     // 各テスト前にモックをリセット
     jest.clearAllMocks();
-    
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PartnersService,
@@ -105,7 +105,7 @@ describe('PartnersService', () => {
         phone: '03-1234-5678',
         email: 'test@example.com',
       };
-      
+
       const result = await service.create(createPartnerDto);
       expect(result).toEqual(mockPartner);
       expect(repository.create).toHaveBeenCalledWith(createPartnerDto);
@@ -119,7 +119,7 @@ describe('PartnersService', () => {
         phone: '03-1234-5678',
         email: 'invalid-email', // 無効なメールアドレス
       };
-      
+
       mockRepository.save.mockRejectedValueOnce(new Error('バリデーションエラー'));
       await expect(service.create(invalidDto)).rejects.toThrow();
     });
@@ -130,7 +130,7 @@ describe('PartnersService', () => {
       const updatePartnerDto = {
         name: '更新テスト株式会社',
       };
-      
+
       const result = await service.update('1', updatePartnerDto);
       expect(result).toEqual(mockPartner);
       expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
@@ -141,10 +141,10 @@ describe('PartnersService', () => {
       const updatePartnerDto = {
         name: '更新テスト株式会社',
       };
-      
+
       // findOneがnullを返すようにモック
       jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
-      
+
       const result = await service.update('999', updatePartnerDto);
       expect(result).toBeNull();
       expect(repository.findOne).toHaveBeenCalledWith({ where: { id: '999' } });
@@ -159,8 +159,10 @@ describe('PartnersService', () => {
     });
 
     it('should return false when delete operation affects no rows', async () => {
-      jest.spyOn(repository, 'delete').mockResolvedValueOnce({ affected: 0, raw: {} } as DeleteResult);
-      
+      jest
+        .spyOn(repository, 'delete')
+        .mockResolvedValueOnce({ affected: 0, raw: {} } as DeleteResult);
+
       const result = await service.remove('1');
       expect(result).toBe(false);
       expect(repository.delete).toHaveBeenCalledWith('1');
@@ -168,7 +170,7 @@ describe('PartnersService', () => {
 
     it('should handle null affected value', async () => {
       jest.spyOn(repository, 'delete').mockResolvedValueOnce({ affected: null, raw: {} } as any);
-      
+
       const result = await service.remove('1');
       expect(result).toBe(false);
       expect(repository.delete).toHaveBeenCalledWith('1');

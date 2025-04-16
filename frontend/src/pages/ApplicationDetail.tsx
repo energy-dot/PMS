@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '../components/common/Button';
 import Alert from '../components/common/Alert';
-import applicationService, { Application, InterviewRecord, CreateInterviewRecordDto } from '../services/applicationService';
+import applicationService, {
+  Application,
+  InterviewRecord,
+  CreateInterviewRecordDto,
+} from '../services/applicationService';
 import projectService from '../services/projectService';
 import partnerService from '../services/partnerService';
 import userService from '../services/userService';
@@ -16,7 +20,20 @@ const ApplicationDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [projectName, setProjectName] = useState('');
   const [partnerName, setPartnerName] = useState('');
-  const [statusOptions] = useState(['新規応募', '書類選考中', '書類NG', '書類OK', '面談調整中', '面談設定済', '面談NG', '面談OK', '内定', '採用', '見送り', '辞退']);
+  const [statusOptions] = useState([
+    '新規応募',
+    '書類選考中',
+    '書類NG',
+    '書類OK',
+    '面談調整中',
+    '面談設定済',
+    '面談NG',
+    '面談OK',
+    '内定',
+    '採用',
+    '見送り',
+    '辞退',
+  ]);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<Application>>({});
   const [newInterviewRecord, setNewInterviewRecord] = useState<CreateInterviewRecordDto>({
@@ -24,7 +41,7 @@ const ApplicationDetail: React.FC = () => {
     interviewDate: new Date(),
     interviewFormat: 'オンライン',
     evaluation: '',
-    evaluationComment: ''
+    evaluationComment: '',
   });
   const [showInterviewForm, setShowInterviewForm] = useState(false);
 
@@ -76,20 +93,24 @@ const ApplicationDetail: React.FC = () => {
   }, [id]);
 
   // フォーム入力の処理
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   // 新規面談記録フォーム入力の処理
-  const handleInterviewInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInterviewInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setNewInterviewRecord({
       ...newInterviewRecord,
-      [name]: name === 'interviewDate' ? new Date(value) : value
+      [name]: name === 'interviewDate' ? new Date(value) : value,
     });
   };
 
@@ -126,7 +147,7 @@ const ApplicationDetail: React.FC = () => {
         interviewDate: new Date(),
         interviewFormat: 'オンライン',
         evaluation: '',
-        evaluationComment: ''
+        evaluationComment: '',
       });
       alert('面談記録を追加しました');
     } catch (err: any) {
@@ -156,7 +177,9 @@ const ApplicationDetail: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-6">
         <Alert type="error">{error}</Alert>
-        <Button onClick={handleBack} className="mt-4">一覧に戻る</Button>
+        <Button onClick={handleBack} className="mt-4">
+          一覧に戻る
+        </Button>
       </div>
     );
   }
@@ -165,7 +188,9 @@ const ApplicationDetail: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-6">
         <Alert type="error">応募者データが見つかりません</Alert>
-        <Button onClick={handleBack} className="mt-4">一覧に戻る</Button>
+        <Button onClick={handleBack} className="mt-4">
+          一覧に戻る
+        </Button>
       </div>
     );
   }
@@ -176,14 +201,14 @@ const ApplicationDetail: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-800">応募者詳細</h1>
         <div className="flex space-x-2">
           {!editMode ? (
-            <Button 
+            <Button
               onClick={() => setEditMode(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               編集
             </Button>
           ) : (
-            <Button 
+            <Button
               onClick={() => setEditMode(false)}
               className="bg-gray-500 hover:bg-gray-600 text-white"
             >
@@ -207,9 +232,7 @@ const ApplicationDetail: React.FC = () => {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  応募者名
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">応募者名</label>
                 <input
                   type="text"
                   name="applicantName"
@@ -219,11 +242,9 @@ const ApplicationDetail: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ステータス
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
                 <select
                   name="status"
                   value={formData.status || ''}
@@ -232,15 +253,15 @@ const ApplicationDetail: React.FC = () => {
                   required
                 >
                   {statusOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  年齢
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">年齢</label>
                 <input
                   type="number"
                   name="age"
@@ -251,9 +272,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  性別
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">性別</label>
                 <input
                   type="text"
                   name="gender"
@@ -264,9 +283,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  最寄り駅
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">最寄り駅</label>
                 <input
                   type="text"
                   name="nearestStation"
@@ -277,9 +294,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  希望単価
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">希望単価</label>
                 <input
                   type="text"
                   name="desiredRate"
@@ -290,9 +305,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  スキル概要
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">スキル概要</label>
                 <textarea
                   name="skillSummary"
                   value={formData.skillSummary || ''}
@@ -316,9 +329,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  備考
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">備考</label>
                 <textarea
                   name="remarks"
                   value={formData.remarks || ''}
@@ -364,21 +375,35 @@ const ApplicationDetail: React.FC = () => {
             <div>
               <h3 className="text-sm font-medium text-gray-500">ステータス</h3>
               <p className="mt-1">
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                  application.status === '新規応募' ? 'bg-blue-100 text-blue-800' :
-                  application.status === '書類選考中' ? 'bg-yellow-100 text-yellow-800' :
-                  application.status === '書類NG' ? 'bg-red-100 text-red-800' :
-                  application.status === '書類OK' ? 'bg-green-100 text-green-800' :
-                  application.status === '面談調整中' ? 'bg-purple-100 text-purple-800' :
-                  application.status === '面談設定済' ? 'bg-indigo-100 text-indigo-800' :
-                  application.status === '面談NG' ? 'bg-red-100 text-red-800' :
-                  application.status === '面談OK' ? 'bg-green-100 text-green-800' :
-                  application.status === '内定' ? 'bg-green-200 text-green-800' :
-                  application.status === '採用' ? 'bg-green-300 text-green-800' :
-                  application.status === '見送り' ? 'bg-gray-100 text-gray-800' :
-                  application.status === '辞退' ? 'bg-orange-100 text-orange-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
+                <span
+                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                    application.status === '新規応募'
+                      ? 'bg-blue-100 text-blue-800'
+                      : application.status === '書類選考中'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : application.status === '書類NG'
+                          ? 'bg-red-100 text-red-800'
+                          : application.status === '書類OK'
+                            ? 'bg-green-100 text-green-800'
+                            : application.status === '面談調整中'
+                              ? 'bg-purple-100 text-purple-800'
+                              : application.status === '面談設定済'
+                                ? 'bg-indigo-100 text-indigo-800'
+                                : application.status === '面談NG'
+                                  ? 'bg-red-100 text-red-800'
+                                  : application.status === '面談OK'
+                                    ? 'bg-green-100 text-green-800'
+                                    : application.status === '内定'
+                                      ? 'bg-green-200 text-green-800'
+                                      : application.status === '採用'
+                                        ? 'bg-green-300 text-green-800'
+                                        : application.status === '見送り'
+                                          ? 'bg-gray-100 text-gray-800'
+                                          : application.status === '辞退'
+                                            ? 'bg-orange-100 text-orange-800'
+                                            : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
                   {application.status}
                 </span>
               </p>
@@ -411,7 +436,9 @@ const ApplicationDetail: React.FC = () => {
 
             <div className="md:col-span-2">
               <h3 className="text-sm font-medium text-gray-500">書類選考コメント</h3>
-              <p className="mt-1 whitespace-pre-line">{application.documentScreeningComment || '-'}</p>
+              <p className="mt-1 whitespace-pre-line">
+                {application.documentScreeningComment || '-'}
+              </p>
             </div>
 
             <div className="md:col-span-2">
@@ -434,18 +461,21 @@ const ApplicationDetail: React.FC = () => {
         </div>
 
         {showInterviewForm && (
-          <form onSubmit={handleAddInterviewRecord} className="mb-6 p-4 border border-gray-200 rounded-md">
+          <form
+            onSubmit={handleAddInterviewRecord}
+            className="mb-6 p-4 border border-gray-200 rounded-md"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  面談日
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">面談日</label>
                 <input
                   type="date"
                   name="interviewDate"
-                  value={newInterviewRecord.interviewDate instanceof Date 
-                    ? newInterviewRecord.interviewDate.toISOString().split('T')[0] 
-                    : ''}
+                  value={
+                    newInterviewRecord.interviewDate instanceof Date
+                      ? newInterviewRecord.interviewDate.toISOString().split('T')[0]
+                      : ''
+                  }
                   onChange={handleInterviewInputChange}
                   className="w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   required
@@ -453,9 +483,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  面談形式
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">面談形式</label>
                 <select
                   name="interviewFormat"
                   value={newInterviewRecord.interviewFormat || ''}
@@ -470,9 +498,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  評価
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">評価</label>
                 <select
                   name="evaluation"
                   value={newInterviewRecord.evaluation || ''}
@@ -488,9 +514,7 @@ const ApplicationDetail: React.FC = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  評価コメント
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">評価コメント</label>
                 <textarea
                   name="evaluationComment"
                   value={newInterviewRecord.evaluationComment || ''}
@@ -517,7 +541,7 @@ const ApplicationDetail: React.FC = () => {
           <p className="text-gray-500 italic">面談記録はありません</p>
         ) : (
           <div className="space-y-4">
-            {interviewRecords.map((record) => (
+            {interviewRecords.map(record => (
               <div key={record.id} className="border border-gray-200 rounded-md p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

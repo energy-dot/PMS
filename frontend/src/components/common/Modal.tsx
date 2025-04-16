@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-interface ModalProps {
+export interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
@@ -8,106 +8,87 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  size = 'md'
-}) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md' }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  
-  // ��ïtg���뒉X�
+
+  // ESCキーでモーダルを閉じる
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [isOpen, onClose]);
+
+  // モーダル外クリックで閉じる
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node) && isOpen) {
         onClose();
       }
     };
-    
-    if (isOpen) {
-      document.addEventListener('mousedown', handleOutsideClick);
-      // �����2b
-      document.body.style.overflow = 'hidden';
-    }
-    
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
-      document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);
-  
-  // ESC��g���뒉X�
+
+  // モーダルが開いている時はスクロールを無効化
   useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-    
     if (isOpen) {
-      document.addEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
     }
-    
+
     return () => {
-      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'auto';
     };
-  }, [isOpen, onClose]);
-  
-  // ����L�DfDjD4oU�h:WjD
-  if (!isOpen) return null;
-  
-  // �����n֗
+  }, [isOpen]);
+
+  // サイズに応じたクラス
   const getSizeClass = () => {
     switch (size) {
-      case 'sm': return 'max-w-md';
-      case 'md': return 'max-w-lg';
-      case 'lg': return 'max-w-2xl';
-      case 'xl': return 'max-w-4xl';
-      default: return 'max-w-lg';
+      case 'sm':
+        return 'max-w-md';
+      case 'md':
+        return 'max-w-lg';
+      case 'lg':
+        return 'max-w-2xl';
+      case 'xl':
+        return 'max-w-4xl';
+      default:
+        return 'max-w-lg';
     }
   };
-  
+
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div
-        ref={modalRef}
-        className={`bg-white rounded-lg shadow-xl overflow-hidden w-full ${getSizeClass()} transform transition-all`}
-      >
-        {title && (
-          <div className="px-6 py-4 border-b">
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          </div>
-        )}
-        
-        <div className="px-6 py-4">
-          {children}
-        </div>
-        
-        <div className="absolute top-0 right-0 pt-4 pr-4">
-          <button
-            type="button"
-            className="text-gray-400 hover:text-gray-500 focus:outline-none"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <span className="sr-only">�X�</span>
-            <svg
-              className="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto bg-black bg-opacity-50">
+      <div className={`relative w-full ${getSizeClass()} mx-auto my-6`} ref={modalRef}>
+        <div className="relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg">
+          {/* ヘッダー */}
+          <div className="flex items-start justify-between p-5 border-b border-gray-200 rounded-t">
+            <h3 className="text-xl font-semibold">{title}</h3>
+            <button
+              className="p-1 ml-auto bg-transparent border-0 text-gray-600 hover:text-gray-900"
+              onClick={onClose}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <span className="text-2xl">×</span>
+            </button>
+          </div>
+
+          {/* 本文 */}
+          <div className="relative p-6 flex-auto">{children}</div>
         </div>
       </div>
     </div>

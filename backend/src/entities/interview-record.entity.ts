@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Application } from './application.entity';
 import { User } from './user.entity';
 
@@ -11,7 +19,7 @@ export class InterviewRecord {
   applicationId: string;
 
   @ManyToOne(() => Application, application => application.interviewRecords, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'application_id' })
   application: Application;
@@ -24,7 +32,7 @@ export class InterviewRecord {
 
   @ManyToOne(() => User, user => user.conductedInterviews, {
     onDelete: 'SET NULL',
-    nullable: true
+    nullable: true,
   })
   @JoinColumn({ name: 'interviewer_id' })
   interviewer: User;

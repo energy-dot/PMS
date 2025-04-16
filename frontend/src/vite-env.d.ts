@@ -7,6 +7,6 @@ declare module 'ag-grid-community/styles/ag-theme-alpine.css';
 // インラインCSSをJSXで使用するための型定義
 declare namespace JSX {
   interface IntrinsicElements {
-    'style': React.DetailedHTMLProps<React.StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>;
+    style: React.DetailedHTMLProps<React.StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>;
   }
 }

@@ -4,7 +4,7 @@ import { createSafeStorage } from './storageUtils';
 
 /**
  * 永続化を使用するストアを作成するヘルパー関数
- * 
+ *
  * @param name ストレージキー名
  * @param stateCreator 状態作成関数
  * @param options オプション設定
@@ -12,7 +12,7 @@ import { createSafeStorage } from './storageUtils';
  */
 export function createPersistentStore<T extends object>(
   name: string,
-  stateCreator: (set: any, get: any) => T,
+  stateCreator: StateCreator<T>,
   options?: {
     partialize?: (state: T) => Partial<T>;
   }
@@ -22,15 +22,12 @@ export function createPersistentStore<T extends object>(
     name,
     storage: createJSONStorage(createSafeStorage),
   };
-  
+
   if (options?.partialize) {
     // 型アサーションを使用して型エラーを回避
     persistConfig.partialize = options.partialize as (state: T) => T;
   }
-  
-  // 永続化ミドルウェアを適用
-  const persistedStateCreator = persist(stateCreator, persistConfig);
-  
-  // ストアを作成して返す
-  return create(persistedStateCreator);
+
+  // 永続化ミドルウェアを適用してストアを作成
+  return create<T>()(persist(stateCreator, persistConfig));
 }

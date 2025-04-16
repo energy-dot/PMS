@@ -19,17 +19,17 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { username, password } = loginDto;
-    
+
     try {
       // データベースからユーザーを検索
       const user = await this.usersRepository.findOne({ where: { username } });
-      
+
       // ユーザーが存在しない場合
       if (!user) {
         this.logger.warn(`ログイン失敗: ユーザーが見つかりません - ${username}`);
         throw new UnauthorizedException('ユーザー名またはパスワードが正しくありません');
       }
-      
+
       // パスワードが一致しない場合
       let passwordMatches;
       try {
@@ -38,23 +38,23 @@ export class AuthService {
         this.logger.error('パスワード照合エラー:', error);
         throw new UnauthorizedException('認証処理中にエラーが発生しました');
       }
-      
+
       if (!passwordMatches) {
         this.logger.warn(`ログイン失敗: パスワードが不一致 - ${username}`);
         throw new UnauthorizedException('ユーザー名またはパスワードが正しくありません');
       }
-      
+
       this.logger.log(`ログイン成功: ${username} (${user.role})`);
-      
+
       // JWTペイロードの作成
       const payload: JwtPayload = {
         sub: user.id,
         username: user.username,
         role: user.role,
       };
-      
+
       const token = this.jwtService.sign(payload);
-      
+
       // レスポンスの形式を統一
       return {
         accessToken: token,
@@ -75,11 +75,11 @@ export class AuthService {
 
   async getProfile(userId: string) {
     const user = await this.usersRepository.findOne({ where: { id: userId } });
-    
+
     if (!user) {
       throw new UnauthorizedException('ユーザーが見つかりません');
     }
-    
+
     // パスワードを除外して返却
     const { password, ...result } = user;
     return result;

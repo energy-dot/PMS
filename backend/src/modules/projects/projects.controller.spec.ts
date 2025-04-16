@@ -78,7 +78,7 @@ describe('ProjectsController', () => {
         status: '進行中',
         budget: '10000000',
       };
-      
+
       const result = await controller.create(createProjectDto);
       expect(result).toEqual(mockProject);
       expect(service.create).toHaveBeenCalledWith(createProjectDto);
@@ -91,7 +91,7 @@ describe('ProjectsController', () => {
         name: '更新テストプロジェクト',
         status: '完了',
       };
-      
+
       const result = await controller.update('1', updateProjectDto);
       expect(result).toEqual(mockProject);
       expect(service.update).toHaveBeenCalledWith('1', updateProjectDto);

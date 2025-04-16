@@ -50,11 +50,14 @@ class MasterDataService {
   }
 
   // マスターデータを作成
-  async createMasterData(type: string, data: Omit<MasterData, 'id' | 'type' | 'createdAt' | 'updatedAt'>): Promise<MasterData> {
+  async createMasterData(
+    type: string,
+    data: Omit<MasterData, 'id' | 'type' | 'createdAt' | 'updatedAt'>
+  ): Promise<MasterData> {
     try {
       const response = await axios.post(`${API_BASE_URL}/master-data`, {
         ...data,
-        type
+        type,
       });
       return response.data;
     } catch (error) {

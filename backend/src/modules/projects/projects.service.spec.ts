@@ -76,7 +76,7 @@ describe('ProjectsService', () => {
         budget: '10000000',
         department: 'テスト部署', // 必須項目を追加
       };
-      
+
       const result = await service.create(createProjectDto);
       expect(result).toEqual(mockProject);
       expect(repo.create).toHaveBeenCalledWith(createProjectDto);
@@ -90,7 +90,7 @@ describe('ProjectsService', () => {
         name: '更新テストプロジェクト',
         status: '完了',
       };
-      
+
       const result = await service.update('1', updateProjectDto);
       expect(result).toEqual(mockProject);
       expect(repo.findOne).toHaveBeenCalledWith({ where: { id: '1' } });
@@ -99,11 +99,11 @@ describe('ProjectsService', () => {
 
     it('should return null if project not found', async () => {
       jest.spyOn(repo, 'findOne').mockResolvedValueOnce(null);
-      
+
       const updateProjectDto: UpdateProjectDto = {
         name: '更新テストプロジェクト',
       };
-      
+
       const result = await service.update('999', updateProjectDto);
       expect(result).toBeNull();
     });
@@ -118,14 +118,14 @@ describe('ProjectsService', () => {
 
     it('should return false when no project was deleted', async () => {
       jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: 0, raw: {} });
-      
+
       const result = await service.remove('999');
       expect(result).toBe(false);
     });
 
     it('should handle null affected value', async () => {
       jest.spyOn(repo, 'delete').mockResolvedValueOnce({ affected: null, raw: {} });
-      
+
       const result = await service.remove('1');
       expect(result).toBe(false);
     });

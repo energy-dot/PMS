@@ -13,14 +13,14 @@ export class ContractDocumentsService {
     private contractRepository: Repository<Contract>,
     @InjectRepository(ContractDocument)
     private contractDocumentRepository: Repository<ContractDocument>,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
   ) {}
 
   // 契約書ファイルの取得
   async getContractDocuments(contractId: string): Promise<FileMetadata[]> {
-    const contract = await this.contractRepository.findOne({ 
+    const contract = await this.contractRepository.findOne({
       where: { id: contractId },
-      relations: ['documents']
+      relations: ['documents'],
     });
 
     if (!contract) {
@@ -43,14 +43,18 @@ export class ContractDocumentsService {
         fileMetadataList.push(fileMetadata);
       }
     }
-    
+
     return fileMetadataList;
   }
 
   // 契約書ファイルの追加
-  async addDocument(contractId: string, file: Express.Multer.File, description: string): Promise<FileMetadata> {
-    const contract = await this.contractRepository.findOne({ 
-      where: { id: contractId }
+  async addDocument(
+    contractId: string,
+    file: Express.Multer.File,
+    description: string,
+  ): Promise<FileMetadata> {
+    const contract = await this.contractRepository.findOne({
+      where: { id: contractId },
     });
 
     if (!contract) {
@@ -62,7 +66,7 @@ export class ContractDocumentsService {
       file,
       'contracts',
       contractId,
-      description
+      description,
     );
 
     // ContractDocument エンティティを作成して保存
@@ -75,7 +79,7 @@ export class ContractDocumentsService {
     contractDocument.documentType = 'その他'; // デフォルト値
     contractDocument.remarks = description;
     contractDocument.isActive = true;
-    
+
     await this.contractDocumentRepository.save(contractDocument);
 
     // FileMetadata オブジェクトを作成して返す
@@ -96,9 +100,9 @@ export class ContractDocumentsService {
 
   // 契約書ファイルの削除
   async removeDocument(contractId: string, fileId: string): Promise<void> {
-    const contract = await this.contractRepository.findOne({ 
+    const contract = await this.contractRepository.findOne({
       where: { id: contractId },
-      relations: ['documents']
+      relations: ['documents'],
     });
 
     if (!contract) {
@@ -108,7 +112,9 @@ export class ContractDocumentsService {
     // ファイルが契約に関連付けられているか確認
     const fileExists = contract.documents?.some(doc => doc.id === fileId);
     if (!fileExists) {
-      throw new NotFoundException(`ファイルID ${fileId} は契約ID ${contractId} に関連付けられていません`);
+      throw new NotFoundException(
+        `ファイルID ${fileId} は契約ID ${contractId} に関連付けられていません`,
+      );
     }
 
     // ContractDocument エンティティを削除

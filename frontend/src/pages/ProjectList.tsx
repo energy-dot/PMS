@@ -28,12 +28,12 @@ const ProjectList: React.FC = () => {
   // ステータスの選択肢と表示用のスタイル
   const statusOptions = ['募集中', '選考中', '充足', '承認待ち', '差し戻し', '終了'];
   const statusClassMap: Record<string, string> = {
-    '募集中': 'bg-green-100 text-green-800',
-    '選考中': 'bg-blue-100 text-blue-800',
-    '充足': 'bg-purple-100 text-purple-800',
-    '承認待ち': 'bg-yellow-100 text-yellow-800',
-    '差し戻し': 'bg-red-100 text-red-800',
-    '終了': 'bg-gray-100 text-gray-800',
+    募集中: 'bg-green-100 text-green-800',
+    選考中: 'bg-blue-100 text-blue-800',
+    充足: 'bg-purple-100 text-purple-800',
+    承認待ち: 'bg-yellow-100 text-yellow-800',
+    差し戻し: 'bg-red-100 text-red-800',
+    終了: 'bg-gray-100 text-gray-800',
   };
 
   // 事業部/部署のマスタデータを取得
@@ -41,14 +41,14 @@ const ProjectList: React.FC = () => {
     const fetchDepartmentsAndSections = async () => {
       try {
         const departments = await departmentService.getDepartmentsWithSections();
-        
+
         // 事業部IDから名前への変換マップを作成
         const deptMap: Record<string, string> = {};
         departments.forEach(dept => {
           deptMap[dept.id] = dept.name;
         });
         setDepartmentsMap(deptMap);
-        
+
         // 部IDから名前への変換マップを作成
         const sectMap: Record<string, string> = {};
         departments.forEach(dept => {
@@ -63,7 +63,7 @@ const ProjectList: React.FC = () => {
         // エラー処理
       }
     };
-    
+
     fetchDepartmentsAndSections();
   }, []);
 
@@ -104,10 +104,13 @@ const ProjectList: React.FC = () => {
     }
 
     // クライアントサイドフィルタリング（本来はAPIでの検索が望ましい）
-    const filteredProjects = projects.filter(project => 
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (project.department?.name && project.department.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (project.section?.name && project.section.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredProjects = projects.filter(
+      project =>
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (project.department?.name &&
+          project.department.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (project.section?.name &&
+          project.section.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
     setProjects(filteredProjects);
   };
@@ -136,7 +139,7 @@ const ProjectList: React.FC = () => {
     // 3ヶ月後の日付
     const threeMonthsLater = new Date();
     threeMonthsLater.setMonth(today.getMonth() + 3);
-    
+
     // 新規案件データの作成
     const newProject: any = {
       id: `new-${Date.now()}`,
@@ -149,7 +152,7 @@ const ProjectList: React.FC = () => {
       isRemote: false,
       isNew: true, // 新規行フラグ
     };
-    
+
     // 新規行を追加
     setProjects(prev => [newProject, ...prev]);
   };
@@ -192,15 +195,15 @@ const ProjectList: React.FC = () => {
       try {
         const promises = params.modifiedRows.map((row: Project) => {
           const updateData: UpdateProjectDto = { ...row };
-          
+
           // データクリーニング
           delete updateData._modified; // 変更追跡用プロパティを削除
-          
+
           // startDateとendDateが文字列の場合、Dateオブジェクトに変換
           if (updateData.startDate && !(updateData.startDate instanceof Date)) {
             updateData.startDate = new Date(updateData.startDate);
           }
-          
+
           if (updateData.endDate && !(updateData.endDate instanceof Date)) {
             updateData.endDate = new Date(updateData.endDate);
           }
@@ -210,7 +213,9 @@ const ProjectList: React.FC = () => {
           // 新規保存・更新時にはnullに設定してバリデーションエラーを回避
           if (updateData.departmentId !== null && updateData.departmentId !== undefined) {
             if (typeof updateData.departmentId === 'string') {
-              const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(updateData.departmentId);
+              const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+                updateData.departmentId
+              );
               if (!isUUID) {
                 updateData.departmentId = null;
               }
@@ -219,10 +224,12 @@ const ProjectList: React.FC = () => {
               updateData.departmentId = null;
             }
           }
-          
+
           if (updateData.sectionId !== null && updateData.sectionId !== undefined) {
             if (typeof updateData.sectionId === 'string') {
-              const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(updateData.sectionId);
+              const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+                updateData.sectionId
+              );
               if (!isUUID) {
                 updateData.sectionId = null;
               }
@@ -233,7 +240,7 @@ const ProjectList: React.FC = () => {
           }
 
           // 必須フィールドの確認と設定
-          if (!updateData.name) updateData.name = "新規案件";
+          if (!updateData.name) updateData.name = '新規案件';
           if (!updateData.departmentId) {
             // 事業部が選択されていない場合、デフォルト値を設定
             const defaultDeptId = Object.keys(departmentsMap)[0];
@@ -249,8 +256,9 @@ const ProjectList: React.FC = () => {
             }
           }
           if (!updateData.startDate) updateData.startDate = new Date();
-          if (!updateData.endDate) updateData.endDate = new Date(new Date().setMonth(new Date().getMonth() + 3)); // デフォルト3ヶ月
-          
+          if (!updateData.endDate)
+            updateData.endDate = new Date(new Date().setMonth(new Date().getMonth() + 3)); // デフォルト3ヶ月
+
           // 新規行の場合
           if (row.isNew) {
             delete updateData.isNew;
@@ -261,12 +269,12 @@ const ProjectList: React.FC = () => {
             return projectService.updateProject(row.id, updateData);
           }
         });
-        
+
         await Promise.all(promises);
-        
+
         // データ再取得
         fetchProjects();
-        
+
         // 成功メッセージを表示
         alert('変更を保存しました');
       } catch (err: any) {
@@ -277,7 +285,7 @@ const ProjectList: React.FC = () => {
       }
       return;
     }
-    
+
     // 単一セル編集のハンドリング（即時保存しない場合）
   };
 
@@ -287,7 +295,7 @@ const ProjectList: React.FC = () => {
     if (data.isNew) {
       return true;
     }
-    
+
     try {
       // 既存データの場合はAPIで削除
       await projectService.deleteProject(data.id);
@@ -311,7 +319,7 @@ const ProjectList: React.FC = () => {
     if (!departmentId) return '';
     return departmentsMap[departmentId] || '';
   };
-  
+
   const getSectionName = (sectionId: string | null): string => {
     if (!sectionId) return '';
     return sectionsMap[sectionId] || '';
@@ -320,10 +328,11 @@ const ProjectList: React.FC = () => {
   // 特定の事業部に属するセクションのIDを取得
   const getSectionsByDepartment = (departmentId: string): string[] => {
     if (!departmentId) return [];
-    
+
     try {
       // departmentService.getSectionsFromCacheからフィルタリング
-      return departmentService.getSectionsFromCache()
+      return departmentService
+        .getSectionsFromCache()
         .filter(section => section.departmentId === departmentId)
         .map(section => section.id);
     } catch (error) {
@@ -334,18 +343,40 @@ const ProjectList: React.FC = () => {
 
   // スキルの選択肢（実際のシステムではマスタデータから取得）
   const skillOptions = [
-    'JavaScript', 'TypeScript', 'React', 'Angular', 'Vue.js', 
-    'Node.js', 'Java', 'C#', 'Python', 'PHP', 'Ruby', 'Go',
-    'MongoDB', 'MySQL', 'PostgreSQL', 'Oracle', 'SQL Server',
-    'AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes',
-    'HTML', 'CSS', 'SCSS', 'Git', 'DevOps'
+    'JavaScript',
+    'TypeScript',
+    'React',
+    'Angular',
+    'Vue.js',
+    'Node.js',
+    'Java',
+    'C#',
+    'Python',
+    'PHP',
+    'Ruby',
+    'Go',
+    'MongoDB',
+    'MySQL',
+    'PostgreSQL',
+    'Oracle',
+    'SQL Server',
+    'AWS',
+    'Azure',
+    'GCP',
+    'Docker',
+    'Kubernetes',
+    'HTML',
+    'CSS',
+    'SCSS',
+    'Git',
+    'DevOps',
   ];
 
   // 案件データ用列定義
   const columnDefs: ColDef<Project>[] = [
-    { 
-      field: 'name', 
-      headerName: '案件名', 
+    {
+      field: 'name',
+      headerName: '案件名',
       flex: 1,
       editable: true,
       minWidth: 180,
@@ -361,21 +392,21 @@ const ProjectList: React.FC = () => {
         values: Object.keys(departmentsMap),
         valueLabels: departmentsMap,
         allowEmpty: false,
-        emptyText: '選択してください'
+        emptyText: '選択してください',
       },
-      valueFormatter: (params) => getDepartmentName(params.value),
-      valueGetter: (params) => params.data?.departmentId || null,
+      valueFormatter: params => getDepartmentName(params.value),
+      valueGetter: params => params.data?.departmentId || null,
       valueSetter: (params: ValueSetterParams) => {
         const newValue = params.newValue;
         params.data.departmentId = newValue;
-        
+
         // 事業部が変更された場合、セクションをクリア
         if (params.data.departmentId !== newValue) {
           params.data.sectionId = null;
         }
-        
+
         return true;
-      }
+      },
     },
     {
       field: 'sectionId',
@@ -383,49 +414,49 @@ const ProjectList: React.FC = () => {
       width: 150,
       editable: true,
       cellEditor: SelectEditor,
-      cellEditorParams: (params) => {
+      cellEditorParams: params => {
         // 選択中の事業部に所属する部のみを選択肢に表示
         const departmentId = params.data.departmentId;
         if (!departmentId) return { values: [] };
-        
+
         // 事業部に紐づく部のIDリスト
         const filteredSectionIds = getSectionsByDepartment(departmentId);
-        
+
         // 選択肢とラベルのマッピングを作成
         const filteredSectionLabels: Record<string, string> = {};
         filteredSectionIds.forEach(id => {
           filteredSectionLabels[id] = sectionsMap[id] || '';
         });
-        
-        return { 
+
+        return {
           values: filteredSectionIds,
           valueLabels: filteredSectionLabels,
           allowEmpty: false,
-          emptyText: '選択してください'
+          emptyText: '選択してください',
         };
       },
-      valueFormatter: (params) => getSectionName(params.value),
+      valueFormatter: params => getSectionName(params.value),
     },
-    { 
-      field: 'startDate', 
-      headerName: '開始日', 
+    {
+      field: 'startDate',
+      headerName: '開始日',
       width: 120,
       editable: true,
       cellEditor: DateEditor,
-      valueFormatter: (params) => formatDate(params.value),
+      valueFormatter: params => formatDate(params.value),
     },
-    { 
-      field: 'endDate', 
-      headerName: '終了日', 
+    {
+      field: 'endDate',
+      headerName: '終了日',
       width: 120,
       editable: true,
       cellEditor: DateEditor,
-      valueFormatter: (params) => formatDate(params.value),
+      valueFormatter: params => formatDate(params.value),
     },
-    { 
-      field: 'status', 
-      headerName: 'ステータス', 
-      width: 120, 
+    {
+      field: 'status',
+      headerName: 'ステータス',
+      width: 120,
       editable: true,
       cellEditor: SelectEditor,
       cellEditorParams: {
@@ -435,15 +466,15 @@ const ProjectList: React.FC = () => {
       cellRenderer: (params: import('ag-grid-community').ICellRendererParams<Project>) => {
         const status = params.value;
         if (!status) return null;
-        
+
         const className = `px-2 py-1 rounded-full text-xs font-medium ${statusClassMap[status] || 'bg-gray-100 text-gray-800'}`;
-        
+
         return <span className={className}>{status}</span>;
-      }
+      },
     },
-    { 
-      field: 'requiredNumber', 
-      headerName: '募集人数', 
+    {
+      field: 'requiredNumber',
+      headerName: '募集人数',
       width: 110,
       editable: true,
       cellEditor: NumberEditor,
@@ -451,13 +482,13 @@ const ProjectList: React.FC = () => {
         min: 1,
         max: 100,
         step: 1,
-        allowDecimals: false
+        allowDecimals: false,
       },
-      valueFormatter: (params) => params.value || '-'
+      valueFormatter: params => params.value || '-',
     },
-    { 
-      field: 'budget', 
-      headerName: '想定単価', 
+    {
+      field: 'budget',
+      headerName: '想定単価',
       width: 150,
       editable: true,
       cellEditor: NumberEditor,
@@ -466,22 +497,22 @@ const ProjectList: React.FC = () => {
         step: 10000,
         currency: true,
         currencySymbol: '¥',
-        useThousandSeparator: true
+        useThousandSeparator: true,
       },
-      valueFormatter: (params) => {
+      valueFormatter: params => {
         if (!params.value) return '-';
-        
+
         // 数値型の場合はフォーマット
         if (typeof params.value === 'number') {
-          return new Intl.NumberFormat('ja-JP', { 
-            style: 'currency', 
+          return new Intl.NumberFormat('ja-JP', {
+            style: 'currency',
             currency: 'JPY',
-            maximumFractionDigits: 0
+            maximumFractionDigits: 0,
           }).format(params.value);
         }
-        
+
         return params.value;
-      }
+      },
     },
     {
       field: 'requiredSkills',
@@ -492,25 +523,25 @@ const ProjectList: React.FC = () => {
       cellEditorParams: {
         availableTags: skillOptions,
         delimiter: ',',
-        maxTags: 10
+        maxTags: 10,
       },
-      valueFormatter: (params) => params.value || '-',
-      cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis' }
+      valueFormatter: params => params.value || '-',
+      cellStyle: { overflow: 'hidden', textOverflow: 'ellipsis' },
     },
-    { 
-      headerName: '操作', 
+    {
+      headerName: '操作',
       width: 100,
       editable: false,
       cellRenderer: (params: import('ag-grid-community').ICellRendererParams<Project>) => {
         const id = params.data?.id || '';
         // 新規行の場合は操作ボタンを非表示
         if (params.data?.isNew) return null;
-        
+
         return (
           <div>
-            <button 
-              className="action-button px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 focus:outline-none" 
-              onClick={(e) => {
+            <button
+              className="action-button px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-200 focus:outline-none"
+              onClick={e => {
                 e.stopPropagation();
                 handleViewProject(id);
               }}
@@ -520,8 +551,8 @@ const ProjectList: React.FC = () => {
           </div>
         );
       },
-      cellStyle: { textAlign: 'center' }
-    }
+      cellStyle: { textAlign: 'center' },
+    },
   ];
 
   // 事業部・部署フィルターの変更ハンドラ
@@ -546,11 +577,20 @@ const ProjectList: React.FC = () => {
       onClick: handleCreateProject,
       variant: 'success' as const,
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-4 w-4"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+            clipRule="evenodd"
+          />
         </svg>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -569,11 +609,13 @@ const ProjectList: React.FC = () => {
             type="text"
             placeholder="案件名で検索..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={e => setSearchTerm(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSearch()}
             className="w-64"
           />
-          <Button onClick={handleSearch} variant="primary" size="sm">検索</Button>
+          <Button onClick={handleSearch} variant="primary" size="sm">
+            検索
+          </Button>
         </div>
       </div>
 
@@ -589,7 +631,7 @@ const ProjectList: React.FC = () => {
         actionButtons={actionButtons}
         exportOptions={{
           fileName: '案件一覧',
-          sheetName: '案件'
+          sheetName: '案件',
         }}
         loading={isLoading}
         error={error}

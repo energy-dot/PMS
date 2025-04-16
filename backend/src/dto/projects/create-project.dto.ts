@@ -1,4 +1,14 @@
-import { IsString, IsDate, IsOptional, IsNumber, IsBoolean, IsIn, IsUUID, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsIn,
+  IsUUID,
+  Min,
+  Max,
+} from 'class-validator';
 
 export class CreateProjectDto {
   @IsString()

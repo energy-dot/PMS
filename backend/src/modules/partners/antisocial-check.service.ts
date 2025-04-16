@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AntisocialCheck } from '../../entities/antisocial-check.entity';
 import { Partner } from '../../entities/partner.entity';
-import { AntisocialCheckDto, UpdateAntisocialCheckDto } from '../../dto/partners/antisocial-check.dto';
+import {
+  AntisocialCheckDto,
+  UpdateAntisocialCheckDto,
+} from '../../dto/partners/antisocial-check.dto';
 
 @Injectable()
 export class AntisocialCheckService {
@@ -61,7 +64,10 @@ export class AntisocialCheckService {
     return savedCheck;
   }
 
-  async update(id: string, updateAntisocialCheckDto: UpdateAntisocialCheckDto): Promise<AntisocialCheck | null> {
+  async update(
+    id: string,
+    updateAntisocialCheckDto: UpdateAntisocialCheckDto,
+  ): Promise<AntisocialCheck | null> {
     const antisocialCheck = await this.findOne(id);
     if (!antisocialCheck) {
       return null;

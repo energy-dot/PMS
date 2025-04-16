@@ -13,15 +13,15 @@ export class DateUtilsService {
    */
   getDateFilter(startDate?: string, endDate?: string): { gte?: Date; lte?: Date } | null {
     const dateFilter: { gte?: Date; lte?: Date } = {};
-    
+
     if (startDate) {
       dateFilter.gte = new Date(startDate);
     }
-    
+
     if (endDate) {
       dateFilter.lte = new Date(endDate);
     }
-    
+
     return Object.keys(dateFilter).length > 0 ? dateFilter : null;
   }
 
@@ -33,19 +33,19 @@ export class DateUtilsService {
    */
   formatDate(date: Date | string, format: string = 'YYYY-MM-DD'): string {
     if (!date) return '';
-    
+
     const d = date instanceof Date ? date : new Date(date);
-    
+
     // 無効な日付の場合は空文字を返す
     if (isNaN(d.getTime())) return '';
-    
+
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     const hours = String(d.getHours()).padStart(2, '0');
     const minutes = String(d.getMinutes()).padStart(2, '0');
     const seconds = String(d.getSeconds()).padStart(2, '0');
-    
+
     return format
       .replace('YYYY', String(year))
       .replace('MM', month)
@@ -64,7 +64,7 @@ export class DateUtilsService {
   getMonthStartAndEnd(year: number, month: number): { start: Date; end: Date } {
     const start = new Date(year, month, 1);
     const end = new Date(year, month + 1, 0);
-    
+
     return { start, end };
   }
 

@@ -49,12 +49,21 @@ class WorkflowService {
   }
 
   async approveProject(requestHistoryId: string, data: { approverId: string; remarks?: string }) {
-    const response = await axios.post(`${API_URL}/request-histories/${requestHistoryId}/approve`, data);
+    const response = await axios.post(
+      `${API_URL}/request-histories/${requestHistoryId}/approve`,
+      data
+    );
     return response.data;
   }
 
-  async rejectProject(requestHistoryId: string, data: { approverId: string; rejectionReason: string }) {
-    const response = await axios.post(`${API_URL}/request-histories/${requestHistoryId}/reject`, data);
+  async rejectProject(
+    requestHistoryId: string,
+    data: { approverId: string; rejectionReason: string }
+  ) {
+    const response = await axios.post(
+      `${API_URL}/request-histories/${requestHistoryId}/reject`,
+      data
+    );
     return response.data;
   }
 

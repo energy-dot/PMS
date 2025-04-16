@@ -52,8 +52,11 @@ const ApprovalWorkflow: React.FC<ApprovalWorkflowProps> = ({ projectId }) => {
   const formatDate = (date: Date | string | undefined): string => {
     if (!date) return '-';
     const d = new Date(date);
-    return d.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }) + 
-           ' ' + d.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+    return (
+      d.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
+      ' ' +
+      d.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+    );
   };
 
   // 承認処理
@@ -61,13 +64,13 @@ const ApprovalWorkflow: React.FC<ApprovalWorkflowProps> = ({ projectId }) => {
     try {
       await workflowService.approveProject(requestId, {
         approverId: 'current-user-id', // 実際のユーザーIDに置き換える
-        remarks: approvalComment
+        remarks: approvalComment,
       });
-      
+
       // 承認履歴を再取得
       const data = await workflowService.getRequestHistoriesByProjectId(projectId);
       setRequestHistories(data);
-      
+
       setApprovalComment('');
       setError(null);
     } catch (err: any) {
@@ -82,17 +85,17 @@ const ApprovalWorkflow: React.FC<ApprovalWorkflowProps> = ({ projectId }) => {
       setError('差戻し理由を入力してください');
       return;
     }
-    
+
     try {
       await workflowService.rejectProject(requestId, {
         approverId: 'current-user-id', // 実際のユーザーIDに置き換える
-        rejectionReason: approvalComment
+        rejectionReason: approvalComment,
       });
-      
+
       // 承認履歴を再取得
       const data = await workflowService.getRequestHistoriesByProjectId(projectId);
       setRequestHistories(data);
-      
+
       setApprovalComment('');
       setError(null);
     } catch (err: any) {
@@ -130,28 +133,43 @@ const ApprovalWorkflow: React.FC<ApprovalWorkflowProps> = ({ projectId }) => {
               </tr>
             </thead>
             <tbody>
-              {requestHistories.map((history) => (
+              {requestHistories.map(history => (
                 <tr key={history.id} className="border-t">
                   <td className="py-2 px-4">{formatDate(history.requestDate)}</td>
-                  <td className="py-2 px-4">{history.requester?.fullName || history.requesterId}</td>
                   <td className="py-2 px-4">
-                    <span className={`status-badge ${
-                      history.status === '承認待ち' ? 'status-pending' :
-                      history.status === '承認済み' ? 'status-success' :
-                      history.status === '差戻し' ? 'status-rejected' : ''
-                    }`}>
+                    {history.requester?.fullName || history.requesterId}
+                  </td>
+                  <td className="py-2 px-4">
+                    <span
+                      className={`status-badge ${
+                        history.status === '承認待ち'
+                          ? 'status-pending'
+                          : history.status === '承認済み'
+                            ? 'status-success'
+                            : history.status === '差戻し'
+                              ? 'status-rejected'
+                              : ''
+                      }`}
+                    >
                       {history.status}
                     </span>
                   </td>
-                  <td className="py-2 px-4">{history.approver?.fullName || history.approverId || '-'}</td>
                   <td className="py-2 px-4">
-                    {history.approvalDate ? formatDate(history.approvalDate) :
-                     history.rejectionDate ? formatDate(history.rejectionDate) : '-'}
+                    {history.approver?.fullName || history.approverId || '-'}
                   </td>
                   <td className="py-2 px-4">
-                    {history.rejectionReason ? 
-                      <span className="text-red-600">{history.rejectionReason}</span> : 
-                      history.remarks || '-'}
+                    {history.approvalDate
+                      ? formatDate(history.approvalDate)
+                      : history.rejectionDate
+                        ? formatDate(history.rejectionDate)
+                        : '-'}
+                  </td>
+                  <td className="py-2 px-4">
+                    {history.rejectionReason ? (
+                      <span className="text-red-600">{history.rejectionReason}</span>
+                    ) : (
+                      history.remarks || '-'
+                    )}
                   </td>
                 </tr>
               ))}
@@ -161,16 +179,17 @@ const ApprovalWorkflow: React.FC<ApprovalWorkflowProps> = ({ projectId }) => {
       </div>
 
       {/* 最新の申請が承認待ちの場合、承認/差戻し操作を表示 */}
-      {requestHistories.length > 0 && 
-       requestHistories[0].status === '承認待ち' && (
+      {requestHistories.length > 0 && requestHistories[0].status === '承認待ち' && (
         <div className="border rounded-lg p-4">
           <h4 className="font-semibold mb-2">承認操作</h4>
           <div className="mb-4">
-            <label htmlFor="approval-comment" className="block mb-1">コメント</label>
+            <label htmlFor="approval-comment" className="block mb-1">
+              コメント
+            </label>
             <textarea
               id="approval-comment"
               value={approvalComment}
-              onChange={(e) => setApprovalComment(e.target.value)}
+              onChange={e => setApprovalComment(e.target.value)}
               className="w-full border rounded p-2"
               rows={3}
               placeholder="承認または差戻しのコメントを入力してください"

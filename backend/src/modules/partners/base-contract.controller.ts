@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { BaseContractService } from './base-contract.service';
 import { BaseContractDto, UpdateBaseContractDto } from '../../dto/partners/base-contract.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';

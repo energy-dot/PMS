@@ -1,144 +1,92 @@
-import React from 'react';
-import { ColDef, GridReadyEvent, CellValueChangedEvent, CellClickedEvent, RowClickedEvent } from 'ag-grid-community';
-import { DataGridCore } from './DataGridCore';
-import { DataGridToolbar } from './DataGridToolbar';
-import { DataGridFooter } from './DataGridFooter';
-import Card from '../common/Card';
-import Alert from '../common/Alert';
+// components/grids/DataGrid.tsxの修正
 
-interface DataGridProps {
-  rowData: any[] | null;
-  columnDefs: ColDef[];
-  title?: string;
-  pagination?: boolean;
-  paginationPageSize?: number;
-  height?: string | number;
-  onRowClick?: (data: any) => void;
-  onRowDoubleClick?: (data: any) => void;
-  actionButtons?: {
-    label: string;
-    onClick: () => void;
-    variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
-    icon?: React.ReactNode;
-    disabled?: boolean;
-    show?: boolean;
-  }[];
-  defaultSortField?: string;
-  defaultSortDirection?: 'asc' | 'desc';
-  rowSelection?: 'single' | 'multiple';
-  onSelectionChanged?: (selectedRows: any[]) => void;
-  loading?: boolean;
-  error?: string | null;
-  exportOptions?: {
-    fileName?: string;
-    sheetName?: string;
-    onlySelected?: boolean;
-  };
-  className?: string;
-  editable?: boolean;
-  onCellValueChanged?: (params: any) => void;
-  departmentFilter?: boolean;
-  sideBar?: boolean | { toolPanels: any[] };
-  onRowDeleted?: (data: any) => Promise<boolean>;
-  domLayout?: string;
+import React from 'react';
+import DataGridCore from './DataGridCore';
+import DataGridToolbar from './DataGridToolbar';
+import { ButtonVariant } from '../common/Button';
+import { ReactNode } from 'react';
+
+// アクションボタンの型定義
+export interface ActionButton {
+  label: string;
+  onClick: () => void;
+  variant?: ButtonVariant;
+  icon?: ReactNode;
+  disabled?: boolean;
+  show?: boolean;
 }
 
-/**
- * 再利用可能なデータグリッドコンポーネント
- * ag-Gridをラップして使いやすくしたもの
- */
+// DataGridのプロパティ型を定義
+export interface DataGridProps {
+  data: any[];
+  columns: {
+    field: string;
+    headerName: string;
+    width?: number;
+    renderCell?: (params: any) => React.ReactNode;
+  }[];
+  title?: string;
+  loading?: boolean;
+  pagination?: boolean;
+  pageSize?: number;
+  onPageChange?: (page: number) => void;
+  totalCount?: number;
+  actionButtons?: ActionButton[];
+  onRowClick?: (row: any) => void;
+  selectedRows?: any[];
+  onSelectionChange?: (selectedRows: any[]) => void;
+  checkboxSelection?: boolean;
+  filters?: React.ReactNode;
+  onSearch?: (searchTerm: string) => void;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
+}
+
+// DataGridコンポーネント
 const DataGrid: React.FC<DataGridProps> = ({
-  rowData,
-  columnDefs,
+  data,
+  columns,
   title,
-  pagination = true,
-  paginationPageSize = 10,
-  height = 600,
-  onRowClick,
-  onRowDoubleClick,
-  actionButtons = [],
-  defaultSortField,
-  defaultSortDirection = 'asc',
-  rowSelection,
-  onSelectionChanged,
   loading = false,
-  error = null,
-  exportOptions,
-  className = '',
-  editable = false,
-  onCellValueChanged,
-  sideBar = false,
-  onRowDeleted,
-  domLayout,
+  pagination = true,
+  pageSize = 10,
+  onPageChange,
+  totalCount,
+  actionButtons,
+  onRowClick,
+  selectedRows,
+  onSelectionChange,
+  checkboxSelection = false,
+  filters,
+  onSearch,
+  searchPlaceholder = '検索...',
+  emptyMessage = 'データがありません',
 }) => {
-  // エラー表示
-  const renderError = () => {
-    if (!error) return null;
-    return <Alert variant="error" message={error} className="mb-4" />;
-  };
-
-  // ローディング表示
-  const renderLoading = () => {
-    if (!loading) return null;
-    return (
-      <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
-        <div className="loader"></div>
-      </div>
-    );
-  };
-
   return (
-    <div className={`relative ${className}`}>
-      {renderError()}
-      
-      <Card className="overflow-hidden">
-        {title && (
-          <div className="p-4 border-b">
-            <h3 className="text-lg font-medium">{title}</h3>
-          </div>
-        )}
-        
-        <DataGridToolbar 
+    <div className="data-grid">
+      {(title || actionButtons || onSearch || filters) && (
+        <DataGridToolbar
+          title={title}
           actionButtons={actionButtons}
-          editable={editable}
-          rowSelection={rowSelection}
-          selectedRows={[]} // DataGridCoreから受け取る
-          onAddRow={() => {}} // DataGridCoreから受け取る
-          onDuplicateRow={() => {}} // DataGridCoreから受け取る
-          onDeleteRows={() => {}} // DataGridCoreから受け取る
-          onSaveChanges={() => {}} // DataGridCoreから受け取る
-          onDiscardChanges={() => {}} // DataGridCoreから受け取る
-          hasUnsavedChanges={false} // DataGridCoreから受け取る
-          exportOptions={exportOptions}
+          onSearch={onSearch}
+          searchPlaceholder={searchPlaceholder}
+          filters={filters}
         />
-        
-        <div style={{ height: typeof height === 'number' ? `${height}px` : height }}>
-          <DataGridCore
-            rowData={rowData}
-            columnDefs={columnDefs}
-            pagination={pagination}
-            paginationPageSize={paginationPageSize}
-            defaultSortField={defaultSortField}
-            defaultSortDirection={defaultSortDirection}
-            rowSelection={rowSelection}
-            onSelectionChanged={onSelectionChanged}
-            editable={editable}
-            onCellValueChanged={onCellValueChanged}
-            onRowClick={onRowClick}
-            onRowDoubleClick={onRowDoubleClick}
-            sideBar={sideBar}
-            onRowDeleted={onRowDeleted}
-            domLayout={domLayout}
-          />
-        </div>
-        
-        <DataGridFooter 
-          totalRows={rowData?.length || 0}
-          selectedRows={[]} // DataGridCoreから受け取る
-        />
-      </Card>
-      
-      {renderLoading()}
+      )}
+      <DataGridCore
+        data={data}
+        columns={columns}
+        loading={loading}
+        pagination={pagination}
+        pageSize={pageSize}
+        onPageChange={onPageChange}
+        totalCount={totalCount}
+        onRowClick={onRowClick}
+        selectedRows={selectedRows}
+        onSelectionChange={onSelectionChange}
+        checkboxSelection={checkboxSelection}
+        emptyMessage={emptyMessage}
+      />
     </div>
   );
 };

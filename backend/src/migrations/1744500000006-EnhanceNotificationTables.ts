@@ -1,33 +1,33 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class EnhanceNotificationTables1744500000006 implements MigrationInterface {
-    name = 'EnhanceNotificationTables1744500000006'
+  name = 'EnhanceNotificationTables1744500000006';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // 通知テーブルの拡張
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // 通知テーブルの拡張
+    await queryRunner.query(`
             ALTER TABLE "notifications" ADD COLUMN "priority" varchar DEFAULT ('normal')
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "notifications" ADD COLUMN "expiration_date" datetime
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "notifications" ADD COLUMN "action_url" varchar
         `);
 
-        // 新しいインデックスの作成
-        await queryRunner.query(`
+    // 新しいインデックスの作成
+    await queryRunner.query(`
             CREATE INDEX "IDX_notifications_priority" ON "notifications" ("priority")
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             CREATE INDEX "IDX_notifications_created_at" ON "notifications" ("created_at")
         `);
 
-        // 通知設定テーブルの作成
-        await queryRunner.query(`
+    // 通知設定テーブルの作成
+    await queryRunner.query(`
             CREATE TABLE "notification_settings" (
                 "id" varchar PRIMARY KEY NOT NULL,
                 "user_id" varchar NOT NULL,
@@ -41,43 +41,43 @@ export class EnhanceNotificationTables1744500000006 implements MigrationInterfac
             )
         `);
 
-        // 通知設定テーブルのインデックスの作成
-        await queryRunner.query(`
+    // 通知設定テーブルのインデックスの作成
+    await queryRunner.query(`
             CREATE INDEX "IDX_notification_settings_user_id" ON "notification_settings" ("user_id")
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        // 通知設定テーブルのインデックスの削除
-        await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // 通知設定テーブルのインデックスの削除
+    await queryRunner.query(`
             DROP INDEX "IDX_notification_settings_user_id"
         `);
 
-        // 通知設定テーブルの削除
-        await queryRunner.query(`
+    // 通知設定テーブルの削除
+    await queryRunner.query(`
             DROP TABLE "notification_settings"
         `);
 
-        // 新しいインデックスの削除
-        await queryRunner.query(`
+    // 新しいインデックスの削除
+    await queryRunner.query(`
             DROP INDEX "IDX_notifications_created_at"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             DROP INDEX "IDX_notifications_priority"
         `);
 
-        // 追加したカラムの削除
-        await queryRunner.query(`
+    // 追加したカラムの削除
+    await queryRunner.query(`
             ALTER TABLE "notifications" DROP COLUMN "action_url"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "notifications" DROP COLUMN "expiration_date"
         `);
 
-        await queryRunner.query(`
+    await queryRunner.query(`
             ALTER TABLE "notifications" DROP COLUMN "priority"
         `);
-    }
+  }
 }

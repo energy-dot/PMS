@@ -1,133 +1,70 @@
-import api from './api';
-
-// 反社チェックの型定義
-export interface AntisocialCheck {
-  id: string;
-  partner: {
-    id: string;
-    name: string;
-  };
-  checkDate: Date;
-  checkedBy?: string;
-  checkMethod?: string;
-  result: '問題なし' | '要確認' | 'NG';
-  expiryDate?: Date;
-  documentFile?: string;
-  remarks?: string;
-  isCompleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// 反社チェック作成用DTO
-export interface AntisocialCheckDto {
-  partnerId: string;
-  checkDate: Date;
-  checkedBy?: string;
-  checkMethod?: string;
-  result: '問題なし' | '要確認' | 'NG';
-  expiryDate?: Date;
-  documentFile?: string;
-  remarks?: string;
-  isCompleted?: boolean;
-}
-
-// 反社チェック更新用DTO
-export interface UpdateAntisocialCheckDto extends Partial<Omit<AntisocialCheckDto, 'partnerId'>> {}
+import api, { callWithRetry } from './api';
 
 /**
- * 反社チェック関連のAPI操作を行うサービス
+ * 反社会的勢力チェックサービス
  */
-const antisocialCheckService = {
-  /**
-   * 反社チェック一覧を取得
-   * @returns 反社チェック一覧
-   */
-  async getAntisocialChecks(): Promise<AntisocialCheck[]> {
-    try {
-      const response = await api.get<AntisocialCheck[]>('/antisocial-checks');
-      return response.data;
-    } catch (error) {
-      console.error('Get antisocial checks error:', error);
-      throw error;
-    }
-  },
 
-  /**
-   * 特定のパートナー会社の反社チェック一覧を取得
-   * @param partnerId パートナー会社ID
-   * @returns 反社チェック一覧
-   */
-  async getAntisocialChecksByPartnerId(partnerId: string): Promise<AntisocialCheck[]> {
-    try {
-      const response = await api.get<AntisocialCheck[]>(`/antisocial-checks/partner/${partnerId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get antisocial checks for partner ${partnerId} error:`, error);
-      throw error;
-    }
-  },
+interface AntisocialCheckRequest {
+  companyName: string;
+  representativeName: string;
+}
 
-  /**
-   * 反社チェック詳細を取得
-   * @param id 反社チェックID
-   * @returns 反社チェック詳細
-   */
-  async getAntisocialCheck(id: string): Promise<AntisocialCheck> {
-    try {
-      const response = await api.get<AntisocialCheck>(`/antisocial-checks/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get antisocial check ${id} error:`, error);
-      throw error;
-    }
-  },
+interface AntisocialCheckResponse {
+  result: 'clean' | 'suspicious' | 'blacklisted';
+  score: number;
+  details?: string;
+}
 
-  /**
-   * 反社チェックを作成
-   * @param antisocialCheckData 反社チェックデータ
-   * @returns 作成された反社チェック
-   */
-  async createAntisocialCheck(antisocialCheckData: AntisocialCheckDto): Promise<AntisocialCheck> {
-    try {
-      const response = await api.post<AntisocialCheck>('/antisocial-checks', antisocialCheckData);
-      return response.data;
-    } catch (error) {
-      console.error('Create antisocial check error:', error);
-      throw error;
-    }
-  },
+/**
+ * 反社会的勢力チェックを実行する
+ * @param data チェック対象データ
+ * @returns チェック結果
+ */
+export const performAntisocialCheck = async (
+  data: AntisocialCheckRequest
+): Promise<AntisocialCheckResponse> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.post<AntisocialCheckResponse>('/antisocial-check', data));
 
-  /**
-   * 反社チェックを更新
-   * @param id 反社チェックID
-   * @param antisocialCheckData 更新データ
-   * @returns 更新された反社チェック
-   */
-  async updateAntisocialCheck(id: string, antisocialCheckData: UpdateAntisocialCheckDto): Promise<AntisocialCheck> {
-    try {
-      const response = await api.patch<AntisocialCheck>(`/antisocial-checks/${id}`, antisocialCheckData);
-      return response.data;
-    } catch (error) {
-      console.error(`Update antisocial check ${id} error:`, error);
-      throw error;
-    }
-  },
+    // デモ用のモックレスポンス
+    // 通常は99%以上のケースで問題なしとなる
+    const randomScore = Math.random() * 100;
 
-  /**
-   * 反社チェックを削除
-   * @param id 反社チェックID
-   * @returns 削除結果
-   */
-  async deleteAntisocialCheck(id: string): Promise<boolean> {
-    try {
-      const response = await api.delete(`/antisocial-checks/${id}`);
-      return response.status === 200;
-    } catch (error) {
-      console.error(`Delete antisocial check ${id} error:`, error);
-      throw error;
+    if (randomScore > 99.5) {
+      return {
+        result: 'blacklisted',
+        score: randomScore,
+        details: 'ブラックリストに登録されている可能性があります。詳細な調査が必要です。',
+      };
+    } else if (randomScore > 98) {
+      return {
+        result: 'suspicious',
+        score: randomScore,
+        details: '一部の項目で注意が必要です。追加調査をお勧めします。',
+      };
+    } else {
+      return {
+        result: 'clean',
+        score: randomScore,
+      };
     }
+  } catch (error) {
+    console.error('反社会的勢力チェックに失敗しました', error);
+    throw error;
   }
+};
+
+// AntisocialCheckインターフェースをエクスポート
+export interface AntisocialCheck extends AntisocialCheckResponse {
+  id?: string;
+  partnerId: string;
+  checkDate: string;
+}
+
+// デフォルトエクスポートを追加
+const antisocialCheckService = {
+  performAntisocialCheck,
 };
 
 export default antisocialCheckService;

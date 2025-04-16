@@ -16,7 +16,7 @@ export class ReportsService {
     private partnerReportService: PartnerReportService,
     private applicationReportService: ApplicationReportService,
     private evaluationReportService: EvaluationReportService,
-    private contractReportService: ContractReportService
+    private contractReportService: ContractReportService,
   ) {}
 
   /**
@@ -58,6 +58,10 @@ export class ReportsService {
    * 月別案件推移レポートを生成
    */
   async getMonthlyProjectTrendReport(startDate?: string, endDate?: string, department?: string) {
-    return this.projectStatusReportService.getMonthlyProjectTrendReport(startDate, endDate, department);
+    return this.projectStatusReportService.getMonthlyProjectTrendReport(
+      startDate,
+      endDate,
+      department,
+    );
   }
 }

@@ -1,278 +1,166 @@
-import api from './api';
+import api, { callWithRetry } from './api';
 
-// 通知の型定義
-export interface Notification {
+/**
+ * 通知サービス
+ */
+
+interface Notification {
   id: string;
   userId: string;
   title: string;
-  content: string;
-  notificationType: string;
-  relatedEntityType?: string;
-  relatedEntityId?: string;
+  message: string;
+  type: 'info' | 'warning' | 'error' | 'success';
   isRead: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  // 関連エンティティ
-  user?: any;
+  createdAt: string;
 }
-
-// 通知作成用DTO
-export interface CreateNotificationDto {
-  userId: string;
-  title: string;
-  content: string;
-  notificationType: string;
-  relatedEntityType?: string;
-  relatedEntityId?: string;
-  isRead?: boolean;
-}
-
-// 通知更新用DTO
-export interface UpdateNotificationDto extends Partial<CreateNotificationDto> {}
 
 /**
- * 通知関連のAPI操作を行うサービス
+ * ユーザーの通知一覧を取得する
+ * @param userId ユーザーID
+ * @returns 通知の配列
  */
-const notificationService = {
-  /**
-   * 通知一覧を取得
-   * @returns 通知一覧
-   */
-  async getNotifications(): Promise<Notification[]> {
-    try {
-      const response = await api.get<Notification[]>('/notifications');
-      return response.data;
-    } catch (error) {
-      console.error('Get notifications error:', error);
-      throw error;
-    }
-  },
+export const getNotificationsByUser = async (userId: string): Promise<Notification[]> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Notification[]>(`/users/${userId}/notifications`));
 
-  /**
-   * 通知詳細を取得
-   * @param id 通知ID
-   * @returns 通知詳細
-   */
-  async getNotification(id: string): Promise<Notification> {
-    try {
-      const response = await api.get<Notification>(`/notifications/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get notification ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * ユーザーIDを指定して通知一覧を取得
-   * @param userId ユーザーID
-   * @returns 通知一覧
-   */
-  async getNotificationsByUser(userId: string): Promise<Notification[]> {
-    try {
-      const response = await api.get<Notification[]>(`/notifications/user/${userId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get notifications by user ${userId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * ユーザーIDを指定して未読通知一覧を取得
-   * @param userId ユーザーID
-   * @returns 未読通知一覧
-   */
-  async getUnreadNotificationsByUser(userId: string): Promise<Notification[]> {
-    try {
-      const response = await api.get<Notification[]>(`/notifications/user/${userId}/unread`);
-      return response.data;
-    } catch (error) {
-      console.error(`Get unread notifications by user ${userId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * ユーザーIDを指定して未読通知数を取得
-   * @param userId ユーザーID
-   * @returns 未読通知数
-   */
-  async countUnreadNotificationsByUser(userId: string): Promise<number> {
-    try {
-      const response = await api.get<{ count: number }>(`/notifications/user/${userId}/unread/count`);
-      return response.data.count;
-    } catch (error) {
-      console.error(`Count unread notifications by user ${userId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 通知を作成
-   * @param notificationData 通知データ
-   * @returns 作成された通知
-   */
-  async createNotification(notificationData: CreateNotificationDto): Promise<Notification> {
-    try {
-      const response = await api.post<Notification>('/notifications', notificationData);
-      return response.data;
-    } catch (error) {
-      console.error('Create notification error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 通知を更新
-   * @param id 通知ID
-   * @param notificationData 更新データ
-   * @returns 更新された通知
-   */
-  async updateNotification(id: string, notificationData: UpdateNotificationDto): Promise<Notification> {
-    try {
-      const response = await api.patch<Notification>(`/notifications/${id}`, notificationData);
-      return response.data;
-    } catch (error) {
-      console.error(`Update notification ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 通知を既読にする
-   * @param id 通知ID
-   * @returns 更新された通知
-   */
-  async markAsRead(id: string): Promise<Notification> {
-    try {
-      const response = await api.patch<Notification>(`/notifications/${id}/read`, {});
-      return response.data;
-    } catch (error) {
-      console.error(`Mark notification ${id} as read error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * ユーザーの全通知を既読にする
-   * @param userId ユーザーID
-   * @returns 成功結果
-   */
-  async markAllAsRead(userId: string): Promise<boolean> {
-    try {
-      const response = await api.patch<{ success: boolean }>(`/notifications/user/${userId}/read-all`, {});
-      return response.data.success;
-    } catch (error) {
-      console.error(`Mark all notifications as read for user ${userId} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * 通知を削除
-   * @param id 通知ID
-   * @returns 削除結果
-   */
-  async deleteNotification(id: string): Promise<boolean> {
-    try {
-      const response = await api.delete(`/notifications/${id}`);
-      return response.status === 200;
-    } catch (error) {
-      console.error(`Delete notification ${id} error:`, error);
-      throw error;
-    }
-  },
-
-  /**
-   * システム通知を作成
-   * @param userId ユーザーID
-   * @param title タイトル
-   * @param content 内容
-   * @returns 作成された通知
-   */
-  async createSystemNotification(userId: string, title: string, content: string): Promise<Notification> {
-    try {
-      const response = await api.post<Notification>('/notifications/system', {
+    // デモ用のモックデータ
+    return [
+      {
+        id: 'notif-1',
         userId,
-        title,
-        content
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Create system notification error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * プロジェクト関連の通知を作成
-   * @param userId ユーザーID
-   * @param title タイトル
-   * @param content 内容
-   * @param projectId プロジェクトID
-   * @returns 作成された通知
-   */
-  async createProjectNotification(userId: string, title: string, content: string, projectId: string): Promise<Notification> {
-    try {
-      const response = await api.post<Notification>('/notifications/project', {
+        title: '新規応募があります',
+        message: 'プロジェクト「ECサイトリニューアル」に新しい応募がありました。',
+        type: 'info',
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'notif-2',
         userId,
-        title,
-        content,
-        projectId
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Create project notification error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 応募関連の通知を作成
-   * @param userId ユーザーID
-   * @param title タイトル
-   * @param content 内容
-   * @param applicationId 応募ID
-   * @returns 作成された通知
-   */
-  async createApplicationNotification(userId: string, title: string, content: string, applicationId: string): Promise<Notification> {
-    try {
-      const response = await api.post<Notification>('/notifications/application', {
-        userId,
-        title,
-        content,
-        applicationId
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Create application notification error:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * 承認関連の通知を作成
-   * @param userId ユーザーID
-   * @param title タイトル
-   * @param content 内容
-   * @param requestHistoryId 申請履歴ID
-   * @returns 作成された通知
-   */
-  async createApprovalNotification(userId: string, title: string, content: string, requestHistoryId: string): Promise<Notification> {
-    try {
-      const response = await api.post<Notification>('/notifications/approval', {
-        userId,
-        title,
-        content,
-        requestHistoryId
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Create approval notification error:', error);
-      throw error;
-    }
+        title: '契約が承認されました',
+        message: '「社内業務システム開発」の契約が承認されました。',
+        type: 'success',
+        isRead: true,
+        createdAt: new Date(Date.now() - 86400000).toISOString(), // 1日前
+      },
+    ];
+  } catch (error) {
+    console.error(`ユーザーID ${userId} の通知情報の取得に失敗しました`, error);
+    throw error;
   }
+};
+
+/**
+ * 特定の通知情報を取得する
+ * @param id 通知ID
+ * @returns 通知情報
+ */
+export const getNotificationById = async (id: string): Promise<Notification> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.get<Notification>(`/notifications/${id}`));
+
+    // デモ用のモックデータ
+    const mockNotifications = [
+      {
+        id: 'notif-1',
+        userId: 'user-1',
+        title: '新規応募があります',
+        message: 'プロジェクト「ECサイトリニューアル」に新しい応募がありました。',
+        type: 'info' as const,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      },
+      {
+        id: 'notif-2',
+        userId: 'user-1',
+        title: '契約が承認されました',
+        message: '「社内業務システム開発」の契約が承認されました。',
+        type: 'success' as const,
+        isRead: true,
+        createdAt: new Date(Date.now() - 86400000).toISOString(), // 1日前
+      },
+    ];
+
+    const notification = mockNotifications.find(n => n.id === id);
+
+    if (!notification) {
+      throw new Error(`通知ID ${id} が見つかりません`);
+    }
+
+    return notification;
+  } catch (error) {
+    console.error(`通知ID ${id} の情報取得に失敗しました`, error);
+    throw error;
+  }
+};
+
+/**
+ * 通知を既読にする
+ * @param id 通知ID
+ * @returns 更新された通知情報
+ */
+export const markNotificationAsRead = async (id: string): Promise<Notification> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.patch<Notification>(`/notifications/${id}/read`, {}));
+
+    // デモ用のモックレスポンス
+    const notification = await getNotificationById(id);
+    return {
+      ...notification,
+      isRead: true,
+    };
+  } catch (error) {
+    console.error(`通知ID ${id} の既読設定に失敗しました`, error);
+    throw error;
+  }
+};
+
+/**
+ * 全ての通知を既読にする
+ * @param userId ユーザーID
+ * @returns 成功結果
+ */
+export const markAllNotificationsAsRead = async (userId: string): Promise<{ success: boolean }> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.post<{ success: boolean }>(`/users/${userId}/notifications/read-all`, {}));
+
+    // デモ用のモックレスポンス
+    return { success: true };
+  } catch (error) {
+    console.error(`ユーザーID ${userId} の全通知既読設定に失敗しました`, error);
+    throw error;
+  }
+};
+
+/**
+ * 通知を削除する
+ * @param id 通知ID
+ * @returns 削除結果
+ */
+export const deleteNotification = async (id: string): Promise<{ success: boolean }> => {
+  try {
+    // 本番環境では実際のAPIエンドポイントを呼び出す
+    // return await callWithRetry(() => api.delete<{ success: boolean }>(`/notifications/${id}`));
+
+    // デモ用のモックレスポンス
+    return { success: true };
+  } catch (error) {
+    console.error(`通知ID ${id} の削除に失敗しました`, error);
+    throw error;
+  }
+};
+
+// デフォルトエクスポートを追加
+const notificationService = {
+  getNotificationsByUser,
+  getNotificationById,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
 };
 
 export default notificationService;

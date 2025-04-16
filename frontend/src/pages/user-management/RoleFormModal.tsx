@@ -31,7 +31,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   onSubmit,
   modalMode,
   availablePermissions,
-  loading
+  loading,
 }) => {
   if (!show) return null;
 
@@ -39,11 +39,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const submitButtonText = modalMode === 'create' ? '作成' : '更新';
 
   return (
-    <Modal
-      title={title}
-      onClose={onClose}
-      size="lg"
-    >
+    <Modal isOpen={show} title={title} onClose={onClose} size="lg">
       <form onSubmit={onSubmit}>
         <div className="p-4">
           <div className="mb-4">
@@ -56,11 +52,9 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
               disabled={modalMode === 'edit'}
             />
           </div>
-          
+
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              説明
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">説明</label>
             <textarea
               name="description"
               value={formData.description}
@@ -69,11 +63,9 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
               rows={3}
             />
           </div>
-          
+
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              権限
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">権限</label>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               {availablePermissions.map(permission => (
                 <div key={permission.value} className="flex items-center">
@@ -94,21 +86,12 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
             </div>
           </div>
         </div>
-        
+
         <div className="bg-gray-100 px-4 py-3 flex justify-end">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={onClose}
-            className="mr-2"
-          >
+          <Button type="button" variant="secondary" onClick={onClose} className="mr-2">
             キャンセル
           </Button>
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={loading}
-          >
+          <Button type="submit" variant="primary" disabled={loading}>
             {submitButtonText}
           </Button>
         </div>

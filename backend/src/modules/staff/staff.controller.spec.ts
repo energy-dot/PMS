@@ -77,7 +77,7 @@ describe('StaffController', () => {
         skills: ['Java', 'Spring', 'SQL'],
         partner: { id: '1', name: 'テスト株式会社' } as any,
       };
-      
+
       const result = await controller.create(createStaffDto);
       expect(result).toEqual(mockStaff);
       expect(service.create).toHaveBeenCalledWith(createStaffDto);
@@ -90,7 +90,7 @@ describe('StaffController', () => {
         status: '待機中',
         skills: ['Java', 'Spring', 'SQL', 'AWS'],
       };
-      
+
       const result = await controller.update('1', updateStaffDto);
       expect(result).toEqual(mockStaff);
       expect(service.update).toHaveBeenCalledWith('1', updateStaffDto);

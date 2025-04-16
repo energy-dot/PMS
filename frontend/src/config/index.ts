@@ -1,7 +1,5 @@
 // APIのベースURL
-export const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
-  : '/api'; // 開発環境でもプロキシを使用
+export const API_BASE_URL = process.env.NODE_ENV === 'production' ? '/api' : '/api'; // 開発環境でもプロキシを使用
 
 // ページネーションデフォルト設定
 export const DEFAULT_PAGE_SIZE = 10;

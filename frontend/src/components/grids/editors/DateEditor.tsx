@@ -15,7 +15,7 @@ const DateEditor = forwardRef((props: ICellEditorParams, ref) => {
     // 値がDate型の場合はフォーマット
     if (props.value instanceof Date) {
       setValue(formatDateForInput(props.value));
-    } 
+    }
     // 値が文字列の場合は日付に変換を試みる
     else if (typeof props.value === 'string') {
       try {
@@ -35,12 +35,12 @@ const DateEditor = forwardRef((props: ICellEditorParams, ref) => {
         setValue('');
         setError('日付の変換に失敗しました');
       }
-    } 
+    }
     // 値がない場合は空文字
     else {
       setValue('');
     }
-    
+
     // フォーカスを当てる
     if (inputRef.current) {
       inputRef.current.focus();
@@ -54,24 +54,24 @@ const DateEditor = forwardRef((props: ICellEditorParams, ref) => {
       getValue() {
         // 値がない場合はnullを返す
         if (!value) return null;
-        
+
         try {
           // 返す値はDate型に変換
           const date = new Date(value);
-          
+
           // 有効な日付かチェック
           if (isNaN(date.getTime())) {
             setError('無効な日付形式です');
             return null;
           }
-          
+
           return date;
         } catch (e) {
           setError('日付の変換に失敗しました');
           return null;
         }
       },
-      
+
       // フォーカス時の挙動
       afterGuiAttached() {
         if (inputRef.current) {
@@ -79,18 +79,18 @@ const DateEditor = forwardRef((props: ICellEditorParams, ref) => {
           inputRef.current.select();
         }
       },
-      
+
       // キーイベントの処理
       isCancelAfterEnd() {
         // 入力がない場合はキャンセル扱い
         return !value;
       },
-      
+
       // 入力値の検証
       isPopup() {
         // カレンダーUIがページ上でフロートしていることを示す
         return false;
-      }
+      },
     };
   });
 
@@ -111,7 +111,7 @@ const DateEditor = forwardRef((props: ICellEditorParams, ref) => {
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
-    
+
     // 入力値の検証
     if (newValue) {
       try {
@@ -155,9 +155,7 @@ const DateEditor = forwardRef((props: ICellEditorParams, ref) => {
           今日
         </button>
       </div>
-      {error && (
-        <div className="text-red-500 text-xs mt-1">{error}</div>
-      )}
+      {error && <div className="text-red-500 text-xs mt-1">{error}</div>}
     </div>
   );
 });

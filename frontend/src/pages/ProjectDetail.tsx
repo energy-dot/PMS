@@ -31,7 +31,7 @@ const ProjectDetail: React.FC = () => {
         // 案件情報を取得
         const projectData = await projectService.getProjectById(id);
         setProject(projectData);
-        
+
         // 承認ステータスを設定
         setApprovalStatus(projectData.approvalStatus || projectData.status);
       } catch (err: any) {
@@ -93,18 +93,18 @@ const ProjectDetail: React.FC = () => {
   // 承認申請を行う
   const handleRequestApproval = async () => {
     if (!id || !project) return;
-    
+
     try {
       await workflowService.requestProjectApproval(id, {
         requesterId: 'current-user-id', // 実際のユーザーIDに置き換える
-        remarks: '承認をお願いします。'
+        remarks: '承認をお願いします。',
       });
-      
+
       // 案件情報を再取得して表示を更新
       const updatedProject = await projectService.getProjectById(id);
       setProject(updatedProject);
       setApprovalStatus('承認待ち');
-      
+
       setError(null);
     } catch (err: any) {
       setError(err.response?.data?.message || '承認申請に失敗しました');
@@ -124,10 +124,7 @@ const ProjectDetail: React.FC = () => {
     return (
       <div className="text-center p-8">
         <p>案件情報が見つかりません。</p>
-        <Button
-          onClick={() => navigate('/projects')}
-          className="mt-4"
-        >
+        <Button onClick={() => navigate('/projects')} className="mt-4">
           一覧に戻る
         </Button>
       </div>
@@ -138,7 +135,7 @@ const ProjectDetail: React.FC = () => {
     { id: 'info', label: '基本情報' },
     { id: 'applications', label: '応募者管理' },
     { id: 'workflow', label: '承認ワークフロー' },
-    { id: 'documents', label: '関連書類' }
+    { id: 'documents', label: '関連書類' },
   ];
 
   return (
@@ -146,32 +143,20 @@ const ProjectDetail: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="page-title">{project.name}</h1>
         <div>
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/projects')}
-            className="mr-2"
-          >
+          <Button variant="secondary" onClick={() => navigate('/projects')} className="mr-2">
             一覧に戻る
           </Button>
           {approvalStatus !== '承認待ち' && approvalStatus !== '承認済み' && (
-            <Button
-              onClick={handleRequestApproval}
-              className="mr-2"
-              variant="primary"
-            >
+            <Button onClick={handleRequestApproval} className="mr-2" variant="primary">
               承認申請
             </Button>
           )}
-          <Button
-            onClick={() => navigate(`/projects/${id}/edit`)}
-          >
-            編集
-          </Button>
+          <Button onClick={() => navigate(`/projects/${id}/edit`)}>編集</Button>
         </div>
       </div>
-      
+
       {error && <Alert variant="error" message={error} onClose={() => setError(null)} />}
-      
+
       <div className="card p-6 mb-6">
         <div className="flex justify-between mb-4">
           <div>
@@ -185,14 +170,17 @@ const ProjectDetail: React.FC = () => {
           <div>
             <strong>登録日:</strong> {formatDate(project.createdAt)}
             {project.updatedAt && project.updatedAt !== project.createdAt && (
-              <span> / <strong>更新日:</strong> {formatDate(project.updatedAt)}</span>
+              <span>
+                {' '}
+                / <strong>更新日:</strong> {formatDate(project.updatedAt)}
+              </span>
             )}
           </div>
         </div>
       </div>
-      
+
       <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-      
+
       <div className="mt-6">
         {activeTab === 'info' && (
           <div className="card p-6">
@@ -266,7 +254,7 @@ const ProjectDetail: React.FC = () => {
             </div>
           </div>
         )}
-        
+
         {activeTab === 'applications' && (
           <div className="card p-6">
             <div className="flex justify-between items-center mb-4">
@@ -278,39 +266,44 @@ const ProjectDetail: React.FC = () => {
                 新規応募登録
               </Button>
             </div>
-            
+
             {isApplicationsLoading ? (
               <div className="text-center py-4">応募データを読み込み中...</div>
             ) : applications.length > 0 ? (
-              <ApplicationList applications={applications} onStatusChange={() => {
-                // 応募ステータス変更時に一覧を再取得
-                applicationService.getApplicationsByProjectId(id).then(setApplications);
-              }} />
+              <ApplicationList
+                applications={applications}
+                onStatusChange={() => {
+                  // 応募ステータス変更時に一覧を再取得
+                  applicationService.getApplicationsByProjectId(id).then(setApplications);
+                }}
+              />
             ) : (
               <div className="text-center py-4">この案件への応募はまだありません。</div>
             )}
           </div>
         )}
-        
+
         {activeTab === 'workflow' && (
           <div className="card p-6">
             <h3 className="text-lg font-semibold mb-4">承認ワークフロー</h3>
             <ApprovalWorkflow projectId={id} />
           </div>
         )}
-        
+
         {activeTab === 'documents' && (
           <div className="card p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">関連書類</h3>
               <Button
-                onClick={() => {/* ファイルアップロードモーダルを表示 */}}
+                onClick={() => {
+                  /* ファイルアップロードモーダルを表示 */
+                }}
                 variant="primary"
               >
                 書類アップロード
               </Button>
             </div>
-            
+
             <div className="text-center py-4">
               この案件に関連する書類はまだアップロードされていません。
             </div>

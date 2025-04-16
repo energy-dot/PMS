@@ -32,7 +32,7 @@ describe('PartnersController', () => {
   beforeEach(async () => {
     // 各テスト前にモックをリセット
     jest.clearAllMocks();
-    
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PartnersController],
       providers: [
@@ -91,7 +91,7 @@ describe('PartnersController', () => {
         phone: '03-1234-5678',
         email: 'test@example.com',
       };
-      
+
       const result = await controller.create(createPartnerDto);
       expect(result).toEqual(mockPartner);
       expect(service.create).toHaveBeenCalledWith(createPartnerDto);
@@ -104,8 +104,10 @@ describe('PartnersController', () => {
         phone: '03-1234-5678',
         email: 'invalid-email', // 無効なメールアドレス
       } as CreatePartnerDto;
-      
-      mockPartnersService.create.mockRejectedValueOnce(new BadRequestException('バリデーションエラー'));
+
+      mockPartnersService.create.mockRejectedValueOnce(
+        new BadRequestException('バリデーションエラー'),
+      );
       await expect(controller.create(invalidDto)).rejects.toThrow(BadRequestException);
     });
   });
@@ -115,7 +117,7 @@ describe('PartnersController', () => {
       const updatePartnerDto: UpdatePartnerDto = {
         name: '更新テスト株式会社',
       };
-      
+
       const result = await controller.update('1', updatePartnerDto);
       expect(result).toEqual(mockPartner);
       expect(service.update).toHaveBeenCalledWith('1', updatePartnerDto);
@@ -125,7 +127,7 @@ describe('PartnersController', () => {
       const updatePartnerDto: UpdatePartnerDto = {
         name: '更新テスト株式会社',
       };
-      
+
       mockPartnersService.update.mockRejectedValueOnce(new NotFoundException());
       await expect(controller.update('999', updatePartnerDto)).rejects.toThrow(NotFoundException);
     });

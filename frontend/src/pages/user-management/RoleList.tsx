@@ -21,43 +21,38 @@ interface RoleListProps {
 /**
  * 役割一覧コンポーネント
  */
-export const RoleList: React.FC<RoleListProps> = ({
-  roles,
-  onEditRole,
-  onDeleteRole,
-  loading
-}) => {
+export const RoleList: React.FC<RoleListProps> = ({ roles, onEditRole, onDeleteRole, loading }) => {
   // 役割列定義
   const roleColumnDefs: ColDef[] = [
-    { 
-      headerName: '役割名', 
-      field: 'name', 
-      sortable: true, 
-      filter: true, 
-      flex: 1 
+    {
+      headerName: '役割名',
+      field: 'name',
+      sortable: true,
+      filter: true,
+      flex: 1,
     },
-    { 
-      headerName: '説明', 
-      field: 'description', 
-      sortable: true, 
-      filter: true, 
-      flex: 2 
+    {
+      headerName: '説明',
+      field: 'description',
+      sortable: true,
+      filter: true,
+      flex: 2,
     },
-    { 
-      headerName: '権限数', 
-      field: 'permissions', 
-      sortable: true, 
-      filter: true, 
+    {
+      headerName: '権限数',
+      field: 'permissions',
+      sortable: true,
+      filter: true,
       width: 100,
       valueGetter: (params: any) => {
         return params.data?.permissions?.length || 0;
-      }
+      },
     },
-    { 
-      headerName: '操作', 
-      field: 'id', 
-      sortable: false, 
-      filter: false, 
+    {
+      headerName: '操作',
+      field: 'id',
+      sortable: false,
+      filter: false,
       width: 150,
       cellRenderer: (params: any) => {
         return `
@@ -70,14 +65,14 @@ export const RoleList: React.FC<RoleListProps> = ({
       onCellClicked: (params: any) => {
         const { event } = params;
         const target = event.target as HTMLElement;
-        
+
         if (target.classList.contains('edit-btn')) {
           onEditRole(params.data);
         } else if (target.classList.contains('delete-btn')) {
           onDeleteRole(params.data.id);
         }
-      }
-    }
+      },
+    },
   ];
 
   return (
