@@ -17,7 +17,7 @@ export const getStaffs = async (): Promise<Staff[]> => {
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.get('/staffs'));
+    return await callWithRetry(() => api.get('/staff'));
   } catch (error) {
     logError(error, 'getStaffs');
     throw handleApiError(error, 'スタッフ情報の取得に失敗しました');
@@ -41,7 +41,7 @@ export const getStaffById = async (id: string): Promise<Staff> => {
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.get(`/staffs/${id}`));
+    return await callWithRetry(() => api.get(`/staff/${id}`));
   } catch (error) {
     logError(error, `getStaffById(${id})`);
     throw handleApiError(error, `スタッフID ${id} の情報取得に失敗しました`);
@@ -86,7 +86,7 @@ export const searchStaffs = async (params: SearchStaffParams): Promise<Staff[]> 
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.get('/staffs/search', { params }));
+    return await callWithRetry(() => api.get('/staff/search', { params }));
   } catch (error) {
     logError(error, 'searchStaffs');
     throw handleApiError(error, 'スタッフの検索に失敗しました');
@@ -111,7 +111,7 @@ export const createStaff = async (data: Omit<Staff, 'id'>): Promise<Staff> => {
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.post('/staffs', data));
+    return await callWithRetry(() => api.post('/staff', data));
   } catch (error) {
     logError(error, 'createStaff');
     throw handleApiError(error, 'スタッフの作成に失敗しました');
@@ -140,7 +140,7 @@ export const updateStaff = async (id: string, data: Partial<Staff>): Promise<Sta
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.put(`/staffs/${id}`, data));
+    return await callWithRetry(() => api.patch(`/staff/${id}`, data));
   } catch (error) {
     logError(error, `updateStaff(${id})`);
     throw handleApiError(error, `スタッフID ${id} の情報更新に失敗しました`);
@@ -161,7 +161,7 @@ export const deleteStaff = async (id: string): Promise<{ success: boolean }> => 
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.delete(`/staffs/${id}`));
+    return await callWithRetry(() => api.delete(`/staff/${id}`));
   } catch (error) {
     logError(error, `deleteStaff(${id})`);
     throw handleApiError(error, `スタッフID ${id} の削除に失敗しました`);
@@ -190,7 +190,7 @@ export const updateStaffSkills = async (id: string, skills: string[]): Promise<S
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.put(`/staffs/${id}/skills`, { skills }));
+    return await callWithRetry(() => api.patch(`/staff/${id}/skills`, { skills }));
   } catch (error) {
     logError(error, `updateStaffSkills(${id})`);
     throw handleApiError(error, `スタッフID ${id} のスキル更新に失敗しました`);

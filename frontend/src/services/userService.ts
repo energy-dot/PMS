@@ -79,7 +79,7 @@ export const updateUser = async (id: string, data: Partial<User>): Promise<User>
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.put(`/users/${id}`, data));
+    return await callWithRetry(() => api.patch(`/users/${id}`, data));
   } catch (error) {
     logError(error, `updateUser(${id})`);
     throw handleApiError(error, `ユーザー情報(ID: ${id})の更新に失敗しました`);

@@ -79,7 +79,7 @@ export const updateProject = async (id: string, data: Partial<Project>): Promise
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.put(`/projects/${id}`, data));
+    return await callWithRetry(() => api.patch(`/projects/${id}`, data));
   } catch (error) {
     logError(error, `updateProject(${id})`);
     throw handleApiError(error, `プロジェクト情報(ID: ${id})の更新に失敗しました`);

@@ -1,0 +1,112 @@
+import { Evaluation, EvaluationSkill } from '../shared-types';
+
+// 評価情報のモックデータ
+export const mockEvaluations: Evaluation[] = [
+  {
+    id: '1',
+    staffId: '101',
+    projectId: '201',
+    evaluatorId: '301',
+    evaluationDate: '2023-01-15',
+    overallRating: 4,
+    technicalSkills: 4,
+    communicationSkills: 3,
+    problemSolving: 4,
+    teamwork: 5,
+    leadership: 3,
+    comments: '技術的なスキルが高く、問題解決能力も優れています。チームワークも素晴らしいです。',
+    skillRatings: [
+      { skillName: 'JavaScript', rating: 4 },
+      { skillName: 'React', rating: 5 },
+      { skillName: 'Node.js', rating: 3 },
+    ],
+    evaluationPeriodStart: '2022-10-01',
+    evaluationPeriodEnd: '2023-01-15'
+  },
+  {
+    id: '2',
+    staffId: '102',
+    projectId: '202',
+    evaluatorId: '302',
+    evaluationDate: '2023-02-20',
+    overallRating: 3,
+    technicalSkills: 3,
+    communicationSkills: 4,
+    problemSolving: 3,
+    teamwork: 4,
+    leadership: 2,
+    comments: 'コミュニケーション能力が高く、チームでの協力も良好です。技術的なスキルの向上が期待されます。',
+    skillRatings: [
+      { skillName: 'Java', rating: 3 },
+      { skillName: 'Spring', rating: 3 },
+      { skillName: 'SQL', rating: 4 },
+    ],
+    evaluationPeriodStart: '2022-11-01',
+    evaluationPeriodEnd: '2023-02-20'
+  },
+  {
+    id: '3',
+    staffId: '103',
+    projectId: '203',
+    evaluatorId: '303',
+    evaluationDate: '2023-03-10',
+    overallRating: 5,
+    technicalSkills: 5,
+    communicationSkills: 4,
+    problemSolving: 5,
+    teamwork: 4,
+    leadership: 5,
+    comments: '非常に優秀なエンジニアです。技術力が高く、リーダーシップも発揮しています。今後も活躍が期待できます。',
+    skillRatings: [
+      { skillName: 'Python', rating: 5 },
+      { skillName: 'Django', rating: 5 },
+      { skillName: 'AWS', rating: 4 },
+      { skillName: 'Docker', rating: 5 },
+    ],
+    evaluationPeriodStart: '2022-12-01',
+    evaluationPeriodEnd: '2023-03-10'
+  },
+  {
+    id: '4',
+    staffId: '104',
+    projectId: '204',
+    evaluatorId: '304',
+    evaluationDate: '2023-04-05',
+    overallRating: 2,
+    technicalSkills: 2,
+    communicationSkills: 3,
+    problemSolving: 2,
+    teamwork: 3,
+    leadership: 1,
+    comments: '技術的なスキルの向上が必要です。基本的な知識は持っていますが、実践的な応用力に欠けています。',
+    skillRatings: [
+      { skillName: 'PHP', rating: 2 },
+      { skillName: 'Laravel', rating: 2 },
+      { skillName: 'MySQL', rating: 3 },
+    ],
+    evaluationPeriodStart: '2023-01-05',
+    evaluationPeriodEnd: '2023-04-05'
+  },
+  {
+    id: '5',
+    staffId: '105',
+    projectId: '205',
+    evaluatorId: '305',
+    evaluationDate: '2023-05-20',
+    overallRating: 4,
+    technicalSkills: 4,
+    communicationSkills: 5,
+    problemSolving: 4,
+    teamwork: 5,
+    leadership: 4,
+    comments: 'コミュニケーション能力が非常に高く、チーム内の調整役として活躍しています。技術力も十分あります。',
+    skillRatings: [
+      { skillName: 'C#', rating: 4 },
+      { skillName: '.NET', rating: 4 },
+      { skillName: 'Azure', rating: 3 },
+      { skillName: 'SQL Server', rating: 4 },
+    ],
+    evaluationPeriodStart: '2023-02-20',
+    evaluationPeriodEnd: '2023-05-20'
+  }
+];

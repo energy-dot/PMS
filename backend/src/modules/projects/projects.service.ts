@@ -62,6 +62,9 @@ export class ProjectsService {
     project.approvedBy = '';
     project.approvedAt = new Date(0); // 1970-01-01, エポックタイム
 
+    // 要員割り当て情報の初期化
+    project.assignedStaffs = [];
+
     return this.projectsRepository.save(project);
   }
 
@@ -245,6 +248,48 @@ export class ProjectsService {
 
     project.status = status;
 
+    return this.projectsRepository.save(project);
+  }
+
+  // 要員割り当て機能
+  async assignStaff(id: string, staffIds: string[]): Promise<Project> {
+    const project = await this.findOne(id);
+
+    if (!project) {
+      throw new Error('案件が見つかりません');
+    }
+
+    // 現在の割り当て要員リストを取得
+    const currentStaffs = project.assignedStaffs || [];
+    
+    // 新しい要員を追加（重複を排除）
+    const updatedStaffs = [...new Set([...currentStaffs, ...staffIds])];
+    
+    // 要員数を更新
+    project.assignedStaffs = updatedStaffs;
+    project.currentHeadcount = updatedStaffs.length;
+    
+    return this.projectsRepository.save(project);
+  }
+
+  // 要員削除機能
+  async removeStaff(id: string, staffId: string): Promise<Project> {
+    const project = await this.findOne(id);
+
+    if (!project) {
+      throw new Error('案件が見つかりません');
+    }
+
+    // 現在の割り当て要員リストを取得
+    const currentStaffs = project.assignedStaffs || [];
+    
+    // 指定された要員を削除
+    const updatedStaffs = currentStaffs.filter((sid: string) => sid !== staffId);
+    
+    // 要員数を更新
+    project.assignedStaffs = updatedStaffs;
+    project.currentHeadcount = updatedStaffs.length;
+    
     return this.projectsRepository.save(project);
   }
 }

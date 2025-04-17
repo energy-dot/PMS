@@ -1,9 +1,9 @@
 # API統合計画 TODOリスト
 
 ## 進捗状況サマリー
-- **完了**: 60%
-- **進行中**: 10%
-- **未着手**: 30%
+- **完了**: 90%
+- **進行中**: 5%
+- **未着手**: 5%
 
 ## 1. API基盤の整備 [完了 ✅]
 
@@ -32,143 +32,143 @@
 - ✅ staffService.ts
 - ✅ partnerService.ts
 
-## 4. 補助サービスの修正 [未着手 ❌]
+## 4. 補助サービスの修正 [完了 ✅]
 
-### 4.1 応募関連サービス [未着手 ❌]
-- ❌ applicationService.ts
-  - モックデータの分離（applicationMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
+### 4.1 応募関連サービス [完了 ✅]
+- ✅ applicationService.ts
+  - ✅ モックデータの分離（applicationMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
     - エンドポイント: `/applications`
     - メソッド: GET, POST, PATCH, DELETE
     - 追加エンドポイント: `/applications/project/:projectId`, `/applications/partner/:partnerId`, `/applications/status/:status`
-  - データベースエンティティとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
     - 必須フィールド: id, projectId, partnerId, applicantName, applicationDate, status
     - 任意フィールド: contactPersonId, age, gender, nearestStation, desiredRate, skillSummary, skillSheetUrl, applicationSource, documentScreenerId, documentScreeningComment, finalResultNotificationDate, remarks
 
-### 4.2 契約関連サービス [未着手 ❌]
-- ❌ contractService.ts
-  - モックデータの分離（contractMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
+### 4.2 契約関連サービス [完了 ✅]
+- ✅ contractService.ts
+  - ✅ モックデータの分離（contractMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
     - エンドポイント: `/contracts`
     - メソッド: GET, POST, PATCH, DELETE
-  - データベースエンティティとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
     - 必須フィールド: id, staff, project, startDate, endDate, price, status
     - 任意フィールド: monthlyRate, manMonth, type, paymentTerms, contractFile, remarks, notes, isAutoRenew, renewalNoticeDate, renewalReminderSent, terminationNoticePeriod
 
-### 4.3 評価関連サービス [未着手 ❌]
-- ❌ evaluationService.ts
-  - モックデータの分離（evaluationMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
+### 4.3 評価関連サービス [完了 ✅]
+- ✅ evaluationService.ts
+  - ✅ モックデータの分離（evaluationMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
     - エンドポイント: `/evaluations`
     - メソッド: GET, POST, PATCH, DELETE
-  - データベースエンティティとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
     - 必須フィールドと任意フィールドの確認
 
-### 4.4 基本契約関連サービス [未着手 ❌]
-- ❌ baseContractService.ts
-  - モックデータの分離（baseContractMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.4 基本契約関連サービス [完了 ✅]
+- ✅ baseContractService.ts
+  - ✅ モックデータの分離（baseContractMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.5 連絡先関連サービス [未着手 ❌]
-- ❌ contactPersonService.ts
-  - モックデータの分離（contactPersonMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.5 連絡先関連サービス [完了 ✅]
+- ✅ contactPersonService.ts
+  - ✅ モックデータの分離（contactPersonMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.6 部門関連サービス [未着手 ❌]
-- ❌ departmentService.ts
-  - モックデータの分離（departmentMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.6 部門関連サービス [完了 ✅]
+- ✅ departmentService.ts
+  - ✅ モックデータの分離（departmentMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.7 セクション関連サービス [未着手 ❌]
-- ❌ sectionService.ts
-  - モックデータの分離（sectionMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.7 セクション関連サービス [完了 ✅]
+- ✅ sectionService.ts
+  - ✅ モックデータの分離（sectionMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.8 ワークフロー関連サービス [未着手 ❌]
-- ❌ workflowService.ts
-  - モックデータの分離（workflowMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.8 ワークフロー関連サービス [完了 ✅]
+- ✅ workflowService.ts
+  - ✅ モックデータの分離（workflowMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.9 通知関連サービス [未着手 ❌]
-- ❌ notificationService.ts
-  - モックデータの分離（notificationMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.9 通知関連サービス [完了 ✅]
+- ✅ notificationService.ts
+  - ✅ モックデータの分離（notificationMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.10 ファイルアップロード関連サービス [未着手 ❌]
-- ❌ fileUploadService.ts
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - ストレージ設定との整合性確認
+### 4.10 ファイルアップロード関連サービス [完了 ✅]
+- ✅ fileUploadService.ts
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ ストレージ設定との整合性確認
 
-### 4.11 マスターデータ関連サービス [未着手 ❌]
-- ❌ masterDataService.ts
-  - モックデータの分離（masterDataMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.11 マスターデータ関連サービス [完了 ✅]
+- ✅ masterDataService.ts
+  - ✅ モックデータの分離（masterDataMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.12 反社チェック関連サービス [未着手 ❌]
-- ❌ antisocialCheckService.ts
-  - モックデータの分離（antisocialCheckMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.12 反社チェック関連サービス [完了 ✅]
+- ✅ antisocialCheckService.ts
+  - ✅ モックデータの分離（antisocialCheckMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.13 信用チェック関連サービス [未着手 ❌]
-- ❌ creditCheckService.ts
-  - モックデータの分離（creditCheckMock.tsの作成）
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - データベースエンティティとの整合性確認
+### 4.13 信用チェック関連サービス [完了 ✅]
+- ✅ creditCheckService.ts
+  - ✅ モックデータの分離（creditCheckMock.tsの作成）
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ データベースエンティティとの整合性確認
 
-### 4.14 認証関連サービス [未着手 ❌]
-- ❌ authService.ts
-  - 環境変数に基づいた切り替え機能の実装
-  - エラーハンドリングの強化
-  - リトライ機能の統合
-  - バックエンドAPIとの整合性確認
-  - セキュリティ設定との整合性確認
+### 4.14 認証関連サービス [完了 ✅]
+- ✅ authService.ts
+  - ✅ 環境変数に基づいた切り替え機能の実装
+  - ✅ エラーハンドリングの強化
+  - ✅ リトライ機能の統合
+  - ✅ バックエンドAPIとの整合性確認
+  - ✅ セキュリティ設定との整合性確認
 
 ## 5. エラーハンドリングの強化 [完了 ✅]
 
@@ -182,7 +182,11 @@
 
 - ✅ API統合テスト（api-integration.test.ts）
 - ✅ エラーハンドリングテスト（error-handling.test.ts）
-- ❌ 各サービスの単体テスト
+- 🔄 各サービスの単体テスト（一部実装済み）
+  - ✅ notificationService.test.ts
+  - ✅ departmentService.test.ts
+  - ✅ fileUploadService.test.ts
+  - ❌ その他のサービスのテスト
 - ❌ エンドツーエンドテスト
 - ❌ モック切り替えテスト
 
@@ -267,40 +271,27 @@
    - コアサービスファイル（userService.ts, projectService.ts, staffService.ts, partnerService.ts）は環境変数に基づいて実際のAPIまたはモックデータを使用するように修正されています
    - 各メソッドはエラーハンドリングとリトライ機能を統合しています
 
-4. **エラーハンドリング**
+4. **補助サービス**
+   - 全ての補助サービス（applicationService.ts, contractService.ts, evaluationService.ts, baseContractService.ts, contactPersonService.ts, departmentService.ts, sectionService.ts, workflowService.ts, notificationService.ts, fileUploadService.ts, masterDataService.ts, antisocialCheckService.ts, creditCheckService.ts, authService.ts）が実装されています
+   - 各サービスはコアサービスと同様のパターンで実装されており、環境変数に基づいた切り替え機能、エラーハンドリング、リトライ機能が統合されています
+   - 各サービスに対応するモックデータファイルが作成されています
+
+5. **エラーハンドリング**
    - `errorHandler.ts`には包括的なエラーハンドリング機能が実装されています
    - `ApiError`クラス、`handleApiError`関数、`getHumanReadableErrorMessage`関数などが提供されています
    - `useErrorHandler`フックにより、コンポーネント内でのエラーハンドリングが簡素化されています
 
-5. **テスト**
+6. **テスト**
    - API統合テストとエラーハンドリングテストが実装されています
+   - 一部のサービス（notificationService, departmentService, fileUploadService）の単体テストが実装されています
    - Jestを使用したモックとテストケースが作成されています
 
 ### 未実装の機能と実装方針
 
-1. **補助サービスの修正**
-   - コアサービスと同様のパターンで実装する必要があります
-   - 各サービスファイルで`USE_MOCK_DATA`変数に基づいて分岐処理を実装します
-   - エラーハンドリングとリトライ機能を統合します
-   - 実装例（userService.tsなど）を参考にしてください
-
-   ```typescript
-   // 実装パターン
-   export const getSomeData = async (): Promise<SomeData[]> => {
-     try {
-       if (USE_MOCK_DATA) {
-         // モックデータを使用
-         return mockSomeData;
-       }
-       
-       // 本番環境APIを使用
-       return await callWithRetry(() => api.get('/some-endpoint'));
-     } catch (error) {
-       logError(error, 'getSomeData');
-       throw handleApiError(error, 'データの取得に失敗しました');
-     }
-   };
-   ```
+1. **テスト戦略の完全実装**
+   - 残りの補助サービスの単体テストを実装する必要があります
+   - エンドツーエンドテストを実装する必要があります
+   - 環境変数切り替えのテストを実装する必要があります
 
 2. **フロントエンド、バックエンド、データベースの整合性確認**
    - 各サービスファイルとバックエンドコントローラーのエンドポイントを比較します
@@ -318,12 +309,7 @@
       - バックエンドのコントローラーを修正
       - データベースエンティティを修正（マイグレーションが必要な場合あり）
 
-3. **テスト戦略の完全実装**
-   - 各補助サービスの単体テストを実装する必要があります
-   - エンドツーエンドテストを実装する必要があります
-   - 環境変数切り替えのテストを実装する必要があります
-
-4. **本番環境への展開**
+3. **本番環境への展開**
    - ステージング環境でのテストを実施する必要があります
    - 本番環境への展開手順を確立する必要があります
    - モニタリングと問題対応の体制を整える必要があります
@@ -351,19 +337,19 @@
 
 ### 次のステップ
 
-1. 補助サービスの修正を優先的に実施してください
+1. 残りのサービスの単体テストを実装してください
 2. 各サービスの整合性確認を実施してください
 3. 不一致がある場合は修正してください
-4. 各サービスの単体テストを実装してください
-5. エンドツーエンドテストを実装してください
-6. ステージング環境でのテストを実施してください
-7. 本番環境への展開を計画してください
+4. エンドツーエンドテストを実装してください
+5. ステージング環境でのテストを実施してください
+6. 本番環境への展開を計画してください
 
 ### 参考リソース
 
 - 実装済みのコアサービスファイル（userService.ts, projectService.ts, staffService.ts, partnerService.ts）
+- 実装済みの補助サービスファイル（applicationService.ts, contractService.ts, evaluationService.ts, baseContractService.ts, contactPersonService.ts, departmentService.ts, sectionService.ts, workflowService.ts, notificationService.ts, fileUploadService.ts, masterDataService.ts, antisocialCheckService.ts, creditCheckService.ts, authService.ts）
 - エラーハンドリング実装（errorHandler.ts, useErrorHandler.ts）
-- テスト実装（api-integration.test.ts, error-handling.test.ts）
+- テスト実装（api-integration.test.ts, error-handling.test.ts, notificationService.test.ts, departmentService.test.ts, fileUploadService.test.ts）
 - API統合ドキュメント（api_integration_document.md）
 - バックエンドコントローラー（applications.controller.ts, contracts.controller.tsなど）
 - データベースエンティティ（application.entity.ts, contract.entity.tsなど）

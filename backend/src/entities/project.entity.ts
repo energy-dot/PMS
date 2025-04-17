@@ -134,6 +134,9 @@ export class Project {
   @OneToMany(() => Evaluation, evaluation => evaluation.project)
   evaluations: Evaluation[];
 
+  @Column('simple-array', { nullable: true })
+  assignedStaffs: string[];
+
   @CreateDateColumn()
   createdAt: Date;
 

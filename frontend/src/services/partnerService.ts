@@ -95,7 +95,7 @@ export const updatePartner = async (id: string, data: Partial<Partner>): Promise
     }
     
     // 本番環境APIを使用
-    return await callWithRetry(() => api.put(`/partners/${id}`, data));
+    return await callWithRetry(() => api.patch(`/partners/${id}`, data));
   } catch (error) {
     logError(error, `updatePartner(${id})`);
     throw handleApiError(error, `パートナーID ${id} の情報更新に失敗しました`);
